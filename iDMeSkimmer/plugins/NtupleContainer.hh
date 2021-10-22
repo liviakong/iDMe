@@ -40,6 +40,7 @@ public:
     vector<float> genMass_;
     
    // Gen jet
+    int nGenJet_;
     vector<float> genJetPt_;
     vector<float> genJetEta_;
     vector<float> genJetPhi_;
@@ -57,6 +58,15 @@ public:
     vector<float> recoElectronPhi_;
     vector<float> recoElectronVxy_;
     vector<float> recoElectronVz_;
+    vector<float> recoElectronDxy_;
+    vector<float> recoElectronDxyError_;
+    vector<float> recoElectronDz_;
+    vector<float> recoElectronDzError_;
+    vector<float> recoElectronTrkChi2_;
+    vector<float> recoElectronTrkIso_;
+    vector<int> recoElectronTrkNumTrackerHits_;
+    vector<int> recoElectronTrkNumPixHits_;
+    vector<int> recoElectronTrkNumStripHits_;
     vector<int> recoElectronCharge_;
 
     // Low pT electrons
@@ -66,19 +76,31 @@ public:
     vector<float> recoLowPtElectronPhi_;
     vector<float> recoLowPtElectronVxy_;
     vector<float> recoLowPtElectronVz_;
+    vector<float> recoLowPtElectronDxy_;
+    vector<float> recoLowPtElectronDxyError_;
+    vector<float> recoLowPtElectronDz_;
+    vector<float> recoLowPtElectronDzError_;
+    vector<float> recoLowPtElectronTrkChi2_;
+    vector<float> recoLowPtElectronTrkIso_;
+    vector<int> recoLowPtElectronTrkNumTrackerHits_;
+    vector<int> recoLowPtElectronTrkNumPixHits_;
+    vector<int> recoLowPtElectronTrkNumStripHits_;
     vector<int> recoLowPtElectronCharge_;
 
     // Electron-positron vertices
+    int nEleVertex_regreg_;
     vector<float> regreg_recoVtxVxy_;
     vector<float> regreg_recoVtxVz_;
     vector<float> regreg_recoVtxSigmaVxy_;
     vector<float> regreg_recoVtxReducedChi2_;
     vector<float> regreg_recoVtxDr_;
+    int nEleVertex_lowlow_;
     vector<float> lowlow_recoVtxVxy_;
     vector<float> lowlow_recoVtxVz_;
     vector<float> lowlow_recoVtxSigmaVxy_;
     vector<float> lowlow_recoVtxReducedChi2_;
     vector<float> lowlow_recoVtxDr_;
+    int nEleVertex_lowreg_;
     vector<float> lowreg_recoVtxVxy_;
     vector<float> lowreg_recoVtxVz_;
     vector<float> lowreg_recoVtxSigmaVxy_;

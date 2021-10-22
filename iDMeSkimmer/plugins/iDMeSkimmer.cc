@@ -95,6 +95,7 @@ class iDMeSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       const edm::EDGetTokenT<reco::GenJetCollection> genJetToken_;
       const edm::EDGetTokenT<reco::GenMETCollection> genMETToken_;
       const edm::EDGetTokenT<GenEventInfoProduct> genEvtInfoToken_;
+      const edm::EDGetTokenT<reco::VertexCollection>primaryVertexToken_;
 
       // Handles
       edm::Handle<pat::ElectronCollection> recoElectronHandle_;
@@ -103,6 +104,7 @@ class iDMeSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::Handle<reco::GenJetCollection> genJetHandle_;
       edm::Handle<reco::GenMETCollection> genMETHandle_;
       edm::Handle<GenEventInfoProduct> genEvtInfoHandle_;
+      edm::Handle<reco::VertexCollection> primaryVertexHandle_;
 };
 //
 // constants, enums and typedefs
@@ -123,7 +125,8 @@ iDMeSkimmer::iDMeSkimmer(const edm::ParameterSet& ps)
    genParticleToken_(consumes<reco::GenParticleCollection>(ps.getParameter<edm::InputTag>("genParticle"))),
    genJetToken_(consumes<reco::GenJetCollection>(ps.getParameter<edm::InputTag>("genJet"))),
    genMETToken_(consumes<reco::GenMETCollection>(ps.getParameter<edm::InputTag>("genMET"))),
-   genEvtInfoToken_(consumes<GenEventInfoProduct>(ps.getParameter<edm::InputTag>("genEvt")))
+   genEvtInfoToken_(consumes<GenEventInfoProduct>(ps.getParameter<edm::InputTag>("genEvt"))),
+   primaryVertexToken_(consumes<reco::VertexCollection>(ps.getParameter<edm::InputTag>("primaryVertex")))
 {
    usesResource("TFileService");
    m_random_generator = std::mt19937(37428479);
@@ -170,6 +173,7 @@ iDMeSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
    desc.add<edm::InputTag>("genJet",edm::InputTag("slimmedGenJets"));
    desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
    desc.add<edm::InputTag>("genEvt", edm::InputTag("generator"));
+   desc.add<edm::InputTag>("primaryVertex",edm::InputTag("offlineSlimmedPrimaryVertices"));
    
    descriptions.add("iDMeSkimmer", desc);
 }
@@ -187,6 +191,7 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iEvent.getByToken(genJetToken_,genJetHandle_);
    iEvent.getByToken(genMETToken_,genMETHandle_);
    iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
+   iEvent.getByToken(primaryVertexToken_, primaryVertexHandle_);
 
    // Clear tree branches before filling
    nt.ClearTreeBranches();
@@ -197,10 +202,11 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    nt.eventNum_ = iEvent.id().event();
    nt.lumiSec_ = iEvent.luminosityBlock();
    nt.runNum_ = iEvent.id().run();
+   reco::Vertex pv = *primaryVertexHandle_->begin();
    
    // Handling default electrons
    nt.nElectronDefault_ = recoElectronHandle_->size();
-   std::vector<reco::TrackRef> reg_eleTracks{};
+   std::vector<reco::GsfTrackRef> reg_eleTracks{};
    for (unsigned int i = 0; i < recoElectronHandle_->size(); i++) {
       pat::ElectronRef ele(recoElectronHandle_,i);
       nt.recoElectronPt_.push_back(ele->pt());
@@ -208,19 +214,28 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronPhi_.push_back(ele->phi());
       nt.recoElectronVxy_.push_back(ele->trackPositionAtVtx().rho());
       nt.recoElectronVz_.push_back(ele->trackPositionAtVtx().z());
+      nt.recoElectronTrkIso_.push_back(ele->trackIso());
       nt.recoElectronCharge_.push_back(ele->charge());
       // Filling tracks
-      auto track = ele->closestCtfTrackRef();
+      reco::GsfTrackRef track = ele->gsfTrack();
          if (!track.isNonnull())
             cout << "Track " << i << " from regular ele reco is not valid! " << endl;
          else {
             reg_eleTracks.emplace_back(track);
+            nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
+            nt.recoElectronDxyError_.push_back(track->dxyError());
+            nt.recoElectronDz_.push_back(track->dz(pv.position()));
+            nt.recoElectronDzError_.push_back(track->dzError());
+            nt.recoElectronTrkChi2_.push_back(track->normalizedChi2());
+            nt.recoElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
+            nt.recoElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
+            nt.recoElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
          }
    }
 
    // Handling low-pT electrons
    nt.nElectronLowPt_ = lowPtElectronHandle_->size();
-   std::vector<reco::TrackRef> lowpt_eleTracks{};
+   std::vector<reco::GsfTrackRef> lowpt_eleTracks{};
    for (unsigned int i = 0; i < lowPtElectronHandle_->size(); i++) {
       pat::ElectronRef ele(lowPtElectronHandle_,i);
       nt.recoLowPtElectronPt_.push_back(ele->pt());
@@ -228,13 +243,22 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronEta_.push_back(ele->eta());
       nt.recoLowPtElectronVxy_.push_back(ele->trackPositionAtVtx().rho());
       nt.recoLowPtElectronVz_.push_back(ele->trackPositionAtVtx().z());
+      nt.recoLowPtElectronTrkIso_.push_back(ele->trackIso());
       nt.recoLowPtElectronCharge_.push_back(ele->charge());
       // Filling tracks
-      auto track = ele->closestCtfTrackRef();
+      reco::GsfTrackRef track = ele->gsfTrack();
          if (!track.isNonnull())
             cout << "Track " << i << " from low-pT ele reco is not valid! " << endl;
          else {
             lowpt_eleTracks.emplace_back(track);
+            nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
+            nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
+            nt.recoLowPtElectronDz_.push_back(track->dz(pv.position()));
+            nt.recoLowPtElectronDzError_.push_back(track->dzError());
+            nt.recoLowPtElectronTrkChi2_.push_back(track->normalizedChi2());
+            nt.recoLowPtElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
+            nt.recoLowPtElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
+            nt.recoLowPtElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
          }
    }
 
@@ -251,19 +275,17 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", theB);
    KalmanVertexFitter kvf(true);
    // Define vertex reco function 
-   auto computeVertices = [&](vector<reco::TrackRef> coll_1, vector<reco::TrackRef> coll_2, std::string type) {
-        for (size_t i = 0; i < 4; i++) {
-            for (size_t j = 0; j < 4; j++) {
-               reco::TrackRef ele_i, ele_j;
-               if (i < coll_1.size()) {
-                  ele_i = coll_1[i];
-               }
-               if (j < coll_2.size()) {
-                  ele_j = coll_2[j];
-               }
+   auto computeVertices = [&](vector<reco::GsfTrackRef> coll_1, vector<reco::GsfTrackRef> coll_2, std::string type) {
+        for (size_t i = 0; i < coll_1.size(); i++) {
+            for (size_t j = 0; j < coll_2.size(); j++) {
+               reco::GsfTrackRef ele_i, ele_j;
+               ele_i = coll_1[i];
+               ele_j = coll_2[j];
+               bool skip = false;
+               if ( (type == "regreg" || type == "lowlow") && i == j ) skip = true;
 
                TransientVertex tv;
-               if (ele_i.isNonnull() && ele_j.isNonnull() && i != j) {
+               if (ele_i.isNonnull() && ele_j.isNonnull() && !skip) {
                   vector<reco::TransientTrack> transient_tracks{};
                   transient_tracks.push_back(theB->build(ele_i));
                   transient_tracks.push_back(theB->build(ele_j));
@@ -312,22 +334,25 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
     // lowpT-lowpT
     computeVertices(lowpt_eleTracks, lowpt_eleTracks, "lowlow");
+    nt.nEleVertex_lowlow_ = nt.lowlow_recoVtxVxy_.size();
     // regular-regular
     computeVertices(reg_eleTracks, reg_eleTracks, "regreg");
+    nt.nEleVertex_regreg_ = nt.regreg_recoVtxVxy_.size();
     // lowpT-regular
     computeVertices(lowpt_eleTracks, reg_eleTracks, "lowreg");
+    nt.nEleVertex_lowreg_ = nt.lowreg_recoVtxVxy_.size();
 
    ///////////////////////////////////////
 
    //Handling gen particles
    
    if (!isData) {
-      nt.nGen_ = (int)genParticleHandle_->size();
       // Gen weight
       nt.genwgt_ = genEvtInfoHandle_->weight();
       for (size_t i = 0; i < genParticleHandle_->size(); i++) {
          reco::GenParticleRef genParticle(genParticleHandle_, i);
          if (!genParticle->isHardProcess()) continue;
+         nt.nGen_++;
          nt.genID_.push_back(genParticle->pdgId());
          nt.genCharge_.push_back(genParticle->charge());
          nt.genPt_.push_back(genParticle->pt());
@@ -341,6 +366,7 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
       
       // all gen jets
+      nt.nGenJet_ = (int)genJetHandle_->size();
       for (size_t i = 0; i < genJetHandle_->size(); i++) {
          reco::GenJetRef jetRef(genJetHandle_, i);
          nt.genJetPt_.push_back(jetRef->pt());

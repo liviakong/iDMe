@@ -11,6 +11,7 @@
 <use name="DataFormats/METReco"/>
 <use name="DataFormats/Math"/>
 <use name="DataFormats/VertexReco"/>
+<use name="DataFormats/EgammaCandidates"/>
 <use name="TrackingTools/TransientTrack"/>
 <use name="TrackingTools/Records"/>
 <use name="RecoVertex/VertexPrimitives"/>

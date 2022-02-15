@@ -1,6 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 import FWCore.ParameterSet.VarParsing as VarParsing
 import FWCore.Utilities.FileUtils as FileUtils
+import json
 
 process = cms.Process("USER")
 options = VarParsing.VarParsing('analysis')
@@ -15,23 +16,33 @@ options.register('numThreads',
         VarParsing.VarParsing.multiplicity.singleton,
         VarParsing.VarParsing.varType.int,
         "Number of threads (for CRAB vs non-CRAB execution)")
+options.register("nEvents",
+	-1,
+	VarParsing.VarParsing.multiplicity.singleton,
+        VarParsing.VarParsing.varType.int,
+	"Number of events to process (defaults to all)")
 options.register('flist',
         "",
         VarParsing.VarParsing.multiplicity.singleton,
         VarParsing.VarParsing.varType.string,
         "File list to ntuplize")
+options.register('outfile',
+        "test_output.root",
+        VarParsing.VarParsing.multiplicity.singleton,
+        VarParsing.VarParsing.varType.string,
+        "Output file name")
 
 options.parseArguments()
 
-# reading input file list; if none given just use default file
-if options.flist == "":
-    options.inputFiles = "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/MINIAOD/Mchi-42p0_dMchi-4p0_ctau-10/iDMe_Mchi-42p0_dMchi-4p0_mZDinput-120p0_ctau-0_1jet_icckw1_drjj0_xptj80_xqcut20_slc7_amd64_gcc630_CMSSW_9_3_16_tarball_10380744_MINIAOD_ctau-10_year-2018.root"
-else:
-    print("reading input file list: "+options.flist)
-    options.inputFiles = FileUtils.loadListFromFile(options.flist)
-
-options.maxEvents = -1
-options.outputFile = 'test_output.root'
+# reading input file list if given
+if options.flist != "":
+    if ".txt" in options.flist:
+        # list of files
+        print("reading input file list: "+options.flist)
+        options.inputFiles = FileUtils.loadListFromFile(options.flist)
+    else:
+        # we have passed a file name directly
+        options.inputFiles = options.flist 
 
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
@@ -49,14 +60,14 @@ process.options = cms.untracked.PSet(
     numberOfThreads = cms.untracked.uint32(options.numThreads)
     )
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(options.maxEvents)
+    input = cms.untracked.int32(options.nEvents)
     )
 process.source = cms.Source("PoolSource",
     fileNames = cms.untracked.vstring(options.inputFiles),
     skipBadFiles = cms.untracked.bool(True)
     )
 process.TFileService = cms.Service("TFileService",
-    fileName = cms.string(options.outputFile),
+    fileName = cms.string(options.outfile),
     closeFileFast = cms.untracked.bool(True)
     )
 
@@ -65,12 +76,12 @@ process.TFileService = cms.Service("TFileService",
 ## (the only options specified below after cloning are the non-default ones)
 from iDMeAnalysis.iDMeSkimmer.iDMeSkimmer_cfi import iDMeSkimmer
 
-process.ntuples_gbm = iDMeSkimmer.clone(
+process.ntuples = iDMeSkimmer.clone(
     isData = cms.bool(options.data)
 )
 
 process.commonSequence = cms.Sequence(
-    process.ntuples_gbm
+    process.ntuples
     )
 
 process.p = cms.Path(process.commonSequence)

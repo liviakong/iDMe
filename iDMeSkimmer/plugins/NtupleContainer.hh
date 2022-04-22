@@ -11,7 +11,7 @@ class NtupleContainer {
 public:
     NtupleContainer();
     virtual ~NtupleContainer();
-    void SetTree(TTree *tree, bool isData);
+    void SetTree(TTree *tree);
     void CreateTreeBranches();
     void ClearTreeBranches();
 
@@ -19,6 +19,7 @@ public:
     unsigned long long eventNum_;
     unsigned long long runNum_;
     unsigned long long lumiSec_;
+    bool isData_;
 
     // Gen branches
     
@@ -213,10 +214,118 @@ public:
     vector<float> lowreg_ll_py_;
     vector<float> lowreg_ll_pz_;
 
+    // Displaced dileptons from dedicated algorithm
+    int ndispEE_;
+    int dispEE_maxIxy_;
+    vector<float> dispEE_Lxy_;
+    vector<float> dispEE_Ixy_;
+    vector<float> dispEE_trackDxy_;
+    vector<float> dispEE_trackIxy_;
+    vector<float> dispEE_vx_;
+    vector<float> dispEE_vy_;
+    vector<float> dispEE_mass_;
+    vector<float> dispEE_normalizedChi2_;
+    vector<float> dispEE_leadingPt_;
+    vector<float> dispEE_subleadingPt_;
+    vector<float> dispEE_leadingEt_;
+    vector<float> dispEE_subleadingEt_;
+    vector<float> dispEE_cosAlpha_;
+    vector<float> dispEE_dPhi_;
+    vector<float> dispEE_relisoA_;
+    vector<float> dispEE_relisoB_;
+    vector<int> dispEE_fromPVA_;
+    vector<int> dispEE_fromPVB_;
+    vector<int> dispEE_PVAssociation_;
+
+    // Displaced dilepton candidates (aren't required to pass a baseline selection)
+    int nEECand_;
+    vector<float> EECand_Lxy_PV_;
+    vector<float> EECand_Ixy_PV_;
+    vector<float> EECand_Lxy_0_;
+    vector<float> EECand_Ixy_0_;
+    vector<float> EECand_Lxy_BS_;
+    vector<float> EECand_Ixy_BS_;
+    vector<float> EECand_trackDxy_;
+    vector<float> EECand_trackIxy_;
+    vector<float> EECand_trackDxy_PV_;
+    vector<float> EECand_trackIxy_PV_;
+    vector<float> EECand_trackDxy_0_;
+    vector<float> EECand_trackIxy_0_;
+    vector<float> EECand_trackDxy_BS_;
+    vector<float> EECand_trackIxy_BS_;
+    vector<float> EECand_vx_;
+    vector<float> EECand_vy_;
+    vector<float> EECand_mass_;
+    vector<float> EECand_normalizedChi2_;
+    vector<float> EECand_leadingPt_;
+    vector<float> EECand_subleadingPt_;
+    vector<float> EECand_leadingEt_;
+    vector<float> EECand_subleadingEt_;
+    vector<float> EECand_cosAlpha_;
+    vector<float> EECand_dR_;
+    vector<float> EECand_dPhi_;
+    vector<float> EECand_lldPhi_;
+    vector<float> EECand_relisoA_;
+    vector<float> EECand_relisoB_;
+
+    // Isotracks passing selection for displaced dilepton reco
+    int nIsoTrackSel_;
+    vector<float> IsoTrackSel_pt_;
+    vector<float> IsoTrackSel_eta_;
+    vector<float> IsoTrackSel_etaExtra_;
+    vector<float> IsoTrackSel_phiExtra_;
+    vector<float> IsoTrackSel_phi_;
+    vector<int> IsoTrackSel_charge_;
+    vector<float> IsoTrackSel_dxy_;
+    vector<float> IsoTrackSel_dxyError_;
+    vector<float> IsoTrackSel_dxy_PV_;
+    vector<float> IsoTrackSel_dxyError_PV_;
+    vector<float> IsoTrackSel_dxy_0_;
+    vector<float> IsoTrackSel_dxyError_0_;
+    vector<float> IsoTrackSel_dxy_BS_;
+    vector<float> IsoTrackSel_dxyError_BS_;
+    vector<float> IsoTrackSel_dz_;
+    vector<float> IsoTrackSel_dzError_;
+    vector<float> IsoTrackSel_vx_;
+    vector<float> IsoTrackSel_vy_;
+    vector<float> IsoTrackSel_vz_;
+    vector<float> IsoTrackSel_pfIsolationDR03_;
+    vector<float> IsoTrackSel_miniPFIsolation_;
+    vector<float> IsoTrackSel_relPfIsolationDR03_;
+    vector<float> IsoTrackSel_relMiniPFIsolation_;
+    vector<int> IsoTrackSel_isHighPurityTrack_;
+    vector<int> IsoTrackSel_numberOfValidTrackerHits_;
+    vector<int> IsoTrackSel_numberOfValidPixelHits_;
+    vector<int> IsoTrackSel_numberOfValidPixelBarrelHits_;
+    vector<int> IsoTrackSel_numberOfValidPixelEndcapHits_;
+    vector<int> IsoTrackSel_numberOfValidStripHits_;
+    vector<int> IsoTrackSel_numberOfValidStripTIBHits_;
+    vector<int> IsoTrackSel_numberOfValidStripTIDHits_;
+    vector<int> IsoTrackSel_numberOfValidStripTOBHits_;
+    vector<int> IsoTrackSel_numberOfValidStripTECHits_;
+    vector<int> IsoTrackSel_fromPV_;
+    vector<float> IsoTrackSel_PVx_;
+    vector<float> IsoTrackSel_PVy_;
+    vector<float> IsoTrackSel_PVz_;
+
+    // Photons selected for displaced dilepton reco
+    int nPhotonSel_;
+    vector<float> PhotonSel_et_;
+    vector<float> PhotonSel_eta_;
+    vector<float> PhotonSel_phi_;
+    vector<float> PhotonSel_hadronicOverEm_;
+    vector<float> PhotonSel_full5x5_sigmaIetaIeta_;
+    vector<int> PhotonSel_isEB_;
+    vector<int> PhotonSel_isEE_;
+    vector<float> PhotonSel_r9_;
+    vector<float> PhotonSel_ecalIso_;
+    vector<float> PhotonSel_hcalIso_;
+    vector<float> PhotonSel_caloIso_;
+    vector<float> PhotonSel_relIso_;
+
 private:
     // Reco and gen TTrees
     TTree * outT;
-    bool isData_;
 
 };
 

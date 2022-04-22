@@ -1,0 +1,8 @@
+*.root
+.ipynb_checkpoints/
+*.coffea
+__pycache__/
+.vscode/
+*.log
+*.out
+*.err

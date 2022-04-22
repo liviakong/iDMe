@@ -10,8 +10,9 @@ with open(inputJson) as f:
     samples = json.load(f)
 for samp in samples:
     loc = samp["location"]
+    print(loc)
     if '.root' in loc:
-        tree = uproot.open(loc)['ntuples_gbm/genT']
+        tree = uproot.open(loc)['ntuples/outT']
         if tree.num_entries == 0:
             sum_wgt = 0
         else:
@@ -22,7 +23,7 @@ for samp in samples:
         status, flist = xrdClient.dirlist(loc)
         fullList = ["root://cmsxrootd.fnal.gov/"+loc+"/"+item.name for item in flist if '.root' in item.name]
         for f in fullList:
-            tree = uproot.open(f)['ntuples_gbm/genT']
+            tree = uproot.open(f)['ntuples/outT']
             if tree.num_entries == 0:
                 continue
             else:

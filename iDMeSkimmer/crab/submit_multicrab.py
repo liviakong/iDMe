@@ -60,7 +60,9 @@ def main():
     config.JobType.psetName = base_dir+'/src/iDMeAnalysis/iDMeSkimmer/scripts/run_ntuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
-    config.Data.splitting = 'Automatic'
+    #config.Data.splitting = 'Automatic'
+    config.Data.splitting = 'FileBased'
+    config.Data.unitsPerJob = 30
     config.Data.publication = False
     config.Data.ignoreLocality = True
     config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']

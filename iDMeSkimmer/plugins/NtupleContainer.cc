@@ -1,15 +1,15 @@
 #include "NtupleContainer.hh"
 
-NtupleContainer::NtupleContainer() : isData_(true) {}
+NtupleContainer::NtupleContainer() {}
 
 NtupleContainer::~NtupleContainer() {}
 
-void NtupleContainer::SetTree(TTree *tree, bool isData) { outT = tree; isData_ = isData; }
+void NtupleContainer::SetTree(TTree *tree) { outT = tree; }
 
 void NtupleContainer::CreateTreeBranches() {
 
     // Data or MC
-    outT->Branch("isData",&isData_);
+    //outT->Branch("isData",&isData_);
 
     // Reco information
     outT->Branch("eventNum", &eventNum_);
@@ -172,6 +172,115 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("EleVertexLowReg_px",&lowreg_ll_px_);
     outT->Branch("EleVertexLowReg_py",&lowreg_ll_py_);
     outT->Branch("EleVertexLowReg_pz",&lowreg_ll_pz_);
+
+    // Displaced dileptons
+    outT->Branch("ndispEE",&ndispEE_);
+    outT->Branch("dispEE_maxIxy",&dispEE_maxIxy_);
+    outT->Branch("dispEE_Lxy",&dispEE_Lxy_);
+    outT->Branch("dispEE_Ixy",&dispEE_Ixy_);
+    outT->Branch("dispEE_trackDxy",&dispEE_trackDxy_);
+    outT->Branch("dispEE_trackIxy",&dispEE_trackIxy_);
+    outT->Branch("dispEE_vx",&dispEE_vx_);
+    outT->Branch("dispEE_vy",&dispEE_vy_);
+    outT->Branch("dispEE_mass",&dispEE_mass_);
+    outT->Branch("dispEE_normalizedChi2",&dispEE_normalizedChi2_);
+    outT->Branch("dispEE_leadingPt",&dispEE_leadingPt_);
+    outT->Branch("dispEE_subleadingPt",&dispEE_subleadingPt_);
+    outT->Branch("dispEE_leadingEt",&dispEE_leadingEt_);
+    outT->Branch("dispEE_subleadingEt",&dispEE_subleadingEt_);
+    outT->Branch("dispEE_cosAlpha",&dispEE_cosAlpha_);
+    outT->Branch("dispEE_dPhi",&dispEE_dPhi_);
+    outT->Branch("dispEE_relisoA",&dispEE_relisoA_);
+    outT->Branch("dispEE_relisoB",&dispEE_relisoB_);
+    outT->Branch("dispEE_fromPVA",&dispEE_fromPVA_);
+    outT->Branch("dispEE_fromPVB",&dispEE_fromPVB_);
+    outT->Branch("dispEE_PVAssociation",&dispEE_PVAssociation_);
+
+    // Displaced dilepton candidates
+    outT->Branch("nEECand",&nEECand_);
+    outT->Branch("EECand_Lxy_PV",&EECand_Lxy_PV_);
+    outT->Branch("EECand_Ixy_PV",&EECand_Ixy_PV_);
+    outT->Branch("EECand_Lxy_0",&EECand_Lxy_0_);
+    outT->Branch("EECand_Ixy_0",&EECand_Ixy_0_);
+    outT->Branch("EECand_Lxy_BS",&EECand_Lxy_BS_);
+    outT->Branch("EECand_Ixy_BS",&EECand_Ixy_BS_);
+    outT->Branch("EECand_trackDxy",&EECand_trackDxy_);
+    outT->Branch("EECand_trackIxy",&EECand_trackIxy_);
+    outT->Branch("EECand_trackDxy_PV",&EECand_trackDxy_PV_);
+    outT->Branch("EECand_trackIxy_PV",&EECand_trackIxy_PV_);
+    outT->Branch("EECand_trackDxy_0",&EECand_trackDxy_0_);
+    outT->Branch("EECand_trackIxy_0",&EECand_trackIxy_0_);
+    outT->Branch("EECand_trackDxy_BS",&EECand_trackDxy_BS_);
+    outT->Branch("EECand_trackIxy_BS",&EECand_trackIxy_BS_);
+    outT->Branch("EECand_vx",&EECand_vx_);
+    outT->Branch("EECand_vy",&EECand_vy_);
+    outT->Branch("EECand_mass",&EECand_mass_);
+    outT->Branch("EECand_normalizedChi2",&EECand_normalizedChi2_);
+    outT->Branch("EECand_leadingPt",&EECand_leadingPt_);
+    outT->Branch("EECand_subleadingPt",&EECand_subleadingPt_);
+    outT->Branch("EECand_leadingEt",&EECand_leadingEt_);
+    outT->Branch("EECand_subleadingEt",&EECand_subleadingEt_);
+    outT->Branch("EECand_cosAlpha",&EECand_cosAlpha_);
+    outT->Branch("EECand_dR",&EECand_dR_);
+    outT->Branch("EECand_dPhi",&EECand_dPhi_);
+    outT->Branch("EECand_lldPhi",&EECand_lldPhi_);
+    outT->Branch("EECand_relisoA",&EECand_relisoA_);
+    outT->Branch("EECand_relisoB",&EECand_relisoB_);
+
+    // isotracks used for displaced dileptons
+    outT->Branch("nIsoTrackSel",nIsoTrackSel_);
+    outT->Branch("IsoTrackSel_pt",&IsoTrackSel_pt_);
+    outT->Branch("IsoTrackSel_eta",&IsoTrackSel_eta_);
+    outT->Branch("IsoTrackSel_etaExtra",&IsoTrackSel_etaExtra_);
+    outT->Branch("IsoTrackSel_phiExtra",&IsoTrackSel_phiExtra_);
+    outT->Branch("IsoTrackSel_phi",&IsoTrackSel_phi_);
+    outT->Branch("IsoTrackSel_charge",&IsoTrackSel_charge_);
+    outT->Branch("IsoTrackSel_dxy",&IsoTrackSel_dxy_);
+    outT->Branch("IsoTrackSel_dxyError",&IsoTrackSel_dxyError_);
+    outT->Branch("IsoTrackSel_dxy_PV",&IsoTrackSel_dxy_PV_);
+    outT->Branch("IsoTrackSel_dxyError_PV",&IsoTrackSel_dxyError_PV_);
+    outT->Branch("IsoTrackSel_dxy_0",&IsoTrackSel_dxy_0_);
+    outT->Branch("IsoTrackSel_dxyError_0",&IsoTrackSel_dxyError_0_);
+    outT->Branch("IsoTrackSel_dxy_BS",&IsoTrackSel_dxy_BS_);
+    outT->Branch("IsoTrackSel_dxyError_BS",&IsoTrackSel_dxyError_BS_);
+    outT->Branch("IsoTrackSel_dz",&IsoTrackSel_dz_);
+    outT->Branch("IsoTrackSel_dzError",&IsoTrackSel_dzError_);
+    outT->Branch("IsoTrackSel_vx",&IsoTrackSel_vx_);
+    outT->Branch("IsoTrackSel_vy",&IsoTrackSel_vy_);
+    outT->Branch("IsoTrackSel_vz",&IsoTrackSel_vz_);
+    outT->Branch("IsoTrackSel_pfIsolationDR03",&IsoTrackSel_pfIsolationDR03_);
+    outT->Branch("IsoTrackSel_miniPFIsolation",&IsoTrackSel_miniPFIsolation_);
+    outT->Branch("IsoTrackSel_relPfIsolationDR03",&IsoTrackSel_relPfIsolationDR03_);
+    outT->Branch("IsoTrackSel_relMiniPFIsolation",&IsoTrackSel_relMiniPFIsolation_);
+    outT->Branch("IsoTrackSel_isHighPurityTrack",&IsoTrackSel_isHighPurityTrack_);
+    outT->Branch("IsoTrackSel_numberOfValidTrackerHits",&IsoTrackSel_numberOfValidTrackerHits_);
+    outT->Branch("IsoTrackSel_numberOfValidPixelHits",&IsoTrackSel_numberOfValidPixelHits_);
+    outT->Branch("IsoTrackSel_numberOfValidPixelBarrelHits",&IsoTrackSel_numberOfValidPixelBarrelHits_);
+    outT->Branch("IsoTrackSel_numberOfValidPixelEndcapHits",&IsoTrackSel_numberOfValidPixelEndcapHits_);
+    outT->Branch("IsoTrackSel_numberOfValidStripHits",&IsoTrackSel_numberOfValidStripHits_);
+    outT->Branch("IsoTrackSel_numberOfValidStripTIBHits",&IsoTrackSel_numberOfValidStripTIBHits_);
+    outT->Branch("IsoTrackSel_numberOfValidStripTIDHits",&IsoTrackSel_numberOfValidStripTIDHits_);
+    outT->Branch("IsoTrackSel_numberOfValidStripTOBHits",&IsoTrackSel_numberOfValidStripTOBHits_);
+    outT->Branch("IsoTrackSel_numberOfValidStripTECHits",&IsoTrackSel_numberOfValidStripTECHits_);
+    outT->Branch("IsoTrackSel_fromPV",&IsoTrackSel_fromPV_);
+    outT->Branch("IsoTrackSel_PVx",&IsoTrackSel_PVx_);
+    outT->Branch("IsoTrackSel_PVy",&IsoTrackSel_PVy_);
+    outT->Branch("IsoTrackSel_PVz",&IsoTrackSel_PVz_);
+
+    // Photons selected for displaced dileptons
+    outT->Branch("nPhotonSel",nPhotonSel_);
+    outT->Branch("PhotonSel_et",&PhotonSel_et_);
+    outT->Branch("PhotonSel_eta",&PhotonSel_eta_);
+    outT->Branch("PhotonSel_phi",&PhotonSel_phi_);
+    outT->Branch("PhotonSel_hadronicOverEm",&PhotonSel_hadronicOverEm_);
+    outT->Branch("PhotonSel_full5x5_sigmaIetaIeta",&PhotonSel_full5x5_sigmaIetaIeta_);
+    outT->Branch("PhotonSel_isEB",&PhotonSel_isEB_);
+    outT->Branch("PhotonSel_isEE",&PhotonSel_isEE_);
+    outT->Branch("PhotonSel_r9",&PhotonSel_r9_);
+    outT->Branch("PhotonSel_ecalIso",&PhotonSel_ecalIso_);
+    outT->Branch("PhotonSel_hcalIso",&PhotonSel_hcalIso_);
+    outT->Branch("PhotonSel_caloIso",&PhotonSel_caloIso_);
+    outT->Branch("PhotonSel_relIso",&PhotonSel_relIso_);
 
     // Gen information
     if (!isData_) {
@@ -393,4 +502,113 @@ void NtupleContainer::ClearTreeBranches() {
     lowreg_ll_px_.clear();
     lowreg_ll_py_.clear();
     lowreg_ll_pz_.clear();
+
+    // Displaced dileptons fromd dedicated algorithm
+    ndispEE_ = 0;
+    dispEE_maxIxy_ = -999;
+    dispEE_Lxy_.clear();
+    dispEE_Ixy_.clear();
+    dispEE_trackDxy_.clear();
+    dispEE_trackIxy_.clear();
+    dispEE_vx_.clear();
+    dispEE_vy_.clear();
+    dispEE_mass_.clear();
+    dispEE_normalizedChi2_.clear();
+    dispEE_leadingPt_.clear();
+    dispEE_subleadingPt_.clear();
+    dispEE_leadingEt_.clear();
+    dispEE_subleadingEt_.clear();
+    dispEE_cosAlpha_.clear();
+    dispEE_dPhi_.clear();
+    dispEE_relisoA_.clear();
+    dispEE_relisoB_.clear();
+    dispEE_fromPVA_.clear();
+    dispEE_fromPVB_.clear();
+    dispEE_PVAssociation_.clear();
+
+    // Displaced dilepton candidates
+    nEECand_ = 0;
+    EECand_Lxy_PV_.clear();
+    EECand_Ixy_PV_.clear();
+    EECand_Lxy_0_.clear();
+    EECand_Ixy_0_.clear();
+    EECand_Lxy_BS_.clear();
+    EECand_Ixy_BS_.clear();
+    EECand_trackDxy_.clear();
+    EECand_trackIxy_.clear();
+    EECand_trackDxy_PV_.clear();
+    EECand_trackIxy_PV_.clear();
+    EECand_trackDxy_0_.clear();
+    EECand_trackIxy_0_.clear();
+    EECand_trackDxy_BS_.clear();
+    EECand_trackIxy_BS_.clear();
+    EECand_vx_.clear();
+    EECand_vy_.clear();
+    EECand_mass_.clear();
+    EECand_normalizedChi2_.clear();
+    EECand_leadingPt_.clear();
+    EECand_subleadingPt_.clear();
+    EECand_leadingEt_.clear();
+    EECand_subleadingEt_.clear();
+    EECand_cosAlpha_.clear();
+    EECand_dR_.clear();
+    EECand_dPhi_.clear();
+    EECand_lldPhi_.clear();
+    EECand_relisoA_.clear();
+    EECand_relisoB_.clear();
+
+    // Isotracks used for displaced dilepton reco
+    nIsoTrackSel_ = 0;
+    IsoTrackSel_pt_.clear();
+    IsoTrackSel_eta_.clear();
+    IsoTrackSel_etaExtra_.clear();
+    IsoTrackSel_phiExtra_.clear();
+    IsoTrackSel_phi_.clear();
+    IsoTrackSel_charge_.clear();
+    IsoTrackSel_dxy_.clear();
+    IsoTrackSel_dxyError_.clear();
+    IsoTrackSel_dxy_PV_.clear();
+    IsoTrackSel_dxyError_PV_.clear();
+    IsoTrackSel_dxy_0_.clear();
+    IsoTrackSel_dxyError_0_.clear();
+    IsoTrackSel_dxy_BS_.clear();
+    IsoTrackSel_dxyError_BS_.clear();
+    IsoTrackSel_dz_.clear();
+    IsoTrackSel_dzError_.clear();
+    IsoTrackSel_vx_.clear();
+    IsoTrackSel_vy_.clear();
+    IsoTrackSel_vz_.clear();
+    IsoTrackSel_pfIsolationDR03_.clear();
+    IsoTrackSel_miniPFIsolation_.clear();
+    IsoTrackSel_relPfIsolationDR03_.clear();
+    IsoTrackSel_relMiniPFIsolation_.clear();
+    IsoTrackSel_isHighPurityTrack_.clear();
+    IsoTrackSel_numberOfValidTrackerHits_.clear();
+    IsoTrackSel_numberOfValidPixelHits_.clear();
+    IsoTrackSel_numberOfValidPixelBarrelHits_.clear();
+    IsoTrackSel_numberOfValidPixelEndcapHits_.clear();
+    IsoTrackSel_numberOfValidStripHits_.clear();
+    IsoTrackSel_numberOfValidStripTIBHits_.clear();
+    IsoTrackSel_numberOfValidStripTIDHits_.clear();
+    IsoTrackSel_numberOfValidStripTOBHits_.clear();
+    IsoTrackSel_numberOfValidStripTECHits_.clear();
+    IsoTrackSel_fromPV_.clear();
+    IsoTrackSel_PVx_.clear();
+    IsoTrackSel_PVy_.clear();
+    IsoTrackSel_PVz_.clear();
+
+    // Photons used for displaced dilepton reco
+    nPhotonSel_ = 0;
+    PhotonSel_et_.clear();
+    PhotonSel_eta_.clear();
+    PhotonSel_phi_.clear();
+    PhotonSel_hadronicOverEm_.clear();
+    PhotonSel_full5x5_sigmaIetaIeta_.clear();
+    PhotonSel_isEB_.clear();
+    PhotonSel_isEE_.clear();
+    PhotonSel_r9_.clear();
+    PhotonSel_ecalIso_.clear();
+    PhotonSel_hcalIso_.clear();
+    PhotonSel_caloIso_.clear();
+    PhotonSel_relIso_.clear();
 }

@@ -186,6 +186,42 @@
         ]
     },
     {
+        "varname" : "reco_vertex_genMatch",
+        "name" : "Nearest Reco Vertex to Gen Vertex",
+        "categories" : {
+            "sample" : "Signal Sample",
+            "type" : "Vertex Type"
+        },
+        "bins" : [
+            ["dist","Distance to Nearest Gen Vertex",100,0,50],
+            ["chi2","Vertex Fit $\\chi^2$",80,0,20],
+            ["dR","Electron $\\Delta R$",80,0,4]
+        ]
+    },
+    {
+        "varname" : "nearest_vertex_genMatch",
+        "name" : "Global Nearest Reco Vertex to Gen Vertex",
+        "categories" : {
+            "sample":"Signal Sample"
+        },
+        "bins" : [
+            ["type","Vertex Type",3,1,4],
+            ["dist","Distance to Nearest Gen Vertex",50,0,50],
+            ["chi2","Vertex Fit $\\chi^2$",80,0,20],
+            ["dR","Electron $\\Delta R$",80,0,4]
+        ]
+    },
+    {
+        "varname" : "nearest_vtx_matchType",
+        "name" : "Global Nearest Reco Vertex to Gen Vertex Type",
+        "categories" : {
+            "sample":"Signal Sample"
+        },
+        "bins" : [
+            ["type","Vertex Type",4,0,4]
+        ]
+    },
+    {
         "varname" : "match_conv_kinematics",
         "name" : "Matched Conversion Electron Kinematics",
         "categories" : {
@@ -223,11 +259,24 @@
         "varname": "conv_match_matrix",
         "name" : "Conversion Electron Gen-Match Matrix",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "match" : "Match Category"
         },
         "bins": [
-            ["c1_matchtype","Conversion 1 Match Type",3,0,3],
-            ["c2_matchtype","Conversion 2 Match Type",3,0,3]
+            ["c1_matchType","Conversion 1 Match Type",4,0,4],
+            ["c2_matchType","Conversion 2 Match Type",4,0,4]
+        ]
+    },
+    {
+        "varname": "conv_match_matrix_uniq",
+        "name" : "Disambiguated Conversion Electron Gen-Match Matrix",
+        "categories" : {
+            "sample" : "Signal Sample",
+            "match" : "Match Category"
+        },
+        "bins": [
+            ["c1_matchType","Conversion 1 Match Type",4,0,4],
+            ["c2_matchType","Conversion 2 Match Type",4,0,4]
         ]
     }
 ]

@@ -169,6 +169,7 @@ void
 AODSkimmer::beginJob()
 {
    outT = fs->make<TTree>("outT", "outT");
+   nt.isData_ = isData;
    nt.SetTree(outT);
    nt.CreateTreeBranches();
 }
@@ -237,7 +238,6 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    nt.eventNum_ = iEvent.id().event();
    nt.lumiSec_ = iEvent.luminosityBlock();
    nt.runNum_ = iEvent.id().run();
-   //nt.isData_ = isData;
    reco::Vertex pv = (*primaryVertexHandle_).at(0);
    reco::BeamSpot beamspot = *beamspotHandle_;
    // Set up objects for vertex reco
@@ -402,152 +402,44 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       }
    }
 
-   // Reconstructing electron vertices
-   // Sort electron tracks by pT
-   vector<int> ind_ele(reg_eleTracks.size());
-   std::iota(ind_ele.begin(),ind_ele.end(),0); // create vector of electron indices
-   std::sort(ind_ele.begin(), ind_ele.end(), [&](const int & l, const int & r) { // sort indices by ele pT
-            return reg_eleTracks[l]->pt() > reg_eleTracks[r]->pt();
-            });
-   vector<int> ind_lptele(lowpt_eleTracks.size());
-   std::iota(ind_lptele.begin(),ind_lptele.end(),0); // create vector of low-pT electron indices
-   std::sort(ind_lptele.begin(), ind_lptele.end(), [&](const int & l, const int & r) { // sort indices by ele pT
-            return lowpt_eleTracks[l]->pt() > lowpt_eleTracks[r]->pt();
-            });
-   
-   // Define vertex reco function 
-   auto computeVertices = [&](vector<int> coll_1, vector<int> coll_2, std::string type) {
-      for (size_t i = 0; i < coll_1.size(); i++) {
-         for (size_t j = 0; j < coll_2.size(); j++) {
-            int ind1 = coll_1[i];
-            int ind2 = coll_2[j];
-            reco::GsfTrackRef ele_i, ele_j;
-            if (type == "regreg") {
-               ele_i = reg_eleTracks[ind1];
-               ele_j = reg_eleTracks[ind2];
-            }
-            else if (type == "lowlow") {
-               ele_i = lowpt_eleTracks[ind1];
-               ele_j = lowpt_eleTracks[ind2];
-            }
-            else if (type == "lowreg") {
-               ele_i = lowpt_eleTracks[ind1];
-               ele_j = reg_eleTracks[ind2];
-            }
-            bool skip = false;
-            if ( (type == "regreg" || type == "lowlow") && i == j ) skip = true; // don't vertex ele with itself
-            if (ele_i == ele_j) skip = true; // if same ele is in reg and low-pT collections
-            
-            if (skip) continue;
-
-            TransientVertex tv;
-            if (ele_i.isNonnull() && ele_j.isNonnull()) {
-               vector<reco::TransientTrack> transient_tracks{};
-               transient_tracks.push_back(theB->build(ele_i));
-               transient_tracks.push_back(theB->build(ele_j));
-               tv = kvf.vertex(transient_tracks);
-            }
-            float vxy = -9999;
-            float x = -9999; float y = -9999; float z = -9999;
-            float sigma_vxy = -9999;
-            float vtx_chi2 = -9999;
-            float vz = -9999;
-            float dr = -9999;
-            if (tv.isValid()) {
-               reco::Vertex vertex = reco::Vertex(tv);
-               x = vertex.x(); y = vertex.y(); z = vertex.z();
-               vxy = sqrt(vertex.x()*vertex.x() + vertex.y()*vertex.y());
-               sigma_vxy = (1/vxy)*sqrt(vertex.x()*vertex.x()*vertex.xError()*vertex.xError() +
-                        vertex.y()*vertex.y()*vertex.yError()*vertex.yError());
-               //sigma_vxy = (1/vxy)*(vertex.x()*vertex.xError() + vertex.y()*vertex.yError());
-               vtx_chi2 = vertex.normalizedChi2();
-               vz = vertex.z();
-               dr = reco::deltaR(*ele_i, *ele_j);
-            }
-
-            if (type == "lowlow") {
-               math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + lowpt_ele_p4s[ind2];
-               nt.lowlow_eleIdx_.push_back(ind1); nt.lowlow_eleIdx_.push_back(ind2);
-               nt.lowlow_recoVtxReducedChi2_.push_back(vtx_chi2);
-               nt.lowlow_recoVtxVxy_.push_back(vxy);
-               nt.lowlow_recoVtxSigmaVxy_.push_back(sigma_vxy);
-               nt.lowlow_recoVtxVz_.push_back(vz);
-               nt.lowlow_recoVtx_x_.push_back(x);
-               nt.lowlow_recoVtx_y_.push_back(y);
-               nt.lowlow_recoVtx_z_.push_back(z);
-               nt.lowlow_recoVtxDr_.push_back(dr);
-               nt.lowlow_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
-               nt.lowlow_ll_pt_.push_back(ll.pt());
-               nt.lowlow_ll_eta_.push_back(ll.eta());
-               nt.lowlow_ll_phi_.push_back(ll.phi());
-               nt.lowlow_ll_e_.push_back(ll.e());
-               nt.lowlow_ll_m_.push_back(ll.M());
-               nt.lowlow_ll_px_.push_back(ll.px());
-               nt.lowlow_ll_py_.push_back(ll.py());
-               nt.lowlow_ll_pz_.push_back(ll.pz());
-            }
-            else if (type == "regreg") {
-               math::XYZTLorentzVector ll = reg_ele_p4s[ind1] + reg_ele_p4s[ind2];
-               nt.regreg_eleIdx_.push_back(ind1); nt.regreg_eleIdx_.push_back(ind2);
-               nt.regreg_recoVtxReducedChi2_.push_back(vtx_chi2);
-               nt.regreg_recoVtxVxy_.push_back(vxy);
-               nt.regreg_recoVtxSigmaVxy_.push_back(sigma_vxy);
-               nt.regreg_recoVtxVz_.push_back(vz);
-               nt.regreg_recoVtx_x_.push_back(x);
-               nt.regreg_recoVtx_y_.push_back(y);
-               nt.regreg_recoVtx_z_.push_back(z);
-               nt.regreg_recoVtxDr_.push_back(dr);
-               nt.regreg_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
-               nt.regreg_ll_pt_.push_back(ll.pt());
-               nt.regreg_ll_eta_.push_back(ll.eta());
-               nt.regreg_ll_phi_.push_back(ll.phi());
-               nt.regreg_ll_e_.push_back(ll.e());
-               nt.regreg_ll_m_.push_back(ll.M());
-               nt.regreg_ll_px_.push_back(ll.px());
-               nt.regreg_ll_py_.push_back(ll.py());
-               nt.regreg_ll_pz_.push_back(ll.pz());
-            }
-            else if (type == "lowreg") {
-               math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + reg_ele_p4s[ind2];
-               nt.lowreg_eleIdx_.push_back(ind1); nt.lowreg_eleIdx_.push_back(ind2);
-               nt.lowreg_recoVtxReducedChi2_.push_back(vtx_chi2);
-               nt.lowreg_recoVtxVxy_.push_back(vxy);
-               nt.lowreg_recoVtxSigmaVxy_.push_back(sigma_vxy);
-               nt.lowreg_recoVtxVz_.push_back(vz);
-               nt.lowreg_recoVtx_x_.push_back(x);
-               nt.lowreg_recoVtx_y_.push_back(y);
-               nt.lowreg_recoVtx_z_.push_back(z);
-               nt.lowreg_recoVtxDr_.push_back(dr);
-               nt.lowreg_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
-               nt.lowreg_ll_pt_.push_back(ll.pt());
-               nt.lowreg_ll_eta_.push_back(ll.eta());
-               nt.lowreg_ll_phi_.push_back(ll.phi());
-               nt.lowreg_ll_e_.push_back(ll.e());
-               nt.lowreg_ll_m_.push_back(ll.M());
-               nt.lowreg_ll_px_.push_back(ll.px());
-               nt.lowreg_ll_py_.push_back(ll.py());
-               nt.lowreg_ll_pz_.push_back(ll.pz());
-            }
-         }
-      }
-   };
-
-   // lowpT-lowpT
-   computeVertices(ind_lptele, ind_lptele, "lowlow");
-   nt.nEleVertex_lowlow_ = nt.lowlow_recoVtxVxy_.size();
-   // regular-regular
-   computeVertices(ind_ele, ind_ele, "regreg");
-   nt.nEleVertex_regreg_ = nt.regreg_recoVtxVxy_.size();
-   // lowpT-regular
-   computeVertices(ind_lptele, ind_ele, "lowreg");
-   nt.nEleVertex_lowreg_ = nt.lowreg_recoVtxVxy_.size();
-
    // Algorithm to reconstruct displaced dilepton vertices from isoTracks
    // Want to use regular and OOT photons for this
    vector<reco::Photon> allPhotons = *photonsHandle_;
    allPhotons.insert(allPhotons.end(),(*ootPhotonsHandle_).begin(),(*ootPhotonsHandle_).end());
    DisplacedDileptonsAOD EleFinder(pv,beamspot,isoTracksHandle_,allPhotons,packedPFCandHandle_,theB);
    EleFinder.findDileptons();
+   
+   // Extracting tracks from new electron candidates
+   vector<reco::Track> cand_eleTracks;
+   vector<math::XYZTLorentzVector> cand_ele_p4s;
+   for (int icand = 0; icand < EleFinder.nElectronCandidate; icand++) {
+      int tk_idx = EleFinder.ElectronCandidate_isotrackIdx[icand];
+      auto isoTk = (*isoTracksHandle_).at(tk_idx);
+      auto tk = *(isoTk.packedCandRef()->bestTrack());
+      cand_eleTracks.push_back(tk);
+      cand_ele_p4s.push_back(isoTk.p4());
+   }
+   
+   // Filling additional electron candidates
+   nt.nEleCand_ = EleFinder.nElectronCandidate;
+   for (int iec = 0; iec < nt.nEleCand_; iec++) {
+      nt.EleCand_pt_.push_back(EleFinder.ElectronCandidate_pt[iec]);
+      nt.EleCand_et_.push_back(EleFinder.ElectronCandidate_et[iec]);
+      nt.EleCand_eta_.push_back(EleFinder.ElectronCandidate_eta[iec]);
+      nt.EleCand_phi_.push_back(EleFinder.ElectronCandidate_phi[iec]);
+      nt.EleCand_dxy_.push_back(EleFinder.ElectronCandidate_dxy[iec]);
+      nt.EleCand_dxyError_.push_back(EleFinder.ElectronCandidate_dxyError[iec]);
+      nt.EleCand_dxy_PV_.push_back(EleFinder.ElectronCandidate_dxy_PV[iec]);
+      nt.EleCand_dxyError_PV_.push_back(EleFinder.ElectronCandidate_dxyError_PV[iec]);
+      nt.EleCand_relPFiso_.push_back(EleFinder.ElectronCandidate_relPFiso[iec]);
+      nt.EleCand_relTrkiso_.push_back(EleFinder.ElectronCandidate_relTrkiso[iec]);
+      nt.EleCand_ptDiff_.push_back(EleFinder.ElectronCandidate_ptDiff[iec]);
+      nt.EleCand_trkIso_.push_back(EleFinder.ElectronCandidate_trkIso[iec]);
+      nt.EleCand_trkChi2_.push_back(EleFinder.ElectronCandidate_trkChi2[iec]);
+      nt.EleCand_numTrackerHits_.push_back(EleFinder.ElectronCandidate_numTrackerHits[iec]);
+      nt.EleCand_numPixHits_.push_back(EleFinder.ElectronCandidate_numPixHits[iec]);
+      nt.EleCand_numStripHits_.push_back(EleFinder.ElectronCandidate_numStripHits[iec]);
+   }
    
    // Filling displaced dileptons that pass baseline selection
    nt.ndispEE_ = EleFinder.nEEBase;
@@ -607,69 +499,236 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.EECand_relisoB_.push_back(EleFinder.EE_relisoB[ieec]);
    }
 
-   // Filling isotracks selected for displaced dilepton reco
-   nt.nIsoTrackSel_ = EleFinder.nIsoTrack;
-   for (int it = 0; it < nt.nIsoTrackSel_; it++) {
-      nt.IsoTrackSel_pt_.push_back(EleFinder.IsoTrackSel_pt[it]);
-      nt.IsoTrackSel_eta_.push_back(EleFinder.IsoTrackSel_eta[it]);
-      nt.IsoTrackSel_etaExtra_.push_back(EleFinder.IsoTrackSel_etaExtra[it]);
-      nt.IsoTrackSel_phiExtra_.push_back(EleFinder.IsoTrackSel_phiExtra[it]);
-      nt.IsoTrackSel_phi_.push_back(EleFinder.IsoTrackSel_phi[it]);
-      nt.IsoTrackSel_charge_.push_back(EleFinder.IsoTrackSel_charge[it]);
-      nt.IsoTrackSel_dxy_.push_back(EleFinder.IsoTrackSel_dxy[it]);
-      nt.IsoTrackSel_dxyError_.push_back(EleFinder.IsoTrackSel_dxyError[it]);
-      nt.IsoTrackSel_dxy_PV_.push_back(EleFinder.IsoTrackSel_dxy_PV[it]);
-      nt.IsoTrackSel_dxyError_PV_.push_back(EleFinder.IsoTrackSel_dxyError_PV[it]);
-      nt.IsoTrackSel_dxy_0_.push_back(EleFinder.IsoTrackSel_dxy_0[it]);
-      nt.IsoTrackSel_dxyError_0_.push_back(EleFinder.IsoTrackSel_dxyError_0[it]);
-      nt.IsoTrackSel_dxy_BS_.push_back(EleFinder.IsoTrackSel_dxy_BS[it]);
-      nt.IsoTrackSel_dxyError_BS_.push_back(EleFinder.IsoTrackSel_dxyError_BS[it]);
-      nt.IsoTrackSel_dz_.push_back(EleFinder.IsoTrackSel_dz[it]);
-      nt.IsoTrackSel_dzError_.push_back(EleFinder.IsoTrackSel_dzError[it]);
-      nt.IsoTrackSel_vx_.push_back(EleFinder.IsoTrackSel_vx[it]);
-      nt.IsoTrackSel_vy_.push_back(EleFinder.IsoTrackSel_vy[it]);
-      nt.IsoTrackSel_vz_.push_back(EleFinder.IsoTrackSel_vz[it]);
-      nt.IsoTrackSel_pfIsolationDR03_.push_back(EleFinder.IsoTrackSel_pfIsolationDR03[it]);
-      nt.IsoTrackSel_miniPFIsolation_.push_back(EleFinder.IsoTrackSel_miniPFIsolation[it]);
-      nt.IsoTrackSel_relPfIsolationDR03_.push_back(EleFinder.IsoTrackSel_relPfIsolationDR03[it]);
-      nt.IsoTrackSel_relMiniPFIsolation_.push_back(EleFinder.IsoTrackSel_relMiniPFIsolation[it]);
-      nt.IsoTrackSel_isHighPurityTrack_.push_back(EleFinder.IsoTrackSel_isHighPurityTrack[it]);
-      nt.IsoTrackSel_numberOfValidTrackerHits_.push_back(EleFinder.IsoTrackSel_numberOfValidTrackerHits[it]);
-      nt.IsoTrackSel_numberOfValidPixelHits_.push_back(EleFinder.IsoTrackSel_numberOfValidPixelHits[it]);
-      nt.IsoTrackSel_numberOfValidPixelBarrelHits_.push_back(EleFinder.IsoTrackSel_numberOfValidPixelBarrelHits[it]);
-      nt.IsoTrackSel_numberOfValidPixelEndcapHits_.push_back(EleFinder.IsoTrackSel_numberOfValidPixelEndcapHits[it]);
-      nt.IsoTrackSel_numberOfValidStripHits_.push_back(EleFinder.IsoTrackSel_numberOfValidStripHits[it]);
-      nt.IsoTrackSel_numberOfValidStripTIBHits_.push_back(EleFinder.IsoTrackSel_numberOfValidStripTIBHits[it]);
-      nt.IsoTrackSel_numberOfValidStripTIDHits_.push_back(EleFinder.IsoTrackSel_numberOfValidStripTIDHits[it]);
-      nt.IsoTrackSel_numberOfValidStripTOBHits_.push_back(EleFinder.IsoTrackSel_numberOfValidStripTOBHits[it]);
-      nt.IsoTrackSel_numberOfValidStripTECHits_.push_back(EleFinder.IsoTrackSel_numberOfValidStripTECHits[it]);
-      nt.IsoTrackSel_fromPV_.push_back(EleFinder.IsoTrackSel_fromPV[it]);
-      nt.IsoTrackSel_PVx_.push_back(EleFinder.IsoTrackSel_PVx[it]);
-      nt.IsoTrackSel_PVy_.push_back(EleFinder.IsoTrackSel_PVy[it]);
-      nt.IsoTrackSel_PVz_.push_back(EleFinder.IsoTrackSel_PVz[it]);
-   }
+   // Define vertex reco function 
+   auto computeVertices = [&](vector<int> coll_1, vector<int> coll_2, std::string type) {
+      for (size_t i = 0; i < coll_1.size(); i++) {
+         for (size_t j = 0; j < coll_2.size(); j++) {
+            int ind1 = coll_1[i];
+            int ind2 = coll_2[j];
+            reco::GsfTrackRef ele_i, ele_j;
+            if (type == "regreg") {
+               ele_i = reg_eleTracks[ind1];
+               ele_j = reg_eleTracks[ind2];
+            }
+            else if (type == "lowlow") {
+               ele_i = lowpt_eleTracks[ind1];
+               ele_j = lowpt_eleTracks[ind2];
+            }
+            else if (type == "lowreg") {
+               ele_i = lowpt_eleTracks[ind1];
+               ele_j = reg_eleTracks[ind2];
+            }
+            if ( (type == "regreg" || type == "lowlow") && (j <= i) ) continue; // don't vertex ele with itself or ones prior (if vertexing with same type)
+            if (ele_i == ele_j) continue; // skip if same ele is in reg and low-pT collections
+            if (!ele_i.isNonnull() || !ele_j.isNonnull()) continue; // skip if there's a bad track
 
-   // Filling photons selected for displaced dilepton reco
-   nt.nPhotonSel_ = EleFinder.nPhoton;
-   for (int ip = 0; ip < nt.nPhotonSel_; ip++) {
-      nt.PhotonSel_et_.push_back(EleFinder.PhotonSel_et[ip]);
-      nt.PhotonSel_eta_.push_back(EleFinder.PhotonSel_eta[ip]);
-      nt.PhotonSel_phi_.push_back(EleFinder.PhotonSel_phi[ip]);
-      nt.PhotonSel_hadronicOverEm_.push_back(EleFinder.PhotonSel_hadronicOverEm[ip]);
-      nt.PhotonSel_full5x5_sigmaIetaIeta_.push_back(EleFinder.PhotonSel_full5x5_sigmaIetaIeta[ip]);
-      nt.PhotonSel_isEB_.push_back(EleFinder.PhotonSel_isEB[ip]);
-      nt.PhotonSel_isEE_.push_back(EleFinder.PhotonSel_isEE[ip]);
-      nt.PhotonSel_r9_.push_back(EleFinder.PhotonSel_r9[ip]);
-      nt.PhotonSel_ecalIso_.push_back(EleFinder.PhotonSel_ecalIso[ip]);
-      nt.PhotonSel_hcalIso_.push_back(EleFinder.PhotonSel_hcalIso[ip]);
-      nt.PhotonSel_caloIso_.push_back(EleFinder.PhotonSel_caloIso[ip]);
-      nt.PhotonSel_relIso_.push_back(EleFinder.PhotonSel_relIso[ip]);
-   }
+            TransientVertex tv;
+            vector<reco::TransientTrack> transient_tracks{};
+            transient_tracks.push_back(theB->build(ele_i));
+            transient_tracks.push_back(theB->build(ele_j));
+            tv = kvf.vertex(transient_tracks);
+
+            if (!tv.isValid()) continue; // skip if the vertex is bad
+
+            reco::Vertex vertex = reco::Vertex(tv);
+            float vx = vertex.x(); 
+            float vy = vertex.y(); 
+            float vz = vertex.z();
+            float vxy = sqrt(vertex.x()*vertex.x() + vertex.y()*vertex.y());
+            float sigma_vxy = (1/vxy)*sqrt(vertex.x()*vertex.x()*vertex.xError()*vertex.xError() +
+                     vertex.y()*vertex.y()*vertex.yError()*vertex.yError());
+            float vtx_chi2 = vertex.normalizedChi2();
+            float dr = reco::deltaR(*ele_i, *ele_j);
+
+            if (type == "lowlow") {
+               math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + lowpt_ele_p4s[ind2];
+               nt.LLvtx_idx1_.push_back(ind1); 
+               nt.LLvtx_idx2_.push_back(ind2);
+               nt.LLvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LLvtx_recoVtxVxy_.push_back(vxy);
+               nt.LLvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
+               nt.LLvtx_recoVtxVx_.push_back(vx);
+               nt.LLvtx_recoVtxVy_.push_back(vy);
+               nt.LLvtx_recoVtxVz_.push_back(vz);
+               nt.LLvtx_recoVtxDr_.push_back(dr);
+               nt.LLvtx_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
+               nt.LLvtx_ll_pt_.push_back(ll.pt());
+               nt.LLvtx_ll_eta_.push_back(ll.eta());
+               nt.LLvtx_ll_phi_.push_back(ll.phi());
+               nt.LLvtx_ll_e_.push_back(ll.e());
+               nt.LLvtx_ll_m_.push_back(ll.M());
+               nt.LLvtx_ll_px_.push_back(ll.px());
+               nt.LLvtx_ll_py_.push_back(ll.py());
+               nt.LLvtx_ll_pz_.push_back(ll.pz());
+            }
+            else if (type == "regreg") {
+               math::XYZTLorentzVector ll = reg_ele_p4s[ind1] + reg_ele_p4s[ind2];
+               nt.RRvtx_idx1_.push_back(ind1); 
+               nt.RRvtx_idx2_.push_back(ind2);
+               nt.RRvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.RRvtx_recoVtxVxy_.push_back(vxy);
+               nt.RRvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
+               nt.RRvtx_recoVtxVx_.push_back(vx);
+               nt.RRvtx_recoVtxVy_.push_back(vy);
+               nt.RRvtx_recoVtxVz_.push_back(vz);
+               nt.RRvtx_recoVtxDr_.push_back(dr);
+               nt.RRvtx_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
+               nt.RRvtx_ll_pt_.push_back(ll.pt());
+               nt.RRvtx_ll_eta_.push_back(ll.eta());
+               nt.RRvtx_ll_phi_.push_back(ll.phi());
+               nt.RRvtx_ll_e_.push_back(ll.e());
+               nt.RRvtx_ll_m_.push_back(ll.M());
+               nt.RRvtx_ll_px_.push_back(ll.px());
+               nt.RRvtx_ll_py_.push_back(ll.py());
+               nt.RRvtx_ll_pz_.push_back(ll.pz());
+            }
+            else if (type == "lowreg") {
+               math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + reg_ele_p4s[ind2];
+               nt.LRvtx_idx1_.push_back(ind1); 
+               nt.LRvtx_idx2_.push_back(ind2);
+               nt.LRvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LRvtx_recoVtxVxy_.push_back(vxy);
+               nt.LRvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
+               nt.LRvtx_recoVtxVx_.push_back(vx);
+               nt.LRvtx_recoVtxVy_.push_back(vy);
+               nt.LRvtx_recoVtxVz_.push_back(vz);
+               nt.LRvtx_recoVtxDr_.push_back(dr);
+               nt.LRvtx_recoVtxSign_.push_back(ele_i->charge()*ele_j->charge());
+               nt.LRvtx_ll_pt_.push_back(ll.pt());
+               nt.LRvtx_ll_eta_.push_back(ll.eta());
+               nt.LRvtx_ll_phi_.push_back(ll.phi());
+               nt.LRvtx_ll_e_.push_back(ll.e());
+               nt.LRvtx_ll_m_.push_back(ll.M());
+               nt.LRvtx_ll_px_.push_back(ll.px());
+               nt.LRvtx_ll_py_.push_back(ll.py());
+               nt.LRvtx_ll_pz_.push_back(ll.pz());
+            }
+         }
+      }
+   };
+
+   auto computeVerticesCand = [&](vector<int> coll_1, vector<int> coll_2, std::string type) {
+      for (size_t i = 0; i < coll_1.size(); i++) {
+         for (size_t j = 0; j < coll_2.size(); j++) {
+            int ind1 = coll_1[i];
+            int ind2 = coll_2[j];
+            reco::GsfTrackRef ele_i;
+            reco::Track ele_j;
+            if (type == "regcand") {
+               ele_i = reg_eleTracks[ind1];
+               ele_j = cand_eleTracks[ind2];
+            }
+            else if (type == "lowcand") {
+               ele_i = lowpt_eleTracks[ind1];
+               ele_j = cand_eleTracks[ind2];
+            }
+            if (!ele_i.isNonnull()) continue; // skip if electron is bad
+            if (reco::deltaR(*ele_i,ele_j) < 0.0001) continue; // skip if it's somehow the same track
+
+            TransientVertex tv;
+            vector<reco::TransientTrack> transient_tracks{};
+            transient_tracks.push_back(theB->build(ele_i));
+            transient_tracks.push_back(theB->build(ele_j));
+            tv = kvf.vertex(transient_tracks);
+
+            if (!tv.isValid()) continue; // skip if the vertex is bad
+
+            reco::Vertex vertex = reco::Vertex(tv);
+            float vx = vertex.x(); 
+            float vy = vertex.y(); 
+            float vz = vertex.z();
+            float vxy = sqrt(vertex.x()*vertex.x() + vertex.y()*vertex.y());
+            float sigma_vxy = (1/vxy)*sqrt(vertex.x()*vertex.x()*vertex.xError()*vertex.xError() +
+                     vertex.y()*vertex.y()*vertex.yError()*vertex.yError());
+            float vtx_chi2 = vertex.normalizedChi2();
+            float dr = reco::deltaR(*ele_i, ele_j);
+
+            if (type == "regcand") {
+               math::XYZTLorentzVector ll = reg_ele_p4s[ind1] + cand_ele_p4s[ind2];
+               nt.RCvtx_idx1_.push_back(ind1); 
+               nt.RCvtx_idx2_.push_back(ind2);
+               nt.RCvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.RCvtx_recoVtxVxy_.push_back(vxy);
+               nt.RCvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
+               nt.RCvtx_recoVtxVx_.push_back(vx);
+               nt.RCvtx_recoVtxVy_.push_back(vy);
+               nt.RCvtx_recoVtxVz_.push_back(vz);
+               nt.RCvtx_recoVtxDr_.push_back(dr);
+               nt.RCvtx_recoVtxSign_.push_back(ele_i->charge()*ele_j.charge());
+               nt.RCvtx_ll_pt_.push_back(ll.pt());
+               nt.RCvtx_ll_eta_.push_back(ll.eta());
+               nt.RCvtx_ll_phi_.push_back(ll.phi());
+               nt.RCvtx_ll_e_.push_back(ll.e());
+               nt.RCvtx_ll_m_.push_back(ll.M());
+               nt.RCvtx_ll_px_.push_back(ll.px());
+               nt.RCvtx_ll_py_.push_back(ll.py());
+               nt.RCvtx_ll_pz_.push_back(ll.pz());
+            }
+            else if (type == "lowcand") {
+               math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + cand_ele_p4s[ind2];
+               nt.LCvtx_idx1_.push_back(ind1); 
+               nt.LCvtx_idx2_.push_back(ind2);
+               nt.LCvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LCvtx_recoVtxVxy_.push_back(vxy);
+               nt.LCvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
+               nt.LCvtx_recoVtxVx_.push_back(vx);
+               nt.LCvtx_recoVtxVy_.push_back(vy);
+               nt.LCvtx_recoVtxVz_.push_back(vz);
+               nt.LCvtx_recoVtxDr_.push_back(dr);
+               nt.LCvtx_recoVtxSign_.push_back(ele_i->charge()*ele_j.charge());
+               nt.LCvtx_ll_pt_.push_back(ll.pt());
+               nt.LCvtx_ll_eta_.push_back(ll.eta());
+               nt.LCvtx_ll_phi_.push_back(ll.phi());
+               nt.LCvtx_ll_e_.push_back(ll.e());
+               nt.LCvtx_ll_m_.push_back(ll.M());
+               nt.LCvtx_ll_px_.push_back(ll.px());
+               nt.LCvtx_ll_py_.push_back(ll.py());
+               nt.LCvtx_ll_pz_.push_back(ll.pz());
+            }
+         }
+      }
+   };
+
+   // Reconstructing electron vertices
+   // Sort electron tracks by pT
+   vector<int> ind_ele(reg_eleTracks.size());
+   std::iota(ind_ele.begin(),ind_ele.end(),0); // create vector of electron indices
+   std::sort(ind_ele.begin(), ind_ele.end(), [&](const int & l, const int & r) { // sort indices by ele pT
+            return reg_ele_p4s[l].pt() > reg_ele_p4s[r].pt();
+            });
+   // Sort low-pT electron tracks by pT
+   vector<int> ind_lptele(lowpt_eleTracks.size());
+   std::iota(ind_lptele.begin(),ind_lptele.end(),0); // create vector of low-pT electron indices
+   std::sort(ind_lptele.begin(), ind_lptele.end(), [&](const int & l, const int & r) { // sort indices by ele pT
+            return lowpt_ele_p4s[l].pt() > lowpt_ele_p4s[r].pt();
+            });
+   // Sort isotrack electron candidates by pT
+   vector<int> ind_eleCand(cand_eleTracks.size());
+   std::iota(ind_eleCand.begin(),ind_eleCand.end(),0);
+   std::sort(ind_eleCand.begin(),ind_eleCand.end(), [&](const int & l, const int &r) {
+      return cand_ele_p4s[l].pt() > cand_ele_p4s[r].pt();
+   });
+
+
+   // lowpT-lowpT
+   computeVertices(ind_lptele, ind_lptele, "lowlow");
+   nt.nEleVertex_LL_ = nt.LLvtx_recoVtxVxy_.size();
+   // regular-regular
+   computeVertices(ind_ele, ind_ele, "regreg");
+   nt.nEleVertex_RR_ = nt.RRvtx_recoVtxVxy_.size();
+   // lowpT-regular
+   computeVertices(ind_lptele, ind_ele, "lowreg");
+   nt.nEleVertex_LR_ = nt.LRvtx_recoVtxVxy_.size();
+   // regular-cand
+   computeVerticesCand(ind_ele,ind_eleCand,"regcand");
+   nt.nEleVertex_RC_ = nt.RCvtx_recoVtxVxy_.size();
+   // lowpT-cand
+   computeVerticesCand(ind_lptele,ind_eleCand,"lowcand");
+   nt.nEleVertex_LC_ = nt.LCvtx_recoVtxVxy_.size();
 
    ///////////////////////////////////////
 
    //Handling gen particles
-   
    if (!isData) {
       // Gen weight
       nt.genwgt_ = genEvtInfoHandle_->weight();
@@ -685,10 +744,9 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          nt.genPx_.push_back(genParticle.px());
          nt.genPy_.push_back(genParticle.py());
          nt.genPz_.push_back(genParticle.pz());
-         nt.genVxy_.push_back(genParticle.vertex().rho());
-         nt.genVtx_x_.push_back(genParticle.vertex().x());
-         nt.genVtx_y_.push_back(genParticle.vertex().y());
-         nt.genVtx_z_.push_back(genParticle.vertex().z());
+         nt.genVxy_.push_back(sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy()));
+         nt.genVx_.push_back(genParticle.vx());
+         nt.genVy_.push_back(genParticle.vy());
          nt.genVz_.push_back(genParticle.vz());
          nt.genMass_.push_back(genParticle.mass());
       }

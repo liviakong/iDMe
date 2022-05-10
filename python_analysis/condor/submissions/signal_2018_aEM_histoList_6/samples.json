@@ -1,0 +1,24 @@
+[
+    {
+        "Mchi": 96.0,
+        "sum_wgt": 0.0,
+        "ctau": 100,
+        "dMchi": 32.0,
+        "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-100/",
+        "alphaD": "aEM",
+        "year": 2018,
+        "xsec": 0.0,
+        "type": "signal"
+    },
+    {
+        "Mchi": 96.0,
+        "sum_wgt": 0.0,
+        "ctau": 1000,
+        "dMchi": 32.0,
+        "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1000/",
+        "alphaD": "aEM",
+        "year": 2018,
+        "xsec": 0.0,
+        "type": "signal"
+    }
+]

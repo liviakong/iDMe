@@ -3,6 +3,7 @@
 
 #include <vector>
 using std::vector;
+#include <iostream>
 
 #include <TTree.h>
 
@@ -38,9 +39,8 @@ public:
     vector<float> genPz_;
     vector<float> genVxy_;
     vector<float> genVz_;
-    vector<float> genVtx_x_;
-    vector<float> genVtx_y_;
-    vector<float> genVtx_z_;
+    vector<float> genVx_;
+    vector<float> genVy_;
     vector<float> genMass_;
     
    // Gen jet
@@ -169,65 +169,124 @@ public:
     float PuppiCaloMET_Phi_;
 
     // Electron-positron vertices
-    int nEleVertex_regreg_;
-    vector<int> regreg_eleIdx_;
-    vector<float> regreg_recoVtxVxy_;
-    vector<float> regreg_recoVtxVz_;
-    vector<float> regreg_recoVtxSigmaVxy_;
-    vector<float> regreg_recoVtx_x_;
-    vector<float> regreg_recoVtx_y_;
-    vector<float> regreg_recoVtx_z_;
-    vector<float> regreg_recoVtxReducedChi2_;
-    vector<float> regreg_recoVtxDr_;
-    vector<int> regreg_recoVtxSign_;
-    vector<float> regreg_ll_pt_;
-    vector<float> regreg_ll_eta_;
-    vector<float> regreg_ll_phi_;
-    vector<float> regreg_ll_e_;
-    vector<float> regreg_ll_m_;
-    vector<float> regreg_ll_px_;
-    vector<float> regreg_ll_py_;
-    vector<float> regreg_ll_pz_;
+    int nEleVertex_RR_;
+    vector<int> RRvtx_idx1_;
+    vector<int> RRvtx_idx2_;
+    vector<float> RRvtx_recoVtxVxy_;
+    vector<float> RRvtx_recoVtxSigmaVxy_;
+    vector<float> RRvtx_recoVtxVx_;
+    vector<float> RRvtx_recoVtxVy_;
+    vector<float> RRvtx_recoVtxVz_;
+    vector<float> RRvtx_recoVtxReducedChi2_;
+    vector<float> RRvtx_recoVtxDr_;
+    vector<int> RRvtx_recoVtxSign_;
+    vector<float> RRvtx_ll_pt_;
+    vector<float> RRvtx_ll_eta_;
+    vector<float> RRvtx_ll_phi_;
+    vector<float> RRvtx_ll_e_;
+    vector<float> RRvtx_ll_m_;
+    vector<float> RRvtx_ll_px_;
+    vector<float> RRvtx_ll_py_;
+    vector<float> RRvtx_ll_pz_;
 
-    int nEleVertex_lowlow_;
-    vector<int> lowlow_eleIdx_;
-    vector<float> lowlow_recoVtxVxy_;
-    vector<float> lowlow_recoVtxVz_;
-    vector<float> lowlow_recoVtxSigmaVxy_;
-    vector<float> lowlow_recoVtx_x_;
-    vector<float> lowlow_recoVtx_y_;
-    vector<float> lowlow_recoVtx_z_;
-    vector<float> lowlow_recoVtxReducedChi2_;
-    vector<float> lowlow_recoVtxDr_;
-    vector<int> lowlow_recoVtxSign_;
-    vector<float> lowlow_ll_pt_;
-    vector<float> lowlow_ll_eta_;
-    vector<float> lowlow_ll_phi_;
-    vector<float> lowlow_ll_e_;
-    vector<float> lowlow_ll_m_;
-    vector<float> lowlow_ll_px_;
-    vector<float> lowlow_ll_py_;
-    vector<float> lowlow_ll_pz_;
+    int nEleVertex_LL_;
+    vector<int> LLvtx_idx1_;
+    vector<int> LLvtx_idx2_;
+    vector<float> LLvtx_recoVtxVxy_;
+    vector<float> LLvtx_recoVtxSigmaVxy_;
+    vector<float> LLvtx_recoVtxVx_;
+    vector<float> LLvtx_recoVtxVy_;
+    vector<float> LLvtx_recoVtxVz_;
+    vector<float> LLvtx_recoVtxReducedChi2_;
+    vector<float> LLvtx_recoVtxDr_;
+    vector<int> LLvtx_recoVtxSign_;
+    vector<float> LLvtx_ll_pt_;
+    vector<float> LLvtx_ll_eta_;
+    vector<float> LLvtx_ll_phi_;
+    vector<float> LLvtx_ll_e_;
+    vector<float> LLvtx_ll_m_;
+    vector<float> LLvtx_ll_px_;
+    vector<float> LLvtx_ll_py_;
+    vector<float> LLvtx_ll_pz_;
 
-    int nEleVertex_lowreg_;
-    vector<int> lowreg_eleIdx_;
-    vector<float> lowreg_recoVtxVxy_;
-    vector<float> lowreg_recoVtxVz_;
-    vector<float> lowreg_recoVtxSigmaVxy_;
-    vector<float> lowreg_recoVtx_x_;
-    vector<float> lowreg_recoVtx_y_;
-    vector<float> lowreg_recoVtx_z_;
-    vector<float> lowreg_recoVtxReducedChi2_;
-    vector<float> lowreg_recoVtxDr_;
-    vector<int> lowreg_recoVtxSign_;
-    vector<float> lowreg_ll_pt_;
-    vector<float> lowreg_ll_eta_;
-    vector<float> lowreg_ll_phi_;
-    vector<float> lowreg_ll_e_;
-    vector<float> lowreg_ll_m_;
-    vector<float> lowreg_ll_px_;
-    vector<float> lowreg_ll_py_;
-    vector<float> lowreg_ll_pz_;
+    int nEleVertex_LR_;
+    vector<int> LRvtx_idx1_;
+    vector<int> LRvtx_idx2_;
+    vector<float> LRvtx_recoVtxVxy_;
+    vector<float> LRvtx_recoVtxSigmaVxy_;
+    vector<float> LRvtx_recoVtxVx_;
+    vector<float> LRvtx_recoVtxVy_;
+    vector<float> LRvtx_recoVtxVz_;
+    vector<float> LRvtx_recoVtxReducedChi2_;
+    vector<float> LRvtx_recoVtxDr_;
+    vector<int> LRvtx_recoVtxSign_;
+    vector<float> LRvtx_ll_pt_;
+    vector<float> LRvtx_ll_eta_;
+    vector<float> LRvtx_ll_phi_;
+    vector<float> LRvtx_ll_e_;
+    vector<float> LRvtx_ll_m_;
+    vector<float> LRvtx_ll_px_;
+    vector<float> LRvtx_ll_py_;
+    vector<float> LRvtx_ll_pz_;
+
+    int nEleVertex_RC_;
+    vector<int> RCvtx_idx1_;
+    vector<int> RCvtx_idx2_;
+    vector<float> RCvtx_recoVtxVxy_;
+    vector<float> RCvtx_recoVtxSigmaVxy_;
+    vector<float> RCvtx_recoVtxVx_;
+    vector<float> RCvtx_recoVtxVy_;
+    vector<float> RCvtx_recoVtxVz_;
+    vector<float> RCvtx_recoVtxReducedChi2_;
+    vector<float> RCvtx_recoVtxDr_;
+    vector<int> RCvtx_recoVtxSign_;
+    vector<float> RCvtx_ll_pt_;
+    vector<float> RCvtx_ll_eta_;
+    vector<float> RCvtx_ll_phi_;
+    vector<float> RCvtx_ll_e_;
+    vector<float> RCvtx_ll_m_;
+    vector<float> RCvtx_ll_px_;
+    vector<float> RCvtx_ll_py_;
+    vector<float> RCvtx_ll_pz_;
+
+    int nEleVertex_LC_;
+    vector<int> LCvtx_idx1_;
+    vector<int> LCvtx_idx2_;
+    vector<float> LCvtx_recoVtxVxy_;
+    vector<float> LCvtx_recoVtxSigmaVxy_;
+    vector<float> LCvtx_recoVtxVx_;
+    vector<float> LCvtx_recoVtxVy_;
+    vector<float> LCvtx_recoVtxVz_;
+    vector<float> LCvtx_recoVtxReducedChi2_;
+    vector<float> LCvtx_recoVtxDr_;
+    vector<int> LCvtx_recoVtxSign_;
+    vector<float> LCvtx_ll_pt_;
+    vector<float> LCvtx_ll_eta_;
+    vector<float> LCvtx_ll_phi_;
+    vector<float> LCvtx_ll_e_;
+    vector<float> LCvtx_ll_m_;
+    vector<float> LCvtx_ll_px_;
+    vector<float> LCvtx_ll_py_;
+    vector<float> LCvtx_ll_pz_;
+
+    // Electron candidates reconstructed from isoTracks + ECAL clusters
+    int nEleCand_;
+    vector<float> EleCand_pt_;
+    vector<float> EleCand_et_;
+    vector<float> EleCand_eta_;
+    vector<float> EleCand_phi_;
+    vector<float> EleCand_dxy_;
+    vector<float> EleCand_dxyError_;
+    vector<float> EleCand_dxy_PV_;
+    vector<float> EleCand_dxyError_PV_;
+    vector<float> EleCand_relPFiso_;
+    vector<float> EleCand_relTrkiso_;
+    vector<float> EleCand_ptDiff_;
+    vector<float> EleCand_trkIso_;
+    vector<float> EleCand_trkChi2_;
+    vector<int> EleCand_numTrackerHits_;
+    vector<int> EleCand_numPixHits_;
+    vector<int> EleCand_numStripHits_;
 
     // Displaced dileptons from dedicated algorithm
     int ndispEE_;
@@ -282,61 +341,6 @@ public:
     vector<float> EECand_lldPhi_;
     vector<float> EECand_relisoA_;
     vector<float> EECand_relisoB_;
-
-    // Isotracks passing selection for displaced dilepton reco
-    int nIsoTrackSel_;
-    vector<float> IsoTrackSel_pt_;
-    vector<float> IsoTrackSel_eta_;
-    vector<float> IsoTrackSel_etaExtra_;
-    vector<float> IsoTrackSel_phiExtra_;
-    vector<float> IsoTrackSel_phi_;
-    vector<int> IsoTrackSel_charge_;
-    vector<float> IsoTrackSel_dxy_;
-    vector<float> IsoTrackSel_dxyError_;
-    vector<float> IsoTrackSel_dxy_PV_;
-    vector<float> IsoTrackSel_dxyError_PV_;
-    vector<float> IsoTrackSel_dxy_0_;
-    vector<float> IsoTrackSel_dxyError_0_;
-    vector<float> IsoTrackSel_dxy_BS_;
-    vector<float> IsoTrackSel_dxyError_BS_;
-    vector<float> IsoTrackSel_dz_;
-    vector<float> IsoTrackSel_dzError_;
-    vector<float> IsoTrackSel_vx_;
-    vector<float> IsoTrackSel_vy_;
-    vector<float> IsoTrackSel_vz_;
-    vector<float> IsoTrackSel_pfIsolationDR03_;
-    vector<float> IsoTrackSel_miniPFIsolation_;
-    vector<float> IsoTrackSel_relPfIsolationDR03_;
-    vector<float> IsoTrackSel_relMiniPFIsolation_;
-    vector<int> IsoTrackSel_isHighPurityTrack_;
-    vector<int> IsoTrackSel_numberOfValidTrackerHits_;
-    vector<int> IsoTrackSel_numberOfValidPixelHits_;
-    vector<int> IsoTrackSel_numberOfValidPixelBarrelHits_;
-    vector<int> IsoTrackSel_numberOfValidPixelEndcapHits_;
-    vector<int> IsoTrackSel_numberOfValidStripHits_;
-    vector<int> IsoTrackSel_numberOfValidStripTIBHits_;
-    vector<int> IsoTrackSel_numberOfValidStripTIDHits_;
-    vector<int> IsoTrackSel_numberOfValidStripTOBHits_;
-    vector<int> IsoTrackSel_numberOfValidStripTECHits_;
-    vector<int> IsoTrackSel_fromPV_;
-    vector<float> IsoTrackSel_PVx_;
-    vector<float> IsoTrackSel_PVy_;
-    vector<float> IsoTrackSel_PVz_;
-
-    // Photons selected for displaced dilepton reco
-    int nPhotonSel_;
-    vector<float> PhotonSel_et_;
-    vector<float> PhotonSel_eta_;
-    vector<float> PhotonSel_phi_;
-    vector<float> PhotonSel_hadronicOverEm_;
-    vector<float> PhotonSel_full5x5_sigmaIetaIeta_;
-    vector<int> PhotonSel_isEB_;
-    vector<int> PhotonSel_isEE_;
-    vector<float> PhotonSel_r9_;
-    vector<float> PhotonSel_ecalIso_;
-    vector<float> PhotonSel_hcalIso_;
-    vector<float> PhotonSel_caloIso_;
-    vector<float> PhotonSel_relIso_;
 
 private:
     // Reco and gen TTrees

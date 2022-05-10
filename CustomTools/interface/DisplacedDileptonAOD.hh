@@ -69,7 +69,7 @@ public:
     bool passPhotonSelection(const reco::Photon &photon);
     bool passBaselineSelection(llCandidate llc);
     bool passBaselineSelection(trackPair ttp);
-    float computeRelIso(const reco::Track & track,  edm::Handle<std::vector<pat::PackedCandidate> > & pfs, bool isPF);
+    float computeIso(const reco::Track & track,  edm::Handle<std::vector<pat::PackedCandidate> > & pfs, bool isPF, bool isRel);
 
     edm::Handle<std::vector<pat::IsolatedTrack> > isoTracks;
     std::vector<reco::Photon> photons;
@@ -181,6 +181,11 @@ public:
     float ElectronCandidate_dxyError_BS[nElectronCandidateMax];
     float ElectronCandidate_relPFiso[nElectronCandidateMax];
     float ElectronCandidate_relTrkiso[nElectronCandidateMax];
+    float ElectronCandidate_trkIso[nElectronCandidateMax];
+    float ElectronCandidate_trkChi2[nElectronCandidateMax];
+    int ElectronCandidate_numTrackerHits[nElectronCandidateMax];
+    int ElectronCandidate_numPixHits[nElectronCandidateMax];
+    int ElectronCandidate_numStripHits[nElectronCandidateMax];
     int ElectronCandidate_photonIdx[nElectronCandidateMax];
     int ElectronCandidate_isotrackIdx[nElectronCandidateMax];
     int ElectronCandidate_pvAssociationQuality[nElectronCandidateMax];

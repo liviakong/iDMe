@@ -5,7 +5,7 @@
         "ctau": 1, 
         "dMchi": 36.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -16,7 +16,7 @@
         "ctau": 10, 
         "dMchi": 36.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -27,7 +27,7 @@
         "ctau": 100, 
         "dMchi": 36.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -38,7 +38,7 @@
         "ctau": 1000, 
         "dMchi": 36.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -49,7 +49,7 @@
         "ctau": 1, 
         "dMchi": 40.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -60,7 +60,7 @@
         "ctau": 10, 
         "dMchi": 40.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -71,7 +71,7 @@
         "ctau": 100, 
         "dMchi": 40.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -82,7 +82,7 @@
         "ctau": 1000, 
         "dMchi": 40.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -93,7 +93,7 @@
         "ctau": 1, 
         "dMchi": 4.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -104,7 +104,7 @@
         "ctau": 10, 
         "dMchi": 4.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -115,7 +115,7 @@
         "ctau": 100, 
         "dMchi": 4.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -126,7 +126,7 @@
         "ctau": 1000, 
         "dMchi": 4.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -137,7 +137,7 @@
         "ctau": 1, 
         "dMchi": 16.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -148,7 +148,7 @@
         "ctau": 10, 
         "dMchi": 16.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -159,7 +159,7 @@
         "ctau": 100, 
         "dMchi": 16.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -170,7 +170,7 @@
         "ctau": 1000, 
         "dMchi": 16.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -181,7 +181,7 @@
         "ctau": 1, 
         "dMchi": 20.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -192,7 +192,7 @@
         "ctau": 10, 
         "dMchi": 20.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -203,7 +203,7 @@
         "ctau": 100, 
         "dMchi": 20.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -214,7 +214,7 @@
         "ctau": 1000, 
         "dMchi": 20.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -225,7 +225,7 @@
         "ctau": 1, 
         "dMchi": 24.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -236,7 +236,7 @@
         "ctau": 10, 
         "dMchi": 24.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -247,7 +247,7 @@
         "ctau": 100, 
         "dMchi": 24.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -258,7 +258,7 @@
         "ctau": 1000, 
         "dMchi": 24.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -269,7 +269,7 @@
         "ctau": 1, 
         "dMchi": 28.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -280,7 +280,7 @@
         "ctau": 10, 
         "dMchi": 28.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -291,7 +291,7 @@
         "ctau": 100, 
         "dMchi": 28.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -302,7 +302,7 @@
         "ctau": 1000, 
         "dMchi": 28.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -313,7 +313,7 @@
         "ctau": 1, 
         "dMchi": 32.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -324,7 +324,7 @@
         "ctau": 10, 
         "dMchi": 32.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-10/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -335,7 +335,7 @@
         "ctau": 100, 
         "dMchi": 32.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-100/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"
@@ -346,7 +346,7 @@
         "ctau": 1000, 
         "dMchi": 32.0, 
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1000/", 
-        "alphaD": "aEM", 
+        "alphaD": "0.1", 
         "year": 2018, 
         "xsec": 0.0, 
         "type": "signal"

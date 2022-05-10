@@ -88,7 +88,7 @@ bool DisplacedDileptonsAOD::passBaselineSelection(trackPair ttp) {
    return true;
 }
 
-float DisplacedDileptonsAOD::computeRelIso(const reco::Track & track, edm::Handle<std::vector<pat::PackedCandidate> > & pfs, bool isPF) {
+float DisplacedDileptonsAOD::computeIso(const reco::Track & track, edm::Handle<std::vector<pat::PackedCandidate> > & pfs, bool isPF, bool isRel) {
     // Contributions to isolation:
     double charged = 0, neutral = 0, pileup  = 0, trackiso = 0;
     for (unsigned int i = 0, n = pfs->size(); i < n; ++i) {
@@ -97,7 +97,7 @@ float DisplacedDileptonsAOD::computeRelIso(const reco::Track & track, edm::Handl
         if (fabs(pf.pt() - track.pt()) < 0.01) { continue; }
         // Only count tracks within a 0.3 cone
         double _dR = getDeltaR(track.phi(), track.eta(), pf.phi(), pf.eta());
-        if (_dR > 0.3 || _dR < 0.03) { continue; }
+        if (_dR > 0.4 || _dR < 0.03) { continue; }
         // PF
         if (pf.charge() == 0) {
             if (pf.pt() > 0.5) neutral += pf.pt();
@@ -112,9 +112,19 @@ float DisplacedDileptonsAOD::computeRelIso(const reco::Track & track, edm::Handl
     // do deltaBeta:
     double iso = charged + std::max(0.0, neutral-0.5*pileup);
     if (isPF){
-        return iso/track.pt();
+        if (isRel) {
+            return iso/track.pt();
+        }
+        else {
+            return iso;
+        }
     } else {
-        return trackiso/track.pt();
+        if (isRel) {
+            return trackiso/track.pt();
+        }
+        else {
+            return trackiso;
+        }
     }
 }
 
@@ -319,8 +329,14 @@ void DisplacedDileptonsAOD::findDileptons() {
 
         // re-compute isolation
         const pat::PackedCandidateRef &e_pck = (*isoTracks).at(iT.at(tmin)).packedCandRef();
-        ElectronCandidate_relPFiso[li] = computeRelIso(*(*e_pck).bestTrack(), packedPFCandidates, true);
-        ElectronCandidate_relTrkiso[li] = computeRelIso(*(*e_pck).bestTrack(), packedPFCandidates, false);
+        reco::Track assoc_tk = *(*e_pck).bestTrack();
+        ElectronCandidate_trkChi2[li] = assoc_tk.normalizedChi2();
+        ElectronCandidate_numTrackerHits[li] = assoc_tk.hitPattern().numberOfValidTrackerHits();
+        ElectronCandidate_numPixHits[li] = assoc_tk.hitPattern().numberOfValidPixelHits();
+        ElectronCandidate_numStripHits[li] = assoc_tk.hitPattern().numberOfValidStripHits();
+        ElectronCandidate_relPFiso[li] = computeIso(*(*e_pck).bestTrack(), packedPFCandidates, true, true);
+        ElectronCandidate_relTrkiso[li] = computeIso(*(*e_pck).bestTrack(), packedPFCandidates, false, true);
+        ElectronCandidate_trkIso[li] = computeIso(*(*e_pck).bestTrack(), packedPFCandidates, false, false);
         ElectronCandidate_pvAssociationQuality[li] = (*isoTracks).at(iT.at(tmin)).packedCandRef()->pvAssociationQuality();
         ElectronCandidate_ptDiff[li] = (*isoTracks).at(iT.at(tmin)).pt() - (*isoTracks).at(iT.at(tmin)).packedCandRef()->pseudoTrack().pt();
 

@@ -302,9 +302,16 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    vector<math::XYZTLorentzVector> reg_ele_p4s;
    for (unsigned int i = 0; i < recoElectronHandle_->size(); i++) {
       pat::ElectronRef ele(recoElectronHandle_,i);
+      reco::GsfTrackRef track = ele->gsfTrack();
+      reg_eleTracks.push_back(track);
+      reg_ele_p4s.push_back(ele->p4());
+      // Filling basic info
       nt.recoElectronPt_.push_back(ele->pt());
       nt.recoElectronEta_.push_back(ele->eta());
+      nt.recoElectronEtaError_.push_back(track->etaError());
       nt.recoElectronPhi_.push_back(ele->phi());
+      nt.recoElectronPhiError_.push_back(track->phiError());
+      nt.recoElectronAngularRes_.push_back(sqrt(track->etaError()*track->etaError() + track->phiError()*track->phiError()));
       nt.recoElectronE_.push_back(ele->energy());
       nt.recoElectronPx_.push_back(ele->px());
       nt.recoElectronPy_.push_back(ele->py());
@@ -314,10 +321,7 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronTrkIso_.push_back(ele->trackIso());
       nt.recoElectronCharge_.push_back(ele->charge());
       nt.recoElectron_passConversionVeto_.push_back((int)ele->passConversionVeto());
-      // Filling tracks
-      reco::GsfTrackRef track = ele->gsfTrack();
-      reg_eleTracks.push_back(track);
-      reg_ele_p4s.push_back(ele->p4());
+      // Filling track info
       nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoElectronDxyError_.push_back(track->dxyError());
       nt.recoElectronDz_.push_back(track->dz(pv.position()));
@@ -342,11 +346,17 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          if (dR < mindR) mindR = dR;
       }
       if (mindR < 0.01) continue;
+      reco::GsfTrackRef track = ele->gsfTrack();
+      lowpt_eleTracks.push_back(track);
+      lowpt_ele_p4s.push_back(ele->p4());
       nt.nElectronLowPt_++;
       // Filling branches if not already in regular electron collection
       nt.recoLowPtElectronPt_.push_back(ele->pt());
       nt.recoLowPtElectronPhi_.push_back(ele->phi());
+      nt.recoLowPtElectronPhiError_.push_back(track->phiError());
       nt.recoLowPtElectronEta_.push_back(ele->eta());
+      nt.recoLowPtElectronEtaError_.push_back(track->etaError());
+      nt.recoLowPtElectronAngularRes_.push_back(sqrt(track->etaError()*track->etaError() + track->phiError()*track->phiError()));
       nt.recoLowPtElectronE_.push_back(ele->energy());
       nt.recoLowPtElectronPx_.push_back(ele->px());
       nt.recoLowPtElectronPy_.push_back(ele->py());
@@ -357,9 +367,6 @@ iDMeSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronCharge_.push_back(ele->charge());
       nt.recoLowPtElectron_passConversionVeto_.push_back(ele->passConversionVeto());
       // Filling tracks
-      reco::GsfTrackRef track = ele->gsfTrack();
-      lowpt_eleTracks.push_back(track);
-      lowpt_ele_p4s.push_back(ele->p4());
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
       nt.recoLowPtElectronDz_.push_back(track->dz(pv.position()));

@@ -20,7 +20,10 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("nElectron",&nElectronDefault_);
     outT->Branch("Electron_pt",&recoElectronPt_);
     outT->Branch("Electron_eta",&recoElectronEta_);
+    outT->Branch("Electron_etaErr",&recoElectronEtaError_);
     outT->Branch("Electron_phi",&recoElectronPhi_);
+    outT->Branch("Electron_phiErr",&recoElectronPhiError_);
+    outT->Branch("Electron_angRes",&recoElectronAngularRes_);
     outT->Branch("Electron_energy",&recoElectronE_);
     outT->Branch("Electron_px",&recoElectronPx_);
     outT->Branch("Electron_py",&recoElectronPy_);
@@ -43,7 +46,10 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("nLptElectron",&nElectronLowPt_);
     outT->Branch("LptElectron_pt",&recoLowPtElectronPt_);
     outT->Branch("LptElectron_eta",&recoLowPtElectronEta_);
+    outT->Branch("LptElectron_etaErr",&recoLowPtElectronEtaError_);
     outT->Branch("LptElectron_phi",&recoLowPtElectronPhi_);
+    outT->Branch("LptElectron_phiErr",&recoLowPtElectronPhiError_);
+    outT->Branch("LptElectron_angRes",&recoLowPtElectronAngularRes_);
     outT->Branch("LptElectron_energy",&recoLowPtElectronE_);
     outT->Branch("LptElectron_px",&recoLowPtElectronPx_);
     outT->Branch("LptElectron_py",&recoLowPtElectronPy_);
@@ -351,7 +357,10 @@ void NtupleContainer::ClearTreeBranches() {
     nElectronDefault_ = 0;
     recoElectronPt_.clear();
     recoElectronEta_.clear();
+    recoElectronEtaError_.clear();
     recoElectronPhi_.clear();
+    recoElectronPhiError_.clear();
+    recoElectronAngularRes_.clear();
     recoElectronE_.clear();
     recoElectronPx_.clear();
     recoElectronPy_.clear();
@@ -374,7 +383,10 @@ void NtupleContainer::ClearTreeBranches() {
     nElectronLowPt_ = 0;
     recoLowPtElectronPt_.clear();
     recoLowPtElectronEta_.clear();
+    recoLowPtElectronEtaError_.clear();
     recoLowPtElectronPhi_.clear();
+    recoLowPtElectronPhiError_.clear();
+    recoLowPtElectronAngularRes_.clear();
     recoLowPtElectronE_.clear();
     recoLowPtElectronPx_.clear();
     recoLowPtElectronPy_.clear();

@@ -62,7 +62,10 @@ public:
     int nElectronDefault_;
     vector<float> recoElectronPt_;
     vector<float> recoElectronEta_;
+    vector<float> recoElectronEtaError_;
     vector<float> recoElectronPhi_;
+    vector<float> recoElectronPhiError_;
+    vector<float> recoElectronAngularRes_;
     vector<float> recoElectronE_;
     vector<float> recoElectronPx_;
     vector<float> recoElectronPy_;
@@ -85,7 +88,10 @@ public:
     int nElectronLowPt_;
     vector<float> recoLowPtElectronPt_;
     vector<float> recoLowPtElectronEta_;
+    vector<float> recoLowPtElectronEtaError_;
     vector<float> recoLowPtElectronPhi_;
+    vector<float> recoLowPtElectronPhiError_;
+    vector<float> recoLowPtElectronAngularRes_;
     vector<float> recoLowPtElectronE_;
     vector<float> recoLowPtElectronPx_;
     vector<float> recoLowPtElectronPy_;

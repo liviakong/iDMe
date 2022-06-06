@@ -11,8 +11,37 @@ def loadHistoFiles(location):
     files = [f for f in os.listdir(location) if ".coffea" in f]
     histos = {}
     for f in files:
-        htemp = util.load(location+"/"+f)[0]
+        htemp = util.load(location+"/"+f)
+        if type(htemp) == tuple:
+            htemp = htemp[0]
         for hname in list(htemp.keys()):
+            if hname not in histos.keys():
+                histos[hname] = htemp[hname].copy()
+            else:
+                histos[hname] += htemp[hname]
+    return histos
+
+def loadHistoFromFiles(location,hname):
+    files = [f for f in os.listdir(location) if ".coffea" in f]
+    histo = -1
+    for f in files:
+        htemp = util.load(location+"/"+f)
+        if type(htemp) == tuple:
+            htemp = htemp[0]
+        if histo == -1:
+            histo = htemp[hname].copy()
+        else:
+            histo += htemp[hname]
+    return histo
+
+def loadHistosFromFiles(location,hnames):
+    files = [f for f in os.listdir(location) if ".coffea" in f]
+    histos = {}
+    for f in files:
+        htemp = util.load(location+"/"+f)
+        if type(htemp) == tuple:
+            htemp = htemp[0]
+        for hname in hnames:
             if hname not in histos.keys():
                 histos[hname] = htemp[hname].copy()
             else:
@@ -57,6 +86,6 @@ def reduceSampleName(name,lifetime=False,mass=False,full=False,verbosity=0):
         if verbosity == 2: output = r"$m_\chi = {0}$ GeV, $\Delta m_\chi = {1}$ GeV".format(m,dm)
     return output
 
-def setDefaultStyle():
-    mpl.rcParams["font.size"] = 14
+def setDefaultStyle(fontsize=14):
+    mpl.rcParams["font.size"] = fontsize
     mpl.rcParams["figure.figsize"] = (10,8)

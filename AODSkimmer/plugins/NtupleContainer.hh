@@ -42,6 +42,61 @@ public:
     vector<float> genVx_;
     vector<float> genVy_;
     vector<float> genMass_;
+
+    // Gen Electron & Positron from iDM signal
+    int genEleCharge_;
+    float genElePt_;
+    float genEleEta_;
+    float genElePhi_;
+    float genEleEn_;
+    float genElePx_;
+    float genElePy_;
+    float genElePz_;
+    float genEleVxy_;
+    float genEleVz_;
+    float genEleVx_;
+    float genEleVy_;
+    int genEleBestMatchType_;
+    int genEleBestMatchInd_;
+    float genEleBestMatchDr_;
+    int genEleBestMatchType_withCands_;
+    int genEleBestMatchInd_withCands_;
+    float genEleBestMatchDr_withCands_;
+    int nGenEleMatches_;
+    vector<int> genEleMatchTypes_;
+    vector<int> genEleMatchInds_;
+    vector<float> genEleMatchDrs_;
+
+    int genPosCharge_;
+    float genPosPt_;
+    float genPosEta_;
+    float genPosPhi_;
+    float genPosEn_;
+    float genPosPx_;
+    float genPosPy_;
+    float genPosPz_;
+    float genPosVxy_;
+    float genPosVz_;
+    float genPosVx_;
+    float genPosVy_;
+    int genPosBestMatchType_;
+    int genPosBestMatchInd_;
+    float genPosBestMatchDr_;
+    int genPosBestMatchType_withCands_;
+    int genPosBestMatchInd_withCands_;
+    float genPosBestMatchDr_withCands_;
+    int nGenPosMatches_;
+    vector<int> genPosMatchTypes_;
+    vector<int> genPosMatchInds_;
+    vector<float> genPosMatchDrs_;
+
+    // Gen Electron + Positron info
+    float genEEPt_;
+    float genEEEta_;
+    float genEEPhi_;
+    float genEEEn_;
+    float genEEMass_;
+    float genEEdR_;
     
    // Gen jet
     int nGenJet_;
@@ -62,7 +117,10 @@ public:
     int nElectronDefault_;
     vector<float> recoElectronPt_;
     vector<float> recoElectronEta_;
+    vector<float> recoElectronEtaError_;
     vector<float> recoElectronPhi_;
+    vector<float> recoElectronPhiError_;
+    vector<float> recoElectronAngularRes_;
     vector<float> recoElectronE_;
     vector<float> recoElectronPx_;
     vector<float> recoElectronPy_;
@@ -79,13 +137,15 @@ public:
     vector<int> recoElectronTrkNumPixHits_;
     vector<int> recoElectronTrkNumStripHits_;
     vector<int> recoElectronCharge_;
-    vector<int> recoElectron_passConversionVeto_;
 
     // Low pT electrons
     int nElectronLowPt_;
     vector<float> recoLowPtElectronPt_;
     vector<float> recoLowPtElectronEta_;
+    vector<float> recoLowPtElectronEtaError_;
     vector<float> recoLowPtElectronPhi_;
+    vector<float> recoLowPtElectronPhiError_;
+    vector<float> recoLowPtElectronAngularRes_;
     vector<float> recoLowPtElectronE_;
     vector<float> recoLowPtElectronPx_;
     vector<float> recoLowPtElectronPy_;
@@ -102,7 +162,6 @@ public:
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;
     vector<int> recoLowPtElectronCharge_;
-    vector<int> recoLowPtElectron_passConversionVeto_;
 
     // Photons
     int nPhotons_;
@@ -178,6 +237,7 @@ public:
     vector<float> RRvtx_recoVtxVy_;
     vector<float> RRvtx_recoVtxVz_;
     vector<float> RRvtx_recoVtxReducedChi2_;
+    vector<float> RRvtx_prob_;
     vector<float> RRvtx_recoVtxDr_;
     vector<int> RRvtx_recoVtxSign_;
     vector<float> RRvtx_ll_pt_;
@@ -198,6 +258,7 @@ public:
     vector<float> LLvtx_recoVtxVy_;
     vector<float> LLvtx_recoVtxVz_;
     vector<float> LLvtx_recoVtxReducedChi2_;
+    vector<float> LLvtx_prob_;
     vector<float> LLvtx_recoVtxDr_;
     vector<int> LLvtx_recoVtxSign_;
     vector<float> LLvtx_ll_pt_;
@@ -218,6 +279,7 @@ public:
     vector<float> LRvtx_recoVtxVy_;
     vector<float> LRvtx_recoVtxVz_;
     vector<float> LRvtx_recoVtxReducedChi2_;
+    vector<float> LRvtx_prob_;
     vector<float> LRvtx_recoVtxDr_;
     vector<int> LRvtx_recoVtxSign_;
     vector<float> LRvtx_ll_pt_;
@@ -238,6 +300,7 @@ public:
     vector<float> RCvtx_recoVtxVy_;
     vector<float> RCvtx_recoVtxVz_;
     vector<float> RCvtx_recoVtxReducedChi2_;
+    vector<float> RCvtx_prob_;
     vector<float> RCvtx_recoVtxDr_;
     vector<int> RCvtx_recoVtxSign_;
     vector<float> RCvtx_ll_pt_;
@@ -258,6 +321,7 @@ public:
     vector<float> LCvtx_recoVtxVy_;
     vector<float> LCvtx_recoVtxVz_;
     vector<float> LCvtx_recoVtxReducedChi2_;
+    vector<float> LCvtx_prob_;
     vector<float> LCvtx_recoVtxDr_;
     vector<int> LCvtx_recoVtxSign_;
     vector<float> LCvtx_ll_pt_;

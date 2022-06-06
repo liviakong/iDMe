@@ -39,8 +39,99 @@ def findMatches(gen1,gen2,reco,recoType):
     i1, t1, dr1 = findNearestReco(gen1,reco,recoType)
     i2, t2, dr2 = findNearestReco(gen2,reco,recoType)
     return i1, t1, dr1, i2, t2, dr2
+
+def findUniqueMatches(ele_matches,best_ele_match,pos_matches,best_pos_match,useCands=False,allow11=False):
+    if not useCands:
+        ele_matches = ele_matches[ele_matches.typ != 3]
+        pos_matches = pos_matches[pos_matches.typ != 3]
+    numE = ak.count(ele_matches.typ,axis=1)
+    numP = ak.count(pos_matches.typ,axis=1)
+    idx = ak.Array(np.arange(len(best_ele_match)))
+
+    partitions = []
+    ele = []
+    pos = []
+
+    for i in range(1):
+        # removing events where one or more objects has no match
+        cutA = (numE > 0) & (numP > 0)
+        ele.append(best_ele_match[~cutA])
+        pos.append(best_pos_match[~cutA])
+        partitions.append(idx[~cutA])
+        ele_matches = ele_matches[cutA]
+        best_ele_match = best_ele_match[cutA]
+        pos_matches = pos_matches[cutA]
+        best_pos_match = best_pos_match[cutA]
+        idx = idx[cutA]
+        numE = numE[cutA]
+        numP = numP[cutA]
+
+        if len(numE) == 0:
+            break
+
+        # remove events with distinct match
+        cutB = (best_ele_match.typ == best_pos_match.typ) & (best_ele_match.ind == best_pos_match.ind)
+        ele.append(best_ele_match[~cutB])
+        pos.append(best_pos_match[~cutB])
+        partitions.append(idx[~cutB])
+        ele_matches = ele_matches[cutB]
+        best_ele_match = best_ele_match[cutB]
+        pos_matches = pos_matches[cutB]
+        best_pos_match = best_pos_match[cutB]
+        idx = idx[cutB]
+        numE = numE[cutB]
+        numP = numP[cutB]
+
+        if len(numP) == 0:
+            break
+
+        # sorting remaining matches by dR
+        sort_ele = ak.argsort(ele_matches.dr,axis=1)
+        sort_pos = ak.argsort(pos_matches.dr,axis=1)
+        ele_matches = ele_matches[sort_ele]
+        pos_matches = pos_matches[sort_pos]
+        
+        cutC = (numE == 1) & (numP == 1)
+        cutD = (numE >= 2) & (numP == 1)
+        cutE = (numE == 1) & (numP >= 2)
+        cutF = (numE >= 2) & (numP >= 2)
+
+        if ak.count_nonzero(cutC) > 0:
+            ele_best = best_ele_match[cutC]
+            pos_best = best_pos_match[cutC]
+            if not allow11:
+                ele_best = ak.where(ele_best.dr < pos_best.dr,ele_best,ak.full_like(ele_best,0))
+                pos_best = ak.where(pos_best.dr < ele_best.dr,pos_best,ak.full_like(pos_best,0))
+            ele.append(ele_best)
+            pos.append(pos_best)
+            partitions.append(idx[cutC])
+        if ak.count_nonzero(cutD) > 0:
+            ele_best = ele_matches[cutD][:,1]
+            pos_best = best_pos_match[cutD]
+            ele.append(ele_best)
+            pos.append(pos_best)
+            partitions.append(idx[cutD])
+        if ak.count_nonzero(cutE) > 0:
+            ele_best = best_ele_match[cutE]
+            pos_best = pos_matches[cutE][:,1]
+            ele.append(ele_best)
+            pos.append(pos_best)
+            partitions.append(idx[cutE])
+        if ak.count_nonzero(cutF) > 0:
+            ele_best = ak.where(best_ele_match[cutF].dr < best_pos_match[cutF].dr,ele_matches[cutF][:,0],ele_matches[cutF][:,1])
+            pos_best = ak.where(best_pos_match[cutF].dr < best_ele_match[cutF].dr,pos_matches[cutF][:,0],pos_matches[cutF][:,1])
+            ele.append(ele_best)
+            pos.append(pos_best)
+            partitions.append(idx[cutF])
     
-def findUniqueMatches(gen1,gen2,reco,recoType,allow11=False):
+    all_partitions = ak.concatenate(partitions)
+    reorder = ak.argsort(all_partitions)
+    ele_out = ak.concatenate(ele)[reorder]
+    pos_out = ak.concatenate(pos)[reorder]
+
+    return ele_out, pos_out
+
+def findUniqueMatches_old(gen1,gen2,reco,recoType,allow11=False):
     i1, t1, dr1 = findNearestReco(gen1,reco,recoType)
     i2, t2, dr2 = findNearestReco(gen2,reco,recoType)
     n1 = ak.count(i1,axis=1)
@@ -96,8 +187,8 @@ def findUniqueMatches(gen1,gen2,reco,recoType,allow11=False):
         if len(n1) == 0: break
 
         cutC = (n1 == 1) & (n2 == 1) # if both matched only to the same thing, then take the match with smaller dR
-        cutD = (n1 == 2) & (n2 == 1) 
-        cutE = (n1 == 1) & (n2 == 2)
+        cutD = (n1 >= 2) & (n2 == 1) 
+        cutE = (n1 == 1) & (n2 >= 2)
         cutF = (n1 >= 2) & (n2 >= 2)
 
         if ak.count_nonzero(cutC) > 0: # if both matched only to the same thing, then take the match with smaller dR
@@ -182,24 +273,27 @@ def findUniqueMatches(gen1,gen2,reco,recoType,allow11=False):
 def electron_basics(events,histos,samp):
     eles = events.Electron
     lpt_eles = events.LptElectron
-    gen_eles = events.GenPart[np.abs(events.GenPart.ID) == 11]
+    cand_eles = events.EleCand
 
     ele_kin = histos['ele_kinematics']
     ele_trkHits = histos['ele_trackHits']
     ele_trkQual = histos['ele_trackQual']
 
-    ele_kin.fill(sample=samp,ele_type="Generator",
-                        pt=ak.flatten(gen_eles.pt),eta=ak.flatten(gen_eles.eta),phi=ak.flatten(gen_eles.phi))
     ele_kin.fill(sample=samp,
                 ele_type="Default",
                 pt=ak.flatten(eles.pt),
                 eta=ak.flatten(eles.eta),
                 phi=ak.flatten(eles.phi))
     ele_kin.fill(sample=samp,
-                ele_type="lowpt",
+                ele_type="Low pT",
                 pt=ak.flatten(lpt_eles.pt),
                 eta=ak.flatten(lpt_eles.eta),
                 phi=ak.flatten(lpt_eles.phi))
+    ele_kin.fill(sample=samp,
+                ele_type="Candidate",
+                pt=ak.flatten(cand_eles.pt),
+                eta=ak.flatten(cand_eles.eta),
+                phi=ak.flatten(cand_eles.phi))
     
     ele_trkHits.fill(sample=samp,
                     ele_type="Default",
@@ -207,19 +301,28 @@ def electron_basics(events,histos,samp):
                     numPixHits=ak.flatten(eles.numPixHits),
                     numStripHits=ak.flatten(eles.numStripHits))
     ele_trkHits.fill(sample=samp,
-                    ele_type="lowpt",
+                    ele_type="Low pT",
                     numTrkHits=ak.flatten(lpt_eles.numTrackerHits),
                     numPixHits=ak.flatten(lpt_eles.numPixHits),
                     numStripHits=ak.flatten(lpt_eles.numStripHits))
+    ele_trkHits.fill(sample=samp,
+                    ele_type="Candidate",
+                    numTrkHits=ak.flatten(cand_eles.numTrackerHits),
+                    numPixHits=ak.flatten(cand_eles.numPixHits),
+                    numStripHits=ak.flatten(cand_eles.numStripHits))
 
     ele_trkQual.fill(sample=samp,
                     ele_type="Default",
                     chi2=ak.flatten(eles.trkChi2),
                     trkIso=ak.flatten(eles.trkIso))
     ele_trkQual.fill(sample=samp,
-                    ele_type="lowpt",
+                    ele_type="Low pT",
                     chi2=ak.flatten(lpt_eles.trkChi2),
                     trkIso=ak.flatten(lpt_eles.trkIso))
+    ele_trkQual.fill(sample=samp,
+                    ele_type="Candidate",
+                    chi2=ak.flatten(cand_eles.trkChi2),
+                    trkIso=ak.flatten(cand_eles.trkIso))
     
     return histos
 
@@ -237,177 +340,198 @@ def ele_genMatching(events,histos,samp):
     ele = events.Electron
     lpt_ele = events.LptElectron
     cand_ele = events.EleCand
-    gen_ele = ak.flatten(events.GenPart[events.GenPart.ID == 11])
-    gen_pos = ak.flatten(events.GenPart[events.GenPart.ID == -11])
+    gen_ele = events.GenEle
+    gen_pos = events.GenPos
+
+    ele_matches = events.GenEleMatches
+    pos_matches = events.GenPosMatches
+    ele_match = events.GenEleMatch
+    pos_match = events.GenPosMatch
+    ele_matchC = events.GenEleMatchC
+    pos_matchC = events.GenPosMatchC
 
     # define labels for electron types & concatenate into larger collection
-    ele_RL = ak.concatenate([ele,lpt_ele],axis=1)
-    type_RL = ak.concatenate([ak.ones_like(ele.pt),2*ak.ones_like(lpt_ele.pt)],axis=1)
-    ele_RLC = ak.concatenate([ele_RL,cand_ele],axis=1)
-    type_RLC = ak.concatenate([type_RL,3*ak.ones_like(cand_ele.pt)],axis=1)
-    
-    # matching gen e/p to reco using regular & low-pT electrons
-    indE_RL, typeE_RL, drE_RL, indP_RL, typeP_RL, drP_RL = findUniqueMatches(gen_ele,gen_pos,ele_RL,type_RL) # unique matches
-    indE_RL_all, typeE_RL_all, drE_RL_all, indP_RL_all, typeP_RL_all, drP_RL_all = findMatches(gen_ele,gen_pos,ele_RL,type_RL) # all matches 
-    indE_RL_11, typeE_RL_11, drE_RL_11, indP_RL_11, typeP_RL_11, drP_RL_11 = findUniqueMatches(gen_ele,gen_pos,ele_RL,type_RL,allow11=True) # unique except degenerate where e & p only have 1 match 
-    
-    # matching gen e/p to reco using regular, low-pT, and candidate electrons
-    indE_RLC, typeE_RLC, drE_RLC, indP_RLC, typeP_RLC, drP_RLC = findUniqueMatches(gen_ele,gen_pos,ele_RLC,type_RLC) # unique matches
-    indE_RLC_all, typeE_RLC_all, drE_RLC_all, indP_RLC_all, typeP_RLC_all, drP_RLC_all = findMatches(gen_ele,gen_pos,ele_RLC,type_RLC) # all matches 
-    indE_RLC_11, typeE_RLC_11, drE_RLC_11, indP_RLC_11, typeP_RLC_11, drP_RLC_11 = findUniqueMatches(gen_ele,gen_pos,ele_RLC,type_RLC,allow11=True) # unique except degenerate where e & p only have 1 match
-
-    # replacing -1s with 0s for the match types
-    typeE_RL = np.where(typeE_RL == -1,ak.zeros_like(typeE_RL),typeE_RL)
-    typeP_RL = np.where(typeP_RL == -1,ak.zeros_like(typeP_RL),typeP_RL)
-    typeE_RL_11 = np.where(typeE_RL_11 == -1,ak.zeros_like(typeE_RL_11),typeE_RL_11)
-    typeP_RL_11 = np.where(typeP_RL_11 == -1,ak.zeros_like(typeP_RL_11),typeP_RL_11)
-    typeE_RLC = np.where(typeE_RLC == -1,ak.zeros_like(typeE_RLC),typeE_RLC)
-    typeP_RLC = np.where(typeP_RLC == -1,ak.zeros_like(typeP_RLC),typeP_RLC)
-    typeE_RLC_11 = np.where(typeE_RLC_11 == -1,ak.zeros_like(typeE_RLC_11),typeE_RLC_11)
-    typeP_RLC_11 = np.where(typeP_RLC_11 == -1,ak.zeros_like(typeP_RLC_11),typeP_RLC_11)
+    ematch, pmatch = findUniqueMatches(ele_matches,ele_match,pos_matches,pos_match)
+    ematch11, pmatch11 = findUniqueMatches(ele_matches,ele_match,pos_matches,pos_match,allow11=True)
+    ematchC, pmatchC = findUniqueMatches(ele_matches,ele_matchC,pos_matches,pos_matchC,useCands=True)
+    ematchC11, pmatchC11 = findUniqueMatches(ele_matches,ele_matchC,pos_matches,pos_matchC,allow11=True,useCands=True)
 
     # calculating other useful quantities
-    nEmatch_RL = ak.count(typeE_RL_all,axis=1)
-    nPmatch_RL = ak.count(typeP_RL_all,axis=1)
-    nEmatch_RLC = ak.count(typeE_RLC_all,axis=1)
-    nPmatch_RLC = ak.count(typeP_RLC_all,axis=1)
+    nEmatch = ak.count(ele_matches[ele_matches.typ != 3].dr,axis=1)
+    nPmatch = ak.count(pos_matches[pos_matches.typ != 3].dr,axis=1)
+    nEmatchC = ak.count(ele_matches.dr,axis=1)
+    nPmatchC = ak.count(pos_matches.dr,axis=1)
 
     # determining e+e- "match classes" for each event
-    zeros = ak.zeros_like(typeE_RL) # generic vector of zeros for each event
-    ones = ak.zeros_like(typeE_RL) # generic vector fo ones for each event
+    zeros = ak.zeros_like(ematch.typ) # generic vector of zeros for each event
+    ones = ak.ones_like(ematch.typ) # generic vector fo ones for each event
     
-    noMatch_RL = (typeE_RL_11 == 0) & (typeP_RL_11 == 0)
-    oneMatch_RL = ((typeE_RL_11 != 0) & (typeP_RL_11 == 0)) | ((typeE_RL_11 == 0) & (typeP_RL_11 != 0))
-    degenMatch_RL = (typeE_RL_11 != 0) & (typeP_RL_11 != 0) & (typeE_RL == typeP_RL)
-    uniqMatch_RL = (typeE_RL_11 != 0) & (typeP_RL_11 != 0) & (typeE_RL != typeP_RL)
-    matchClass_RL = ak.where(noMatch_RL,zeros,-1*ones)
-    matchClass_RL = ak.where(oneMatch_RL,ones,matchClass_RL)
-    matchClass_RL = ak.where(degenMatch_RL,2*ones,matchClass_RL)
-    matchClass_RL = ak.where(uniqMatch_RL,3*ones,matchClass_RL)
+    noMatch = (ematch11.typ == 0) & (pmatch11.typ == 0)
+    oneMatch = ((ematch11.typ != 0) & (pmatch11.typ == 0)) | ((ematch11.typ == 0) & (pmatch11.typ != 0))
+    degenMatch = (ematch11.typ != 0) & (pmatch11.typ != 0) & ((ematch11.typ == pmatch11.typ) & (ematch11.ind == pmatch11.ind))
+    uniqMatch = (ematch11.typ != 0) & (pmatch11.typ != 0) & ((ematch11.typ != pmatch11.typ) | (ematch11.ind != pmatch11.ind))
+    matchClass = ak.where(noMatch,zeros,-1*ones)
+    matchClass = ak.where(oneMatch,ones,matchClass)
+    matchClass = ak.where(degenMatch,2*ones,matchClass)
+    matchClass = ak.where(uniqMatch,3*ones,matchClass)
 
-    noMatch_RLC = (typeE_RLC_11 == 0) & (typeP_RLC_11 == 0)
-    oneMatch_RLC = ((typeE_RLC_11 != 0) & (typeP_RLC_11 == 0)) | ((typeE_RLC_11 == 0) & (typeP_RLC_11 != 0))
-    degenMatch_RLC = (typeE_RLC_11 != 0) & (typeP_RLC_11 != 0) & (typeE_RLC == typeP_RLC)
-    uniqMatch_RLC = (typeE_RLC_11 != 0) & (typeP_RLC_11 != 0) & (typeE_RLC != typeP_RLC)
-    matchClass_RLC = ak.where(noMatch_RLC,zeros,-1*ones)
-    matchClass_RLC = ak.where(oneMatch_RLC,ones,matchClass_RLC)
-    matchClass_RLC = ak.where(degenMatch_RLC,2*ones,matchClass_RLC)
-    matchClass_RLC = ak.where(uniqMatch_RLC,3*ones,matchClass_RLC)
+    noMatchC = (ematchC11.typ == 0) & (pmatchC11.typ == 0)
+    oneMatchC = ((ematchC11.typ != 0) & (pmatchC11.typ == 0)) | ((ematchC11.typ == 0) & (pmatchC11.typ != 0))
+    degenMatchC = (ematchC11.typ != 0) & (pmatchC11.typ != 0) & ((ematchC11.typ == pmatchC11.typ) & (ematchC11.ind == pmatchC11.ind))
+    uniqMatchC = (ematchC11.typ != 0) & (pmatchC11.typ != 0) & ((ematchC11.typ != pmatchC11.typ) | (ematchC11.ind != pmatchC11.ind))
+    matchClassC = ak.where(noMatchC,zeros,-1*ones)
+    matchClassC = ak.where(oneMatchC,ones,matchClassC)
+    matchClassC = ak.where(degenMatchC,2*ones,matchClassC)
+    matchClassC = ak.where(uniqMatchC,3*ones,matchClassC)
 
     # Fill match matrices, reg & low-pT matching
     match_mtx.fill(sample=samp,
                     set="RL",
                     scheme="unique",
-                    Etype=typeE_RL,
-                    Ptype=typeP_RL)
+                    Etype=ematch.typ,
+                    Ptype=pmatch.typ)
     match_mtx.fill(sample=samp,
                     set="RL",
                     scheme="nearUnique",
-                    Etype=typeE_RL_11,
-                    Ptype=typeP_RL_11)
+                    Etype=ematch11.typ,
+                    Ptype=pmatch11.typ)
     # Fill match matrices, reg & low-pT & cand matching
     match_mtx.fill(sample=samp,
                     set="RLC",
                     scheme="unique",
-                    Etype=typeE_RLC,
-                    Ptype=typeP_RLC)
+                    Etype=ematchC.typ,
+                    Ptype=pmatchC.typ)
     match_mtx.fill(sample=samp,
                     set="RLC",
                     scheme="nearUnique",
-                    Etype=typeE_RLC_11,
-                    Ptype=typeP_RLC_11)
+                    Etype=ematchC11.typ,
+                    Ptype=pmatchC11.typ)
     
     # Filling number-of-match matrices
     nMatch_mtx.fill(sample=samp,
                     set="RL",
-                    nEmatch=nEmatch_RL,
-                    nPmatch=nPmatch_RL)
+                    nEmatch=nEmatch,
+                    nPmatch=nPmatch)
     nMatch_mtx.fill(sample=samp,
                     set="RLC",
-                    nEmatch=nEmatch_RLC,
-                    nPmatch=nPmatch_RLC)
+                    nEmatch=nEmatchC,
+                    nPmatch=nPmatchC)
 
     # Filling match class matrices
     match_class.fill(sample=samp,
                     set="RL",
-                    matchClass=matchClass_RL)
+                    matchClass=matchClass)
     match_class.fill(sample=samp,
                     set="RLC",
-                    matchClass=matchClass_RLC)
+                    matchClass=matchClassC)
 
     # Preparing variables and filling matched kinematic histograms
-    matched_ele_RL = ak.flatten(ele_RL[indE_RL[indE_RL != -1]])
-    matched_pos_RL = ak.flatten(ele_RL[indP_RL[indP_RL != -1]])
-    matched_ele_RLC = ak.flatten(ele_RLC[indE_RLC[indE_RLC != -1]])
-    matched_pos_RLC = ak.flatten(ele_RLC[indP_RLC[indP_RLC != -1]])
-    matches_RL = ak.concatenate([matched_ele_RL,matched_pos_RL])
-    matches_RLC = ak.concatenate([matched_ele_RLC,matched_pos_RLC])
+    mask_e1 = ematch.typ == 1
+    mask_e2 = ematch.typ == 2
+    mask_p1 = pmatch.typ == 1
+    mask_p2 = pmatch.typ == 2
+    matches_e1 = ak.flatten(events.Electron[mask_e1][ak.Array(ematch[mask_e1].ind[:,np.newaxis].to_list())])
+    matches_e2 = ak.flatten(events.LptElectron[mask_e2][ak.Array(ematch[mask_e2].ind[:,np.newaxis].to_list())])
+    matches_ele = ak.concatenate([matches_e1,matches_e2])
+    matches_p1 = ak.flatten(events.Electron[mask_p1][ak.Array(pmatch[mask_p1].ind[:,np.newaxis].to_list())])
+    matches_p2 = ak.flatten(events.LptElectron[mask_p2][ak.Array(pmatch[mask_p2].ind[:,np.newaxis].to_list())])
+    matches_pos = ak.concatenate([matches_p1,matches_p2])
+    matches = ak.concatenate([matches_ele,matches_pos])
 
-    matched_gen_ele_RL = gen_ele[typeE_RL > 0]
-    matched_gen_pos_RL = gen_pos[typeP_RL > 0]
-    matched_gen_ele_RLC = gen_ele[typeE_RLC > 0]
-    matched_gen_pos_RLC = gen_pos[typeP_RLC > 0]
-    matches_gen_RL = ak.concatenate([matched_gen_ele_RL,matched_gen_pos_RL])
-    matches_gen_RLC = ak.concatenate([matched_gen_ele_RLC,matched_gen_pos_RLC])
+    mask_e1C = ematchC.typ == 1
+    mask_e2C = ematchC.typ == 2
+    mask_e3C = ematchC.typ == 3
+    mask_p1C = pmatchC.typ == 1
+    mask_p2C = pmatchC.typ == 2
+    mask_p3C = pmatchC.typ == 3
+    matches_e1C = ak.flatten(events.Electron[mask_e1C][ak.Array(ematchC[mask_e1C].ind[:,np.newaxis].to_list())])
+    matches_e2C = ak.flatten(events.LptElectron[mask_e2C][ak.Array(ematchC[mask_e2C].ind[:,np.newaxis].to_list())])
+    matches_e3C = ak.flatten(events.EleCand[mask_e3C][ak.Array(ematchC[mask_e3C].ind[:,np.newaxis].to_list())])
+    matches_eleC = ak.concatenate([matches_e1C,matches_e2C,matches_e3C])
+    matches_p1C = ak.flatten(events.Electron[mask_p1C][ak.Array(pmatchC[mask_p1C].ind[:,np.newaxis].to_list())])
+    matches_p2C = ak.flatten(events.LptElectron[mask_p2C][ak.Array(pmatchC[mask_p2C].ind[:,np.newaxis].to_list())])
+    matches_p3C = ak.flatten(events.EleCand[mask_p3C][ak.Array(pmatchC[mask_p3C].ind[:,np.newaxis].to_list())])
+    matches_posC = ak.concatenate([matches_p1C,matches_p2C,matches_p3C])
+    matchesC = ak.concatenate([matches_eleC,matches_posC])
+
+    matches_gen_ele = gen_ele[ematch.typ != 0]
+    matches_gen_pos = gen_pos[pmatch.typ != 0]
+    matches_gen = ak.concatenate([matches_gen_ele,matches_gen_pos])
+
+    matches_gen_eleC = gen_ele[ematchC.typ != 0]
+    matches_gen_posC = gen_pos[pmatchC.typ != 0]
+    matches_genC = ak.concatenate([matches_gen_eleC,matches_gen_posC])
 
     # Filling with reg/lowpT matches
     match_ele_kin.fill(sample=samp,
                         set="RL",
-                        pt=matches_RL.pt,
-                        eta=matches_RL.eta,
-                        phi=matches_RL.phi)
+                        pt=matches.pt,
+                        eta=matches.eta,
+                        phi=matches.phi)
     match_ele_gen_kin.fill(sample=samp,
                             set="RL",
-                            pt=matches_gen_RL.pt,
-                            eta=matches_gen_RL.eta,
-                            phi=matches_gen_RL.phi)
+                            pt=matches_gen.pt,
+                            eta=matches_gen.eta,
+                            phi=matches_gen.phi)
     match_ele_trkHits.fill(sample=samp,
                             set="RL",
-                            numTrkHits=matches_RL.numTrackerHits,
-                            numPixHits=matches_RL.numPixHits,
-                            numStripHits=matches_RL.numStripHits)
+                            numTrkHits=matches.numTrackerHits,
+                            numPixHits=matches.numPixHits,
+                            numStripHits=matches.numStripHits)
     match_ele_trkQual.fill(sample=samp,
                             set="RL",
-                            chi2=matches_RL.trkChi2,
-                            trkIso=matches_RL.trkIso)
+                            chi2=matches.trkChi2,
+                            trkIso=matches.trkIso)
     match_ele_gen_disp.fill(sample=samp,
                             set="RL",
-                            vxy=matches_gen_RL.vxy,
-                            vz=matches_gen_RL.vz)
+                            vxy=matches_gen.vxy,
+                            vz=matches_gen.vz)
     
     # Filling with reg/lowpT/cand matches
     match_ele_kin.fill(sample=samp,
                         set="RLC",
-                        pt=matches_RLC.pt,
-                        eta=matches_RLC.eta,
-                        phi=matches_RLC.phi)
+                        pt=matchesC.pt,
+                        eta=matchesC.eta,
+                        phi=matchesC.phi)
     match_ele_gen_kin.fill(sample=samp,
                             set="RLC",
-                            pt=matches_gen_RLC.pt,
-                            eta=matches_gen_RLC.eta,
-                            phi=matches_gen_RLC.phi)
+                            pt=matches_genC.pt,
+                            eta=matches_genC.eta,
+                            phi=matches_genC.phi)
     match_ele_trkHits.fill(sample=samp,
                             set="RLC",
-                            numTrkHits=matches_RLC.numTrackerHits,
-                            numPixHits=matches_RLC.numPixHits,
-                            numStripHits=matches_RLC.numStripHits)
+                            numTrkHits=matchesC.numTrackerHits,
+                            numPixHits=matchesC.numPixHits,
+                            numStripHits=matchesC.numStripHits)
     match_ele_trkQual.fill(sample=samp,
                             set="RLC",
-                            chi2=matches_RLC.trkChi2,
-                            trkIso=matches_RLC.trkIso)
+                            chi2=matchesC.trkChi2,
+                            trkIso=matchesC.trkIso)
     match_ele_gen_disp.fill(sample=samp,
                             set="RLC",
-                            vxy=matches_gen_RLC.vxy,
-                            vz=matches_gen_RLC.vz)
+                            vxy=matches_genC.vxy,
+                            vz=matches_genC.vz)
     
     return histos
 
 def genParticles(events,histos,samp):
-    gen_eles = events.GenPart[np.abs(events.GenPart.ID) == 11]
     gen_ele_disp = histos['gen_displacement']
+    ele_kin = histos['ele_kinematics']
+    ee_kin = histos["gen_ee_kinematics"]
+
+    gen_eles = ak.concatenate([events.GenEle,events.GenPos])
+    gen_ele = events.GenEle
+    gen_pos = events.GenPos
+    ee = events.genEE
+
+    ele_kin.fill(sample=samp,ele_type="Generator",
+                        pt=gen_eles.pt,eta=gen_eles.eta,phi=gen_eles.phi)
     gen_ele_disp.fill(sample=samp,
-                        vxy=ak.flatten(gen_eles.vxy),
-                        vz=ak.flatten(gen_eles.vz))
+                        vxy=gen_eles.vxy,
+                        vz=gen_eles.vz)
+    ee_kin.fill(sample=samp,
+                mass=ee.mass,
+                dR=ee.dr)
     
     return histos
 
@@ -574,6 +698,9 @@ def recoEE_vertices(events,histos,samp):
     vtx_rr = events.RRvtx
     vtx_ll = events.LLvtx
     vtx_lr = events.LRvtx
+    n_rr = ak.count(vtx_rr.vxy,axis=1)
+    n_ll = ak.count(vtx_ll.vxy,axis=1)
+    n_lr = ak.count(vtx_lr.vxy,axis=1)
     # Selecting only the entries with a valid vertex, i.e. vxy > 0
     vtx_rr = vtx_rr[vtx_rr.vxy > 0]
     vtx_ll = vtx_ll[vtx_ll.vxy > 0]
@@ -634,6 +761,49 @@ def recoEE_vertices(events,histos,samp):
                             chi2=ak.flatten(vtx_lr[opp_lr].reduced_chi2),
                             signif=ak.flatten(vtx_lr[opp_lr].vxy/vtx_lr[opp_lr].sigmavxy))
     
+    # Looking at displaced dilepton vertices found by standalone algorithms
+    h_dEE_kin = histos["dispEE_vtx_kinematics"]
+    h_dEE_qual = histos["dispEE_vtx_qual"]
+    h_dEE_eff = histos["dispEE_eff"]
+
+    dEE = events.EECand
+    dEE_vxy = np.sqrt(dEE.vx**2 + dEE.vy**2)
+    ndEE = ak.count(dEE.dR,axis=1)
+    has_dEE = ndEE > 0
+
+    # Masks for denominator categories
+    noRegVtx = (n_rr == 0) & (n_lr == 0) & (n_ll == 0)
+
+    # inclusive
+    h_dEE_eff.fill(sample=samp,
+                    denom="all",
+                    ndEE=ndEE)
+    h_dEE_kin.fill(sample=samp,
+                    denom="all",
+                    mass=ak.flatten(dEE[has_dEE].mass),
+                    leadPt=ak.flatten(dEE[has_dEE].leadingPt),
+                    dR=ak.flatten(dEE[has_dEE].dR))
+    h_dEE_qual.fill(sample=samp,
+                    denom="all",
+                    vxy=ak.flatten(dEE_vxy[has_dEE]),
+                    dxy=ak.flatten(dEE[has_dEE].trackDxy_PV),
+                    chi2=ak.flatten(dEE[has_dEE].normalizedChi2))
+
+    # events with no RR, LR, or LL vertices
+    h_dEE_eff.fill(sample=samp,
+                    denom="noRegVtx",
+                    ndEE=ndEE[noRegVtx])
+    h_dEE_kin.fill(sample=samp,
+                    denom="noRegVtx",
+                    mass=ak.flatten(dEE[has_dEE & noRegVtx].mass),
+                    leadPt=ak.flatten(dEE[has_dEE & noRegVtx].leadingPt),
+                    dR=ak.flatten(dEE[has_dEE & noRegVtx].dR))
+    h_dEE_qual.fill(sample=samp,
+                    denom="noRegVtx",
+                    vxy=ak.flatten(dEE_vxy[has_dEE & noRegVtx]),
+                    dxy=ak.flatten(dEE[has_dEE & noRegVtx].trackDxy_PV),
+                    chi2=ak.flatten(dEE[has_dEE & noRegVtx].normalizedChi2))
+
     return histos
 
 def recoEE_vertices_genMatchDr(events,histos,samp):
@@ -803,78 +973,6 @@ def recoEE_vertices_genMatchDr(events,histos,samp):
     nearest_vtx_matchType.fill(sample=samp,
                                 type=global_nearest)
 
-
-    # Looking at displaced dilepton vertices found by standalone algorithms
-    h_dEE_kin = histos["dispEE_vtx_kinematics"]
-    h_dEE_qual = histos["dispEE_vtx_qual"]
-    h_dEE_eff = histos["dispEE_eff"]
-
-    dEE = events.EECand
-    dEE_vxy = np.sqrt(dEE.vx**2 + dEE.vy**2)
-    ndEE = ak.count(dEE.dR,axis=1)
-    has_dEE = ndEE > 0
-
-    eles_r = ak.zip({"x":events.Electron.eta,"y":events.Electron.phi},with_name="TwoVector")
-    lpt_eles_r = ak.zip({"x":events.LptElectron.eta,"y":events.LptElectron.phi},with_name="TwoVector")
-    gen_ele = events.GenPart[events.GenPart.ID == 11]
-    gen_pos = events.GenPart[events.GenPart.ID == -11]
-    gen_ele_r = ak.flatten(ak.zip({"x":gen_ele.eta,"y":gen_ele.phi},with_name="TwoVector"))
-    gen_pos_r = ak.flatten(ak.zip({"x":gen_pos.eta,"y":gen_pos.phi},with_name="TwoVector"))
-
-    mindr_ee = ak.min((eles_r - gen_ele_r).r,axis=1)
-    mindr_ep = ak.min((eles_r - gen_pos_r).r,axis=1)
-    mindr_lee = ak.min((lpt_eles_r - gen_ele_r).r,axis=1)
-    mindr_lep = ak.min((lpt_eles_r - gen_pos_r).r,axis=1)
-
-    # Masks for denominator categories
-    noRegVtx = (n_rr == 0) & (n_lr == 0) & (n_ll == 0)
-    noGenMatches = ak.fill_none((mindr_ee > 0.1) & (mindr_ep > 0.1) & (mindr_lee > 0.1) & (mindr_lep > 0.1),True)
-
-    # inclusive
-    h_dEE_eff.fill(sample=samp,
-                    denom="all",
-                    ndEE=ndEE)
-    h_dEE_kin.fill(sample=samp,
-                    denom="all",
-                    mass=ak.flatten(dEE[has_dEE].mass),
-                    leadPt=ak.flatten(dEE[has_dEE].leadingPt),
-                    dR=ak.flatten(dEE[has_dEE].dR))
-    h_dEE_qual.fill(sample=samp,
-                    denom="all",
-                    vxy=ak.flatten(dEE_vxy[has_dEE]),
-                    dxy=ak.flatten(dEE[has_dEE].trackDxy_PV),
-                    chi2=ak.flatten(dEE[has_dEE].normalizedChi2))
-
-    # events with no RR, LR, or LL vertices
-    h_dEE_eff.fill(sample=samp,
-                    denom="noRegVtx",
-                    ndEE=ndEE[noRegVtx])
-    h_dEE_kin.fill(sample=samp,
-                    denom="noRegVtx",
-                    mass=ak.flatten(dEE[has_dEE & noRegVtx].mass),
-                    leadPt=ak.flatten(dEE[has_dEE & noRegVtx].leadingPt),
-                    dR=ak.flatten(dEE[has_dEE & noRegVtx].dR))
-    h_dEE_qual.fill(sample=samp,
-                    denom="noRegVtx",
-                    vxy=ak.flatten(dEE_vxy[has_dEE & noRegVtx]),
-                    dxy=ak.flatten(dEE[has_dEE & noRegVtx].trackDxy_PV),
-                    chi2=ak.flatten(dEE[has_dEE & noRegVtx].normalizedChi2))
-
-    # Events with no gen-matched electrons (reg or low-pt)
-    h_dEE_eff.fill(sample=samp,
-                    denom="noGenMatchEles",
-                    ndEE=ndEE[noGenMatches])
-    h_dEE_kin.fill(sample=samp,
-                    denom="noGenMatchEles",
-                    mass=ak.flatten(dEE[has_dEE & noGenMatches].mass),
-                    leadPt=ak.flatten(dEE[has_dEE & noGenMatches].leadingPt),
-                    dR=ak.flatten(dEE[has_dEE & noGenMatches].dR))
-    h_dEE_qual.fill(sample=samp,
-                    denom="noGenMatchEles",
-                    vxy=ak.flatten(dEE_vxy[has_dEE & noGenMatches]),
-                    dxy=ak.flatten(dEE[has_dEE & noGenMatches].trackDxy_PV),
-                    chi2=ak.flatten(dEE[has_dEE & noGenMatches].normalizedChi2))
-
     return histos
 
 def recoEE_vertices_genMatchByEles(events,histos,samp):
@@ -884,94 +982,106 @@ def recoEE_vertices_genMatchByEles(events,histos,samp):
     vtx_lr = events.LRvtx
     vtx_rc = events.RCvtx
     vtx_lc = events.LCvtx
+    vtx_cc = events.dispEE
 
     ele = events.Electron
     lpt_ele = events.LptElectron
     cand_ele = events.EleCand
-    gen_ele = ak.flatten(events.GenPart[events.GenPart.ID == 11])
-    gen_pos = ak.flatten(events.GenPart[events.GenPart.ID == -11])
-    # define labels for electron types & concatenate into larger collection
-    ele_RL = ak.concatenate([ele,lpt_ele],axis=1)
-    type_RL = ak.concatenate([ak.ones_like(ele.pt),2*ak.ones_like(lpt_ele.pt)],axis=1)
-    ele_RLC = ak.concatenate([ele_RL,cand_ele],axis=1)
-    type_RLC = ak.concatenate([type_RL,3*ak.ones_like(cand_ele.pt)],axis=1)
-    # matching gen e/p to reco using regular & low-pT electrons
-    indE_RL, typeE_RL, drE_RL, indP_RL, typeP_RL, drP_RL = findUniqueMatches(gen_ele,gen_pos,ele_RL,type_RL) # unique matches
-    # matching gen e/p to reco using regular, low-pT, and candidate electrons
-    indE_RLC, typeE_RLC, drE_RLC, indP_RLC, typeP_RLC, drP_RLC = findUniqueMatches(gen_ele,gen_pos,ele_RLC,type_RLC) # unique matches
+    gen_ele = events.GenEle
+    gen_pos = events.GenPos
+    ele_matches = events.GenEleMatches
+    ele_match = events.GenEleMatch
+    ele_matchC = events.GenEleMatchC
+    pos_matches = events.GenPosMatches
+    pos_match = events.GenPosMatch
+    pos_matchC = events.GenPosMatchC
 
-    # replacing -1s with 0s for the match types
-    typeE_RL = np.where(typeE_RL == -1,ak.zeros_like(typeE_RL),typeE_RL)
-    typeP_RL = np.where(typeP_RL == -1,ak.zeros_like(typeP_RL),typeP_RL)
-    typeE_RLC = np.where(typeE_RLC == -1,ak.zeros_like(typeE_RLC),typeE_RLC)
-    typeP_RLC = np.where(typeP_RLC == -1,ak.zeros_like(typeP_RLC),typeP_RLC)
+    ematch, pmatch = findUniqueMatches(ele_matches,ele_match,pos_matches,pos_match)
+    ematchC, pmatchC = findUniqueMatches(ele_matches,ele_matchC,pos_matches,pos_matchC,useCands=True)
 
     # masks for different vertex types, low/reg only
-    matchRR_RL = (typeE_RL == 1) & (typeP_RL == 1)
-    matchLR_RL = ((typeE_RL == 1) & (typeP_RL == 2)) | ((typeE_RL == 2) & (typeP_RL == 1))
-    matchLL_RL = (typeE_RL == 2) & (typeP_RL == 2)
+    noMatch_RL = (ematch.typ == 0) & (pmatch.typ == 0)
+    matchRR_RL = (ematch.typ == 1) & (pmatch.typ == 1)
+    matchLR_RL = ((ematch.typ == 1) & (pmatch.typ == 2)) | ((ematch.typ == 2) & (pmatch.typ == 1))
+    matchLL_RL = (ematch.typ == 2) & (pmatch.typ == 2)
+    ones = ak.ones_like(ematch.typ)
+    zeros = ak.zeros_like(ematch.typ)
+    matchType_RL = ak.where(noMatch_RL,zeros,-1*ones)
+    matchType_RL = ak.where(matchRR_RL,ones,matchType_RL)
+    matchType_RL = ak.where(matchLR_RL,2*ones,matchType_RL)
+    matchType_RL = ak.where(matchLL_RL,3*ones,matchType_RL)
 
     # masks for different vertex types, low/reg/cand
-    matchRR_RLC = (typeE_RLC == 1) & (typeP_RLC == 1)
-    matchRC_RLC = ((typeE_RLC == 1) & (typeP_RLC == 3)) | ((typeE_RLC == 3) & (typeP_RLC == 1))
-    matchLR_RLC = ((typeE_RLC == 1) & (typeP_RLC == 2)) | ((typeE_RLC == 2) & (typeP_RLC == 1))
-    matchLC_RLC = ((typeE_RLC == 2) & (typeP_RLC == 3)) | ((typeE_RLC == 3) & (typeP_RLC == 2))
-    matchLL_RLC = (typeE_RLC == 2) & (typeP_RLC == 2)
-    matchCC_RLC = (typeE_RLC == 3) & (typeP_RLC == 3)
-
-    # Retrieving the matched vertices for each event
-    n_reg_eles = ak.count(ele.pt,axis=1) # for retrieving "local" indices within individual collections
-    n_lpt_eles = ak.count(lpt_ele.pt,axis=1)
-    n_cand_eles = ak.count(cand_ele.pt,axis=1)
+    noMatch_RLC = (ematchC.typ == 0) & (pmatchC.typ == 0)
+    matchRR_RLC = (ematchC.typ == 1) & (pmatchC.typ == 1)
+    matchRC_RLC = ((ematchC.typ == 1) & (pmatchC.typ == 3)) | ((ematchC.typ == 3) & (pmatchC.typ == 1))
+    matchLR_RLC = ((ematchC.typ == 1) & (pmatchC.typ == 2)) | ((ematchC.typ == 2) & (pmatchC.typ == 1))
+    matchLC_RLC = ((ematchC.typ == 2) & (pmatchC.typ == 3)) | ((ematchC.typ == 3) & (pmatchC.typ == 2))
+    matchLL_RLC = (ematchC.typ == 2) & (pmatchC.typ == 2)
+    matchCC_RLC = (ematchC.typ == 3) & (pmatchC.typ == 3)
+    ones = ak.ones_like(ematchC.typ)
+    zeros = ak.zeros_like(ematchC.typ)
+    matchType_RLC = ak.where(noMatch_RLC,zeros,-1*ones)
+    matchType_RLC = ak.where(matchRR_RLC,ones,matchType_RLC)
+    matchType_RLC = ak.where(matchLR_RLC,2*ones,matchType_RLC)
+    matchType_RLC = ak.where(matchLL_RLC,3*ones,matchType_RLC)
+    matchType_RLC = ak.where(matchRC_RLC,4*ones,matchType_RLC)
+    matchType_RLC = ak.where(matchLC_RLC,5*ones,matchType_RLC)
+    matchType_RLC = ak.where(matchCC_RLC,6*ones,matchType_RLC)
 
     # reg/lowpT only
     RRvtx_RL = vtx_rr[matchRR_RL]
-    RRvtx_mask_RL = ((indE_RL[matchRR_RL] == RRvtx_RL.idx1) & (indP_RL[matchRR_RL] == RRvtx_RL.idx2)) |\
-                    ((indE_RL[matchRR_RL] == RRvtx_RL.idx2) & (indP_RL[matchRR_RL] == RRvtx_RL.idx1))
+    RRvtx_mask_RL = ((ematch[matchRR_RL].ind == RRvtx_RL.idx1) & (pmatch[matchRR_RL].ind == RRvtx_RL.idx2)) |\
+                    ((ematch[matchRR_RL].ind == RRvtx_RL.idx2) & (pmatch[matchRR_RL].ind == RRvtx_RL.idx1))
     RRvtx_RL = ak.flatten(RRvtx_RL[RRvtx_mask_RL])
 
     LRvtx_RL = vtx_lr[matchLR_RL]
-    LRvtx_mask_RL = (((indE_RL[matchLR_RL] - n_reg_eles[matchLR_RL]) == LRvtx_RL.idx1) & (indP_RL[matchLR_RL] == LRvtx_RL.idx2)) |\
-                    ((indE_RL[matchLR_RL] == LRvtx_RL.idx2) & ((indP_RL[matchLR_RL] - n_reg_eles[matchLR_RL]) == LRvtx_RL.idx1))
+    LRvtx_mask_RL = ((ematch[matchLR_RL].typ == 2) & (ematch[matchLR_RL].ind == LRvtx_RL.idx1) & (pmatch[matchLR_RL].ind == LRvtx_RL.idx2)) |\
+                    ((ematch[matchLR_RL].typ == 1) & (ematch[matchLR_RL].ind == LRvtx_RL.idx2) & (pmatch[matchLR_RL].ind == LRvtx_RL.idx1))
     LRvtx_RL = ak.flatten(LRvtx_RL[LRvtx_mask_RL])
 
     LLvtx_RL = vtx_ll[matchLL_RL]
-    LLvtx_mask_RL = ((indE_RL[matchLL_RL] == LLvtx_RL.idx1) & (indP_RL[matchLL_RL] == LLvtx_RL.idx2)) |\
-                    ((indE_RL[matchLL_RL] == LLvtx_RL.idx2) & (indP_RL[matchLL_RL] == LLvtx_RL.idx1))
+    LLvtx_mask_RL = ((ematch[matchLL_RL].ind == LLvtx_RL.idx1) & (pmatch[matchLL_RL].ind == LLvtx_RL.idx2)) |\
+                    ((ematch[matchLL_RL].ind == LLvtx_RL.idx2) & (pmatch[matchLL_RL].ind == LLvtx_RL.idx1))
     LLvtx_RL = ak.flatten(LLvtx_RL[LLvtx_mask_RL])
 
     # reg,lowpT,cand
     RRvtx_RLC = vtx_rr[matchRR_RLC]
-    RRvtx_mask_RLC = ((indE_RLC[matchRR_RLC] == RRvtx_RLC.idx1) & (indP_RLC[matchRR_RLC] == RRvtx_RLC.idx2)) |\
-                     ((indE_RLC[matchRR_RLC] == RRvtx_RLC.idx2) & (indP_RLC[matchRR_RLC] == RRvtx_RLC.idx1))
+    RRvtx_mask_RLC = ((ematchC[matchRR_RLC].ind == RRvtx_RLC.idx1) & (pmatchC[matchRR_RLC].ind == RRvtx_RLC.idx2)) |\
+                     ((ematchC[matchRR_RLC].ind == RRvtx_RLC.idx2) & (pmatchC[matchRR_RLC].ind == RRvtx_RLC.idx1))
     RRvtx_RLC = ak.flatten(RRvtx_RLC[RRvtx_mask_RLC])
 
     RCvtx_RLC = vtx_rc[matchRC_RLC]
-    RCvtx_mask_RLC = ((indE_RLC[matchRC_RLC] == RCvtx_RLC.idx1) & ((indP_RLC[matchRC_RLC] - n_reg_eles[matchRC_RLC] - n_lpt_eles[matchRC_RLC]) == RCvtx_RLC.idx2)) |\
-                     (((indE_RLC[matchRC_RLC] - n_reg_eles[matchRC_RLC] - n_lpt_eles[matchRC_RLC]) == RCvtx_RLC.idx2) & (indP_RLC[matchRC_RLC] == RCvtx_RLC.idx1))
+    RCvtx_mask_RLC = ((ematchC[matchRC_RLC].typ == 1) & (ematchC[matchRC_RLC].ind == RCvtx_RLC.idx1) & (pmatchC[matchRC_RLC].ind == RCvtx_RLC.idx2)) |\
+                     ((ematchC[matchRC_RLC].typ == 3) & (ematchC[matchRC_RLC].ind == RCvtx_RLC.idx2) & (pmatchC[matchRC_RLC].ind == RCvtx_RLC.idx1))
     RCvtx_RLC = ak.flatten(RCvtx_RLC[RCvtx_mask_RLC])
 
     LCvtx_RLC = vtx_lc[matchLC_RLC]
-    LCvtx_mask_RLC = (((indE_RLC[matchLC_RLC] - n_reg_eles[matchLC_RLC]) == LCvtx_RLC.idx1) & ((indP_RLC[matchLC_RLC] - n_reg_eles[matchLC_RLC] - n_lpt_eles[matchLC_RLC]) == LCvtx_RLC.idx2)) |\
-                     (((indE_RLC[matchLC_RLC] - n_reg_eles[matchLC_RLC] - n_lpt_eles[matchLC_RLC]) == LCvtx_RLC.idx2) & ((indP_RLC[matchLC_RLC] - n_reg_eles[matchLC_RLC]) == LCvtx_RLC.idx1))
+    LCvtx_mask_RLC = ((ematchC[matchLC_RLC].typ == 2) & (ematchC[matchLC_RLC].ind == LCvtx_RLC.idx1) & (pmatchC[matchLC_RLC].ind == LCvtx_RLC.idx2)) |\
+                     ((ematchC[matchLC_RLC].typ == 3) & (ematchC[matchLC_RLC].ind == LCvtx_RLC.idx2) & (pmatchC[matchLC_RLC].ind == LCvtx_RLC.idx1))
     LCvtx_RLC = ak.flatten(LCvtx_RLC[LCvtx_mask_RLC])
 
     LRvtx_RLC = vtx_lr[matchLR_RLC]
-    LRvtx_mask_RLC = (((indE_RLC[matchLR_RLC] - n_reg_eles[matchLR_RLC]) == LRvtx_RLC.idx1) & (indP_RLC[matchLR_RLC] == LRvtx_RLC.idx2)) |\
-                     ((indE_RLC[matchLR_RLC] == LRvtx_RLC.idx2) & ((indP_RLC[matchLR_RLC] - n_reg_eles[matchLR_RLC]) == LRvtx_RLC.idx1))
+    LRvtx_mask_RLC = ((ematchC[matchLR_RLC].typ == 2) & (ematchC[matchLR_RLC].ind == LRvtx_RLC.idx1) & (pmatchC[matchLR_RLC].ind == LRvtx_RLC.idx2)) |\
+                     ((ematchC[matchLR_RLC].typ == 1) & (ematchC[matchLR_RLC].ind == LRvtx_RLC.idx2) & (pmatchC[matchLR_RLC].ind == LRvtx_RLC.idx1))
     LRvtx_RLC = ak.flatten(LRvtx_RLC[LRvtx_mask_RLC])
 
     LLvtx_RLC = vtx_ll[matchLL_RLC]
-    LLvtx_mask_RLC = ((indE_RLC[matchLL_RLC] == LLvtx_RLC.idx1) & (indP_RLC[matchLL_RLC] == LLvtx_RLC.idx2)) |\
-                     ((indE_RLC[matchLL_RLC] == LLvtx_RLC.idx2) & (indP_RLC[matchLL_RLC] == LLvtx_RLC.idx1))
+    LLvtx_mask_RLC = ((ematchC[matchLL_RLC].ind == LLvtx_RLC.idx1) & (pmatchC[matchLL_RLC].ind == LLvtx_RLC.idx2)) |\
+                     ((ematchC[matchLL_RLC].ind == LLvtx_RLC.idx2) & (pmatchC[matchLL_RLC].ind == LLvtx_RLC.idx1))
     LLvtx_RLC = ak.flatten(LLvtx_RLC[LLvtx_mask_RLC])
 
     # Filling histograms, finally!
     h_vtx = histos["vtx_genMatchByEle"]
     h_vtx_kin = histos["vtx_kin_genMatchByEle"]
     h_vtx_disp = histos["vtx_disp_genMatchByEle"]
+    h_vtx_type = histos["vtx_matchTypeByEle"]
 
     # filling with the reco/lowpT set first
+    h_vtx_type.fill(sample=samp,
+                    set="RL",
+                    type=matchType_RL)
+
     h_vtx.fill(sample=samp,
                type="Reg-Reg",
                set="RL",
@@ -1021,6 +1131,10 @@ def recoEE_vertices_genMatchByEles(events,histos,samp):
                     vxy_signif=(LLvtx_RL.vxy/LLvtx_RL.sigmavxy))
 
     # Filling with reg/lowpT/cand set
+    h_vtx_type.fill(sample=samp,
+                    set="RLC",
+                    type=matchType_RLC)
+
     h_vtx.fill(sample=samp,
                type="Reg-Reg",
                set="RLC",
@@ -1098,5 +1212,32 @@ def recoEE_vertices_genMatchByEles(events,histos,samp):
                     set="RLC",
                     vxy=LLvtx_RLC.vxy,
                     vxy_signif=(LLvtx_RLC.vxy/LLvtx_RLC.sigmavxy))
+
+    # Filling EE candidate info
+    # Events with no gen-matched electrons (reg or low-pt)
+    h_dEE_kin = histos["dispEE_vtx_kinematics"]
+    h_dEE_qual = histos["dispEE_vtx_qual"]
+    h_dEE_eff = histos["dispEE_eff"]
+
+    dEE = events.EECand
+    dEE_vxy = np.sqrt(dEE.vx**2 + dEE.vy**2)
+    ndEE = ak.count(dEE.dR,axis=1)
+    has_dEE = ndEE > 0
+    noGenMatchVtx = (ematch.typ == 0) | (pmatch.typ == 0)
+
+
+    h_dEE_eff.fill(sample=samp,
+                    denom="noGenMatchVtx",
+                    ndEE=ndEE[noGenMatchVtx])
+    h_dEE_kin.fill(sample=samp,
+                    denom="noGenMatchVtx",
+                    mass=ak.flatten(dEE[has_dEE & noGenMatchVtx].mass),
+                    leadPt=ak.flatten(dEE[has_dEE & noGenMatchVtx].leadingPt),
+                    dR=ak.flatten(dEE[has_dEE & noGenMatchVtx].dR))
+    h_dEE_qual.fill(sample=samp,
+                    denom="noGenMatchVtx",
+                    vxy=ak.flatten(dEE_vxy[has_dEE & noGenMatchVtx]),
+                    dxy=ak.flatten(dEE[has_dEE & noGenMatchVtx].trackDxy_PV),
+                    chi2=ak.flatten(dEE[has_dEE & noGenMatchVtx].normalizedChi2))
     
     return histos

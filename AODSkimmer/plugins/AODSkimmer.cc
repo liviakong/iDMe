@@ -61,6 +61,7 @@
 #include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
 
 #include "TTree.h"
+#include "TMath.h"
 
 #include "NtupleContainer.hh"
 
@@ -270,9 +271,16 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    vector<reco::GsfTrackRef> reg_eleTracks{};
    vector<math::XYZTLorentzVector> reg_ele_p4s;
    for (const auto & ele : *recoElectronHandle_) {
+      reco::GsfTrackRef track = ele.gsfTrack();
+      reg_eleTracks.push_back(track);
+      reg_ele_p4s.push_back(ele.p4());
+      // Filling basic info
       nt.recoElectronPt_.push_back(ele.pt());
       nt.recoElectronEta_.push_back(ele.eta());
+      nt.recoElectronEtaError_.push_back(track->etaError());
       nt.recoElectronPhi_.push_back(ele.phi());
+      nt.recoElectronPhiError_.push_back(track->phiError());
+      nt.recoElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
       nt.recoElectronE_.push_back(ele.energy());
       nt.recoElectronPx_.push_back(ele.px());
       nt.recoElectronPy_.push_back(ele.py());
@@ -281,10 +289,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronVz_.push_back(ele.trackPositionAtVtx().z());
       nt.recoElectronTrkIso_.push_back(ele.dr04TkSumPt());
       nt.recoElectronCharge_.push_back(ele.charge());
-      // Filling tracks
-      reco::GsfTrackRef track = ele.gsfTrack();
-      reg_eleTracks.push_back(track);
-      reg_ele_p4s.push_back(ele.p4());
+      // Filling track info
       nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoElectronDxyError_.push_back(track->dxyError());
       nt.recoElectronDz_.push_back(track->dz(pv.position()));
@@ -302,18 +307,22 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       pat::ElectronRef ele(lowPtElectronHandle_,i);
       // Cross-cleaning with regular electrons
       float mindR = 999;
-      for (int k = 0; k < (int)nt.recoElectronPt_.size(); k++) {
-         float dEta = ele->eta() - nt.recoElectronEta_.at(k);
-         float dPhi = ele->phi() - nt.recoElectronPhi_.at(k);
-         float dR = sqrt(dEta*dEta + dPhi*dPhi);
+      for (auto & reg_ele : *recoElectronHandle_) {
+         float dR = reco::deltaR(reg_ele,*ele);
          if (dR < mindR) mindR = dR;
       }
       if (mindR < 0.01) continue;
+      reco::GsfTrackRef track = ele->gsfTrack();
+      lowpt_eleTracks.push_back(track);
+      lowpt_ele_p4s.push_back(ele->p4());
       nt.nElectronLowPt_++;
-      // Filling branches if not already in regular electron collection
+      // Filling basic info, if electron passes cross cleaning
       nt.recoLowPtElectronPt_.push_back(ele->pt());
       nt.recoLowPtElectronPhi_.push_back(ele->phi());
+      nt.recoLowPtElectronPhiError_.push_back(track->phiError());
       nt.recoLowPtElectronEta_.push_back(ele->eta());
+      nt.recoLowPtElectronEtaError_.push_back(track->etaError());
+      nt.recoLowPtElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
       nt.recoLowPtElectronE_.push_back(ele->energy());
       nt.recoLowPtElectronPx_.push_back(ele->px());
       nt.recoLowPtElectronPy_.push_back(ele->py());
@@ -322,11 +331,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronVz_.push_back(ele->trackPositionAtVtx().z());
       nt.recoLowPtElectronTrkIso_.push_back(ele->trackIso());
       nt.recoLowPtElectronCharge_.push_back(ele->charge());
-      nt.recoLowPtElectron_passConversionVeto_.push_back(ele->passConversionVeto());
       // Filling tracks
-      reco::GsfTrackRef track = ele->gsfTrack();
-      lowpt_eleTracks.push_back(track);
-      lowpt_ele_p4s.push_back(ele->p4());
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
       nt.recoLowPtElectronDz_.push_back(track->dz(pv.position()));
@@ -412,17 +417,37 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    // Extracting tracks from new electron candidates
    vector<reco::Track> cand_eleTracks;
    vector<math::XYZTLorentzVector> cand_ele_p4s;
+   vector<bool> passCrossClean;
    for (int icand = 0; icand < EleFinder.nElectronCandidate; icand++) {
       int tk_idx = EleFinder.ElectronCandidate_isotrackIdx[icand];
       auto isoTk = (*isoTracksHandle_).at(tk_idx);
-      auto tk = *(isoTk.packedCandRef()->bestTrack());
-      cand_eleTracks.push_back(tk);
-      cand_ele_p4s.push_back(isoTk.p4());
+      // cross-cleaning with regular electrons
+      float mindR = 999;
+      for (auto & ele : *recoElectronHandle_) {
+         float dR = reco::deltaR(isoTk,ele);
+         if (dR < mindR) mindR = dR;
+      }
+      for (auto & lpt_ele : *lowPtElectronHandle_) {
+         float dR = reco::deltaR(isoTk,lpt_ele);
+         if (dR < mindR) mindR = dR;
+      }
+      if (mindR < 0.01) {
+         passCrossClean.push_back(false);
+         continue;
+      }
+      else {
+         passCrossClean.push_back(true);
+         auto tk = *(isoTk.packedCandRef()->bestTrack());
+         cand_eleTracks.push_back(tk);
+         cand_ele_p4s.push_back(isoTk.p4());
+      }
    }
    
    // Filling additional electron candidates
-   nt.nEleCand_ = EleFinder.nElectronCandidate;
-   for (int iec = 0; iec < nt.nEleCand_; iec++) {
+   nt.nEleCand_ = 0;
+   for (int iec = 0; iec < EleFinder.nElectronCandidate; iec++) {
+      if (!passCrossClean[iec]) continue;
+      nt.nEleCand_++;
       nt.EleCand_pt_.push_back(EleFinder.ElectronCandidate_pt[iec]);
       nt.EleCand_et_.push_back(EleFinder.ElectronCandidate_et[iec]);
       nt.EleCand_eta_.push_back(EleFinder.ElectronCandidate_eta[iec]);
@@ -521,6 +546,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             if ( (type == "regreg" || type == "lowlow") && (j <= i) ) continue; // don't vertex ele with itself or ones prior (if vertexing with same type)
             if (ele_i == ele_j) continue; // skip if same ele is in reg and low-pT collections
             if (!ele_i.isNonnull() || !ele_j.isNonnull()) continue; // skip if there's a bad track
+            if (reco::deltaR(*ele_i,*ele_j) < 0.01) continue; // skip if they're likely to be the same electron un-cross-cleaned
 
             TransientVertex tv;
             vector<reco::TransientTrack> transient_tracks{};
@@ -538,6 +564,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             float sigma_vxy = (1/vxy)*sqrt(vertex.x()*vertex.x()*vertex.xError()*vertex.xError() +
                      vertex.y()*vertex.y()*vertex.yError()*vertex.yError());
             float vtx_chi2 = vertex.normalizedChi2();
+            float vtx_prob = TMath::Prob(vertex.chi2(),(int)vertex.ndof());
             float dr = reco::deltaR(*ele_i, *ele_j);
 
             if (type == "lowlow") {
@@ -545,6 +572,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.LLvtx_idx1_.push_back(ind1); 
                nt.LLvtx_idx2_.push_back(ind2);
                nt.LLvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LLvtx_prob_.push_back(vtx_prob);
                nt.LLvtx_recoVtxVxy_.push_back(vxy);
                nt.LLvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
                nt.LLvtx_recoVtxVx_.push_back(vx);
@@ -566,6 +594,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.RRvtx_idx1_.push_back(ind1); 
                nt.RRvtx_idx2_.push_back(ind2);
                nt.RRvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.RRvtx_prob_.push_back(vtx_prob);
                nt.RRvtx_recoVtxVxy_.push_back(vxy);
                nt.RRvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
                nt.RRvtx_recoVtxVx_.push_back(vx);
@@ -587,6 +616,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.LRvtx_idx1_.push_back(ind1); 
                nt.LRvtx_idx2_.push_back(ind2);
                nt.LRvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LRvtx_prob_.push_back(vtx_prob);
                nt.LRvtx_recoVtxVxy_.push_back(vxy);
                nt.LRvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
                nt.LRvtx_recoVtxVx_.push_back(vx);
@@ -623,7 +653,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                ele_j = cand_eleTracks[ind2];
             }
             if (!ele_i.isNonnull()) continue; // skip if electron is bad
-            if (reco::deltaR(*ele_i,ele_j) < 0.0001) continue; // skip if it's somehow the same track
+            if (reco::deltaR(*ele_i,ele_j) < 0.01) continue; // skip if it's somehow the same track
 
             TransientVertex tv;
             vector<reco::TransientTrack> transient_tracks{};
@@ -641,6 +671,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             float sigma_vxy = (1/vxy)*sqrt(vertex.x()*vertex.x()*vertex.xError()*vertex.xError() +
                      vertex.y()*vertex.y()*vertex.yError()*vertex.yError());
             float vtx_chi2 = vertex.normalizedChi2();
+            float vtx_prob = TMath::Prob(vertex.chi2(),(int)vertex.ndof());
             float dr = reco::deltaR(*ele_i, ele_j);
 
             if (type == "regcand") {
@@ -648,6 +679,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.RCvtx_idx1_.push_back(ind1); 
                nt.RCvtx_idx2_.push_back(ind2);
                nt.RCvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.RCvtx_prob_.push_back(vtx_prob);
                nt.RCvtx_recoVtxVxy_.push_back(vxy);
                nt.RCvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
                nt.RCvtx_recoVtxVx_.push_back(vx);
@@ -669,6 +701,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.LCvtx_idx1_.push_back(ind1); 
                nt.LCvtx_idx2_.push_back(ind2);
                nt.LCvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
+               nt.LCvtx_prob_.push_back(vtx_prob);
                nt.LCvtx_recoVtxVxy_.push_back(vxy);
                nt.LCvtx_recoVtxSigmaVxy_.push_back(sigma_vxy);
                nt.LCvtx_recoVtxVx_.push_back(vx);
@@ -732,6 +765,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    if (!isData) {
       // Gen weight
       nt.genwgt_ = genEvtInfoHandle_->weight();
+      math::XYZTLorentzVector gen_ele_p4, gen_pos_p4;
       for (const auto & genParticle : *genParticleHandle_) {
          if (!genParticle.isHardProcess()) continue;
          nt.nGen_++;
@@ -749,8 +783,143 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          nt.genVy_.push_back(genParticle.vy());
          nt.genVz_.push_back(genParticle.vz());
          nt.genMass_.push_back(genParticle.mass());
+
+         if (abs(genParticle.pdgId()) == 11) {
+            // Recording basic info
+            if (genParticle.pdgId() == 11) {
+               gen_ele_p4 = genParticle.p4();
+               nt.genEleCharge_ = genParticle.charge();
+               nt.genElePt_ = genParticle.pt();
+               nt.genEleEta_ = genParticle.eta();
+               nt.genElePhi_ = genParticle.phi();
+               nt.genEleEn_ = genParticle.energy();
+               nt.genElePx_ = genParticle.px();
+               nt.genElePy_ = genParticle.py();
+               nt.genElePz_ = genParticle.pz();
+               nt.genEleVx_ = genParticle.vx();
+               nt.genEleVy_ = genParticle.vy();
+               nt.genEleVz_ = genParticle.vz();
+               nt.genEleVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
+            }
+            else {
+               gen_pos_p4 = genParticle.p4();
+               nt.genPosCharge_ = genParticle.charge();
+               nt.genPosPt_ = genParticle.pt();
+               nt.genPosEta_ = genParticle.eta();
+               nt.genPosPhi_ = genParticle.phi();
+               nt.genPosEn_ = genParticle.energy();
+               nt.genPosPx_ = genParticle.px();
+               nt.genPosPy_ = genParticle.py();
+               nt.genPosPz_ = genParticle.pz();
+               nt.genPosVx_ = genParticle.vx();
+               nt.genPosVy_ = genParticle.vy();
+               nt.genPosVz_ = genParticle.vz();
+               nt.genPosVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
+            }
+
+            // Finding reco-level matches
+            float mindR = 999;
+            int bestMatchType = 0;
+            int idxBestMatch = -1;
+            int ie = 0, ile = 0, ice = 0;
+            // looping through regular electrons
+            for (auto & ele : reg_ele_p4s) {
+               float dRe = reco::deltaR(ele,genParticle.p4());
+               if (dRe < 0.1) {
+                  if (genParticle.pdgId() == 11) {
+                     nt.genEleMatchTypes_.push_back(1);
+                     nt.genEleMatchInds_.push_back(ie);
+                     nt.genEleMatchDrs_.push_back(dRe);
+                  }
+                  else {
+                     nt.genPosMatchTypes_.push_back(1);
+                     nt.genPosMatchInds_.push_back(ie);
+                     nt.genPosMatchDrs_.push_back(dRe);
+                  }
+                  if (dRe < mindR) {
+                     mindR = dRe;
+                     bestMatchType = 1;
+                     idxBestMatch = ie;
+                  }
+               }
+               ie++;
+            }
+            // looping through low-pT electrons
+            for (auto & ele : lowpt_ele_p4s) {
+               float dRe = reco::deltaR(ele,genParticle.p4());
+               if (dRe < 0.1) {
+                  if (genParticle.pdgId() == 11) {
+                     nt.genEleMatchTypes_.push_back(2);
+                     nt.genEleMatchInds_.push_back(ile);
+                     nt.genEleMatchDrs_.push_back(dRe);
+                  }
+                  else {
+                     nt.genPosMatchTypes_.push_back(2);
+                     nt.genPosMatchInds_.push_back(ile);
+                     nt.genPosMatchDrs_.push_back(dRe);
+                  }
+                  if (dRe < mindR) {
+                     mindR = dRe;
+                     bestMatchType = 2;
+                     idxBestMatch = ile;
+                  }
+               }
+               ile++;
+            }
+            if (genParticle.pdgId() == 11) {
+               nt.genEleBestMatchType_ = bestMatchType;
+               nt.genEleBestMatchInd_ = idxBestMatch;
+               nt.genEleBestMatchDr_ = mindR;
+            }
+            else {
+               nt.genPosBestMatchType_ = bestMatchType;
+               nt.genPosBestMatchInd_ = idxBestMatch;
+               nt.genPosBestMatchDr_ = mindR;
+            }
+            // looping through candidate electrons
+            for (auto & ele : cand_ele_p4s) {
+               float dRe = reco::deltaR(ele,genParticle.p4());
+               if (dRe < 0.1) {
+                  if (genParticle.pdgId() == 11) {
+                     nt.genEleMatchTypes_.push_back(3);
+                     nt.genEleMatchInds_.push_back(ice);
+                     nt.genEleMatchDrs_.push_back(dRe);
+                  }
+                  else {
+                     nt.genPosMatchTypes_.push_back(3);
+                     nt.genPosMatchInds_.push_back(ice);
+                     nt.genPosMatchDrs_.push_back(dRe);
+                  }
+                  if (dRe < mindR) {
+                     mindR = dRe;
+                     bestMatchType = 3;
+                     idxBestMatch = ice;
+                  }
+               }
+               ice++;
+            }
+            if (genParticle.pdgId() == 11) {
+               nt.genEleBestMatchType_withCands_ = bestMatchType;
+               nt.genEleBestMatchInd_withCands_ = idxBestMatch;
+               nt.genEleBestMatchDr_withCands_ = mindR;
+            }
+            else {
+               nt.genPosBestMatchType_withCands_ = bestMatchType;
+               nt.genPosBestMatchInd_withCands_ = idxBestMatch;
+               nt.genPosBestMatchDr_withCands_ = mindR;
+            }
+         }
       }
-      
+      nt.nGenEleMatches_ = nt.genEleMatchTypes_.size();
+      nt.nGenPosMatches_ = nt.genPosMatchTypes_.size();
+      auto gen_ll = gen_ele_p4 + gen_pos_p4;
+      nt.genEEPt_ = gen_ll.pt();
+      nt.genEEEta_ = gen_ll.eta();
+      nt.genEEPhi_ = gen_ll.phi();
+      nt.genEEEn_ = gen_ll.energy();
+      nt.genEEMass_ = gen_ll.mass();
+      nt.genEEdR_ = reco::deltaR(gen_ele_p4,gen_pos_p4);
+
       // all gen jets
       nt.nGenJet_ = (int)genJetHandle_->size();
       for (const auto & jet : *genJetHandle_) {
@@ -768,7 +937,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          nt.genLeadMETPx_ = met.px();
          nt.genLeadMETPy_ = met.py();
       }
-    }
+   }
 
    outT->Fill();
    return;

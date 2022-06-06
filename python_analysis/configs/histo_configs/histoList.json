@@ -13,6 +13,17 @@
         ]
     },
     {
+        "varname": "gen_ee_kinematics",
+        "name": "Gen Dielectron Kinematics",
+        "categories" : {
+            "sample":"Signal Sample"
+        },
+        "bins" : [
+            ["mass","Gen $m_{e^+e^-}$ [GeV]",100,0,50],
+            ["dR","Gen $\\Delta R_{e^+e^-}$",80,0,4]
+        ]
+    },
+    {
         "varname": "ele_match_matrix",
         "name" : "Gen Electron Match Matrix",
         "categories" : {
@@ -240,7 +251,7 @@
             "type" : "Vertex Type"
         },
         "bins" : [
-            ["vxy","Vertex $v_{xy}$ [mm]",500,0,50],
+            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
             ["vxy_signif","Vertex $v_{xy}$ Significance",100,0,100]
         ]
     },
@@ -277,7 +288,7 @@
         },
         "bins" : [
             ["type","Vertex Type",3,1,4],
-            ["vxy","Vertex $v_{xy}$ [mm]",500,0,50],
+            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
             ["vxy_signif","Vertex $v_{xy}$ Significance",100,0,100]
         ]
     },
@@ -325,7 +336,7 @@
             "set":"Collections Used"
         },
         "bins" : [
-            ["vxy","Vertex $v_{xy}$ [mm]",500,0,50],
+            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
             ["vxy_signif","Vertex $v_{xy}$ Significance",100,0,100]
         ]
     },
@@ -340,6 +351,17 @@
         "bins" : [
             ["mass","Dielectron Mass [GeV]",100,0,50],
             ["energy","Dielectron Energy [GeV]",200,0,100]
+        ]
+    },
+    {
+        "varname" : "vtx_matchTypeByEle",
+        "name" : "Vertex Type from Gen-Matched electrons",
+        "categories" : {
+            "sample":"Signal Sample",
+            "set" : "Collections Used"
+        },
+        "bins" : [
+            ["type","Vertex Type",7,0,7]
         ]
     },
     {

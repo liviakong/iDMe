@@ -23,15 +23,28 @@
 // user include files
 #include "CommonTools/UtilAlgos/interface/TFileService.h"
 
+#include "CondFormats/JetMETObjects/interface/JetCorrectorParameters.h"
+#include "CondFormats/JetMETObjects/interface/JetCorrectionUncertainty.h"
+
 #include "FWCore/Framework/interface/Frameworkfwd.h"
 #include "FWCore/Framework/interface/one/EDAnalyzer.h"
+#include "FWCore/Framework/interface/ESHandle.h"
 #include "FWCore/Framework/interface/Event.h"
 #include "FWCore/Framework/interface/MakerMacros.h"
+#include "FWCore/MessageLogger/interface/MessageLogger.h"
+#include "FWCore/ParameterSet/interface/ConfigurationDescriptions.h"
+#include "FWCore/ParameterSet/interface/ParameterSetDescription.h"
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "FWCore/Utilities/interface/InputTag.h"
 #include "FWCore/ServiceRegistry/interface/Service.h"
 #include "FWCore/ServiceRegistry/interface/ServiceMaker.h"
+#include "FWCore/Common/interface/TriggerNames.h"
 
+#include "HLTrigger/HLTcore/interface/HLTConfigProvider.h"
+
+#include "DataFormats/BTauReco/interface/JetTag.h"
+#include "DataFormats/HLTReco/interface/TriggerObject.h"
+#include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
@@ -39,7 +52,9 @@
 #include "DataFormats/EgammaCandidates/interface/Conversion.h"
 #include "DataFormats/HepMCCandidate/interface/GenParticle.h"
 #include "DataFormats/JetReco/interface/GenJet.h"
+#include "DataFormats/JetReco/interface/PFJet.h"
 #include "DataFormats/METReco/interface/PFMET.h"
+#include "DataFormats/METReco/interface/PFMETCollection.h"
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/GenMET.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
@@ -47,6 +62,10 @@
 #include "DataFormats/Math/interface/deltaR.h"
 #include "DataFormats/Math/interface/deltaPhi.h"
 #include "DataFormats/Math/interface/LorentzVector.h"
+
+#include "JetMETCorrections/JetCorrector/interface/JetCorrector.h"
+#include "JetMETCorrections/Objects/interface/JetCorrectionsRecord.h"
+#include "JetMETCorrections/Modules/interface/JetResolution.h"
 
 #include "TrackingTools/TransientTrack/interface/TransientTrack.h"
 #include "TrackingTools/TransientTrack/interface/TransientTrackBuilder.h"
@@ -59,13 +78,13 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
+#include "iDMeAnalysis/CustomTools/interface/JetCorrections.hh"
+#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
 
 #include "TTree.h"
 #include "TMath.h"
 
-#include "NtupleContainer.hh"
-
-class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
+class AODSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::one::SharedResources>  {
    public:
       explicit AODSkimmer(const edm::ParameterSet&);
       ~AODSkimmer();
@@ -76,7 +95,9 @@ class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
    private:
       bool getCollections(const edm::Event&);
       virtual void beginJob() override;
+      virtual void beginRun(edm::Run const&, edm::EventSetup const&) override;
       virtual void analyze(const edm::Event&, const edm::EventSetup&) override;
+      virtual void endRun(edm::Run const&, edm::EventSetup const&) override;
       virtual void endJob() override;
 
       // ----------member data ---------------------------
@@ -87,13 +108,26 @@ class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       std::mt19937 m_random_generator;
 
       bool isData;
+      int year;
+      const std::string triggerProcessName_;
+      std::vector<std::string> trigPaths16_;
+      std::vector<std::string> trigPaths17_;
+      std::vector<std::string> trigPaths18_;
+      std::vector<std::string> allTrigPaths_;
+
+      // Jet Corrector helpers
+      edm::ESHandle<JetCorrectorParametersCollection> JetCorParCollHandle_;
+      JetCorrectionUncertainty * jecUnc; 
 
       // Tokens 
+      const edm::EDGetTokenT<reco::JetTagCollection> bTagProbbToken_;
+      const edm::EDGetTokenT<reco::JetTagCollection> bTagProbbbToken_;
       const edm::EDGetTokenT<vector<reco::GsfElectron> > recoElectronToken_;
       const edm::EDGetTokenT<pat::ElectronCollection> lowPtElectronToken_;
       const edm::EDGetTokenT<vector<pat::IsolatedTrack> > isoTracksToken_;
       const edm::EDGetTokenT<vector<pat::PackedCandidate> > packedPFCandToken_;
       const edm::EDGetTokenT<vector<reco::GenParticle> > genParticleToken_;
+      const edm::EDGetTokenT<vector<reco::PFJet> > recoJetToken_; 
       const edm::EDGetTokenT<vector<reco::GenJet> > genJetToken_;
       const edm::EDGetTokenT<vector<reco::GenMET> > genMETToken_;
       const edm::EDGetTokenT<GenEventInfoProduct   > genEvtInfoToken_;
@@ -104,12 +138,29 @@ class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       const edm::EDGetTokenT<vector<reco::Photon> > ootPhotonsToken_;
       const edm::EDGetTokenT<vector<reco::PFMET> > PFMETToken_;
       const edm::EDGetTokenT<vector<reco::CaloMET> > CaloMETToken_;
+      const edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
+      const edm::EDGetTokenT<double> rhoToken_;
+      const edm::EDGetTokenT<int> primaryVertexFilterToken_;
+      const edm::EDGetTokenT<bool> globalSuperTightHalo2016FilterToken_;
+      const edm::EDGetTokenT<bool> HBHENoiseFilterToken_;
+      const edm::EDGetTokenT<bool> HBHENoiseIsoFilterToken_;
+      const edm::EDGetTokenT<bool> EcalDeadCellTriggerPrimitiveFilterToken_;
+      const edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
+      const edm::EDGetTokenT<bool> BadPFMuonDzFilterToken_;
+      const edm::EDGetTokenT<bool> hfNoisyHitsFilterToken_;
+      const edm::EDGetTokenT<bool> eeBadScFilterToken_;
+      const edm::EDGetTokenT<bool> ecalBadCalibFilterToken_;
+      const edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
+      const edm::EDGetTokenT<trigger::TriggerEvent> trigEventToken_;
 
       // Handles
+      edm::Handle<reco::JetTagCollection> bTagProbbHandle_;
+      edm::Handle<reco::JetTagCollection> bTagProbbbHandle_;
       edm::Handle<vector<reco::GsfElectron> > recoElectronHandle_;
       edm::Handle<pat::ElectronCollection> lowPtElectronHandle_;
       edm::Handle<vector<pat::IsolatedTrack> > isoTracksHandle_;
       edm::Handle<vector<pat::PackedCandidate> > packedPFCandHandle_;
+      edm::Handle<vector<reco::PFJet> > recoJetHandle_;
       edm::Handle<vector<reco::GenParticle> > genParticleHandle_;
       edm::Handle<vector<reco::GenJet> > genJetHandle_;
       edm::Handle<vector<reco::GenMET> > genMETHandle_;
@@ -121,6 +172,30 @@ class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       edm::Handle<vector<reco::Photon> > ootPhotonsHandle_;
       edm::Handle<vector<reco::PFMET> > PFMETHandle_;
       edm::Handle<vector<reco::CaloMET> > CaloMETHandle_;
+      edm::Handle<reco::JetCorrector> jetCorrectorHandle_;
+      edm::Handle<double> rhoHandle_;
+      edm::Handle<int> primaryVertexFilterHandle_;
+      edm::Handle<bool> globalSuperTightHalo2016FilterHandle_;
+      edm::Handle<bool> HBHENoiseFilterHandle_;
+      edm::Handle<bool> HBHENoiseIsoFilterHandle_;
+      edm::Handle<bool> EcalDeadCellTriggerPrimitiveFilterHandle_;
+      edm::Handle<bool> BadPFMuonFilterHandle_;
+      edm::Handle<bool> BadPFMuonDzFilterHandle_;
+      edm::Handle<bool> hfNoisyHitsFilterHandle_;
+      edm::Handle<bool> eeBadScFilterHandle_;
+      edm::Handle<bool> ecalBadCalibFilterHandle_;
+      edm::Handle<edm::TriggerResults> trigResultsHandle_;
+      edm::Handle<trigger::TriggerEvent> trigEventHandle_;
+
+      std::vector<std::string> trigPaths16WithVersion_;
+      std::vector<std::string> trigPaths17WithVersion_;
+      std::vector<std::string> trigPaths18WithVersion_;
+      std::vector<std::string> allTrigPathsWithVersion_;
+      std::vector<bool> trigExist16_;
+      std::vector<bool> trigExist17_;
+      std::vector<bool> trigExist18_;
+      std::vector<bool> trigExist_;
+      HLTConfigProvider hltConfig_;
 };
 //
 // constants, enums and typedefs
@@ -136,11 +211,20 @@ class AODSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
 AODSkimmer::AODSkimmer(const edm::ParameterSet& ps)
  :
    isData(ps.getParameter<bool>("isData")),
+   year(ps.getParameter<int>("year")),
+   triggerProcessName_(ps.getParameter<std::string>("triggerProcessName")),
+   trigPaths16_(ps.getParameter<std::vector<std::string> >("triggerPaths16")),
+   trigPaths17_(ps.getParameter<std::vector<std::string> >("triggerPaths17")),
+   trigPaths18_(ps.getParameter<std::vector<std::string> >("triggerPaths18")),
+   allTrigPaths_(ps.getParameter<std::vector<std::string> >("allTriggerPaths")),
+   bTagProbbToken_(consumes<reco::JetTagCollection>(ps.getParameter<edm::InputTag>("bTagProbb"))),
+   bTagProbbbToken_(consumes<reco::JetTagCollection>(ps.getParameter<edm::InputTag>("bTagProbbb"))),
    recoElectronToken_(consumes<vector<reco::GsfElectron> >(ps.getParameter<edm::InputTag>("recoElectron"))),
    lowPtElectronToken_(consumes<pat::ElectronCollection>(ps.getParameter<edm::InputTag>("lowPtElectron"))),
    isoTracksToken_(consumes<vector<pat::IsolatedTrack> >(ps.getParameter<edm::InputTag>("isoTracks"))),
    packedPFCandToken_(consumes<vector<pat::PackedCandidate> >(ps.getParameter<edm::InputTag>("packedPFCands"))),
    genParticleToken_(consumes<vector<reco::GenParticle> >(ps.getParameter<edm::InputTag>("genParticle"))),
+   recoJetToken_(consumes<vector<reco::PFJet> >(ps.getParameter<edm::InputTag>("recoJetsCHS"))),
    genJetToken_(consumes<vector<reco::GenJet> >(ps.getParameter<edm::InputTag>("genJet"))),
    genMETToken_(consumes<vector<reco::GenMET> >(ps.getParameter<edm::InputTag>("genMET"))),
    genEvtInfoToken_(consumes<GenEventInfoProduct>(ps.getParameter<edm::InputTag>("genEvt"))),
@@ -150,7 +234,21 @@ AODSkimmer::AODSkimmer(const edm::ParameterSet& ps)
    photonsToken_(consumes<vector<reco::Photon> >(ps.getParameter<edm::InputTag>("photons"))),
    ootPhotonsToken_(consumes<vector<reco::Photon> >(ps.getParameter<edm::InputTag>("ootPhotons"))),
    PFMETToken_(consumes<vector<reco::PFMET> >(ps.getParameter<edm::InputTag>("PFMET"))),
-   CaloMETToken_(consumes<vector<reco::CaloMET> >(ps.getParameter<edm::InputTag>("CaloMET")))
+   CaloMETToken_(consumes<vector<reco::CaloMET> >(ps.getParameter<edm::InputTag>("CaloMET"))),
+   jetCorrectorToken_(consumes<reco::JetCorrector>(ps.getParameter<edm::InputTag>("jetCorrector"))),
+   rhoToken_(consumes<double>(ps.getParameter<edm::InputTag>("rho"))),
+   primaryVertexFilterToken_(consumes<int>(ps.getParameter<edm::InputTag>("primaryVertexFilter"))),
+   globalSuperTightHalo2016FilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("globalSuperTight2016HaloFilter"))),
+   HBHENoiseFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("HBHENoiseFilter"))),
+   HBHENoiseIsoFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("HBHENoiseIsoFilter"))),
+   EcalDeadCellTriggerPrimitiveFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("EcalDeadCellTrigPrimFilter"))),
+   BadPFMuonFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("BadPFMuonFilter"))),
+   BadPFMuonDzFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("BadPFMuonDzFilter"))),
+   hfNoisyHitsFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("hfNoisyHitsFilter"))),
+   eeBadScFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("eeBadScFilter"))),
+   ecalBadCalibFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("ecalBadCalibFilter"))),
+   trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResult"))),
+   trigEventToken_(consumes<trigger::TriggerEvent>(ps.getParameter<edm::InputTag>("trigEvent")))
 {
    usesResource("TFileService");
    m_random_generator = std::mt19937(37428479);
@@ -165,9 +263,122 @@ AODSkimmer::~AODSkimmer() = default;
 // member functions
 //
 
-// ------------ method called once each job just before starting event loop  ------------
 void
-AODSkimmer::beginJob()
+AODSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
+{
+   
+   // Set up HLT config
+   using namespace edm;
+
+   bool changed = true;
+   if (hltConfig_.init(iRun, iSetup, triggerProcessName_, changed)) {
+      if (changed) {
+         LogInfo("HLTConfig") << "iDMAnalyzer::beginRun: " << "hltConfig init for Run" << iRun.run();
+         hltConfig_.dump("ProcessName");
+         hltConfig_.dump("GlobalTag");
+         hltConfig_.dump("TableName");
+      }
+   } 
+   else {
+      LogError("HLTConfig") << "iDMAnalyzer::beginRun: config extraction failure with triggerProcessName -> " << triggerProcessName_;
+      return;
+   }
+
+   // Add trigger paths if they exist
+   allTrigPathsWithVersion_.clear();
+   trigPaths16WithVersion_.clear();
+   trigPaths17WithVersion_.clear();
+   trigPaths18WithVersion_.clear();
+   trigExist_.clear();
+   trigExist16_.clear();
+   trigExist17_.clear();
+   trigExist18_.clear();
+   
+   const std::vector<std::string>& pathNames = hltConfig_.triggerNames();
+   
+   // All trigger paths (2016+2017+2018)
+   for (auto trigPathNoVersion : allTrigPaths_) {
+      auto matchedPaths(hltConfig_.restoreVersion(pathNames, trigPathNoVersion));
+      if (matchedPaths.size() == 0) {
+         LogWarning("TriggerNotFound") << "Could not find matched full trigger path with --> " << trigPathNoVersion;
+         allTrigPathsWithVersion_.push_back("None");
+         trigExist_.push_back(false);
+      }
+      else {
+         trigExist_.push_back(true);
+         allTrigPathsWithVersion_.push_back(matchedPaths[0]);
+         if (hltConfig_.triggerIndex(matchedPaths[0]) >= hltConfig_.size()) {
+               LogError("TriggerError") << "Cannot find trigger path --> " << matchedPaths[0];
+               return;
+         }
+      }
+   }
+
+   // 2016 trigger paths
+   for (auto trigPathNoVersion : trigPaths16_) {
+      auto matchedPaths(hltConfig_.restoreVersion(pathNames, trigPathNoVersion));
+      if (matchedPaths.size() == 0) {
+         LogWarning("TriggerNotFound") << "Could not find matched full 2016 trigger path with --> " << trigPathNoVersion;
+         trigPaths16WithVersion_.push_back("None");
+         trigExist16_.push_back(false);
+      }
+      else {
+         trigExist16_.push_back(true);
+         trigPaths16WithVersion_.push_back(matchedPaths[0]);
+         if (hltConfig_.triggerIndex(matchedPaths[0]) >= hltConfig_.size()) {
+               LogError("TriggerError") << "Cannot find 2016 trigger path --> " << matchedPaths[0];
+               return;
+         }
+      }
+   }
+
+   // 2017 trigger paths
+   for (auto trigPathNoVersion : trigPaths17_) {
+      auto matchedPaths(hltConfig_.restoreVersion(pathNames, trigPathNoVersion));
+      if (matchedPaths.size() == 0) {
+         LogWarning("TriggerNotFound") << "Could not find matched full 2017 trigger path with --> " << trigPathNoVersion;
+         trigPaths17WithVersion_.push_back("None");
+         trigExist17_.push_back(false);
+      }
+      else {
+         trigExist17_.push_back(true);
+         trigPaths17WithVersion_.push_back(matchedPaths[0]);
+         if (hltConfig_.triggerIndex(matchedPaths[0]) >= hltConfig_.size()) {
+               LogError("TriggerError") << "Cannot find 2017 trigger path --> " << matchedPaths[0];
+               return;
+         }
+      }
+   }
+
+   // 2018 trigger paths
+   for (auto trigPathNoVersion : trigPaths18_) {
+      auto matchedPaths(hltConfig_.restoreVersion(pathNames, trigPathNoVersion));
+      if (matchedPaths.size() == 0) {
+         LogWarning("TriggerNotFound") << "Could not find matched full 2018 trigger path with --> " << trigPathNoVersion;
+         trigPaths18WithVersion_.push_back("None");
+         trigExist18_.push_back(false);
+      }
+      else {
+         trigExist18_.push_back(true);
+         trigPaths18WithVersion_.push_back(matchedPaths[0]);
+         if (hltConfig_.triggerIndex(matchedPaths[0]) >= hltConfig_.size()) {
+               LogError("TriggerError") << "Cannot find 2018 trigger path --> " << matchedPaths[0];
+               return;
+         }
+      }
+   }
+
+   // JEC Uncertainty object
+   iSetup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParCollHandle_); 
+   JetCorrectorParameters const & JetCorPar = (*JetCorParCollHandle_)["Uncertainty"];
+   jecUnc = new JetCorrectionUncertainty(JetCorPar);
+   if (!jecUnc) {
+      edm::LogError("JECUncertainty") << "iDMAnalyzer::beginRun: failed to get jecUnc object!";
+   }
+}
+
+// ------------ method called once each job just before starting event loop  ------------
+void AODSkimmer::beginJob()
 {
    outT = fs->make<TTree>("outT", "outT");
    nt.isData_ = isData;
@@ -176,22 +387,33 @@ AODSkimmer::beginJob()
 }
 
 // ------------ method called once each job just after ending the event loop  ------------
-void
-AODSkimmer::endJob()
-{
-}
+void AODSkimmer::endJob() {}
+
+void AODSkimmer::endRun(edm::Run const& iRun, edm::EventSetup const& iSetup) {}
 
 // ------------ method fills 'descriptions' with the allowed parameters for the module  ------------
 void
 AODSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
    edm::ParameterSetDescription desc;
 
+   // Inputs from the run_ntuplizer_cfg python (cmsRun inputs)
    desc.add<bool>("isData", 0);
+   desc.add<int>("year",2018);
+   desc.add<std::string>("triggerProcessName", "HLT");
+   desc.add<std::vector<std::string> >("triggerPaths16",{});
+   desc.add<std::vector<std::string> >("triggerPaths17",{});
+   desc.add<std::vector<std::string> >("triggerPaths18",{});
+   desc.add<std::vector<std::string> >("allTriggerPaths",{});
 
+   desc.add<edm::InputTag>("jetCorrector", edm::InputTag("nodefault"));
+
+   desc.add<edm::InputTag>("bTagProbb",edm::InputTag("pfDeepCSVJetTags","probb","RECO"));
+   desc.add<edm::InputTag>("bTagProbbb",edm::InputTag("pfDeepCSVJetTags","probbb","RECO"));
    desc.add<edm::InputTag>("recoElectron",edm::InputTag("gedGsfElectrons"));
    desc.add<edm::InputTag>("lowPtElectron",edm::InputTag("slimmedLowPtElectrons"));
    desc.add<edm::InputTag>("isoTracks",edm::InputTag("isolatedTracks"));
    desc.add<edm::InputTag>("packedPFCands",edm::InputTag("packedPFCandidates"));
+   desc.add<edm::InputTag>("recoJetsCHS",edm::InputTag("ak4PFJetsCHS"));
    desc.add<edm::InputTag>("genParticle",edm::InputTag("genParticles"));
    desc.add<edm::InputTag>("genJet",edm::InputTag("ak4GenJets"));
    desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
@@ -201,8 +423,21 @@ AODSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
    desc.add<edm::InputTag>("conversions",edm::InputTag("allConversions"));
    desc.add<edm::InputTag>("photons",edm::InputTag("photons"));
    desc.add<edm::InputTag>("ootPhotons",edm::InputTag("ootPhotons"));
-   desc.add<edm::InputTag>("PFMET",edm::InputTag("pfMet"));
+   desc.add<edm::InputTag>("PFMET",edm::InputTag("pfMetT0rtT1Txy"));
    desc.add<edm::InputTag>("CaloMET",edm::InputTag("caloMet"));
+   desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoFastjetAll"));
+   desc.add<edm::InputTag>("primaryVertexFilter",edm::InputTag("myPrimaryVertexFilter"));
+   desc.add<edm::InputTag>("globalSuperTight2016HaloFilter",edm::InputTag("globalSuperTightHalo2016Filter"));
+   desc.add<edm::InputTag>("HBHENoiseFilter",edm::InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"));
+   desc.add<edm::InputTag>("HBHENoiseIsoFilter",edm::InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"));
+   desc.add<edm::InputTag>("EcalDeadCellTrigPrimFilter",edm::InputTag("EcalDeadCellTriggerPrimitiveFilter"));
+   desc.add<edm::InputTag>("BadPFMuonFilter",edm::InputTag("BadPFMuonFilter"));
+   desc.add<edm::InputTag>("BadPFMuonDzFilter",edm::InputTag("BadPFMuonDzFilter"));
+   desc.add<edm::InputTag>("hfNoisyHitsFilter",edm::InputTag("hfNoisyHitsFilter"));
+   desc.add<edm::InputTag>("eeBadScFilter",edm::InputTag("eeBadScFilter"));
+   desc.add<edm::InputTag>("ecalBadCalibFilter",edm::InputTag("ecalBadCalibFilter"));
+   desc.add<edm::InputTag>("trigResult",edm::InputTag("TriggerResults","","HLT"));
+   desc.add<edm::InputTag>("trigEvent",edm::InputTag("hltTriggerSummaryAOD"));
    
    descriptions.add("AODSkimmer", desc);
 }
@@ -214,14 +449,13 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    using std::cout, std::endl; 
 
    // Retrieving event data and assigning to handles
+   iEvent.getByToken(bTagProbbToken_,bTagProbbHandle_);
+   iEvent.getByToken(bTagProbbbToken_,bTagProbbbHandle_);
    iEvent.getByToken(recoElectronToken_,recoElectronHandle_);
    iEvent.getByToken(lowPtElectronToken_,lowPtElectronHandle_);
    iEvent.getByToken(isoTracksToken_,isoTracksHandle_);
    iEvent.getByToken(packedPFCandToken_,packedPFCandHandle_);
-   iEvent.getByToken(genParticleToken_,genParticleHandle_);
-   iEvent.getByToken(genJetToken_,genJetHandle_);
-   iEvent.getByToken(genMETToken_,genMETHandle_);
-   iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
+   iEvent.getByToken(recoJetToken_,recoJetHandle_);
    iEvent.getByToken(primaryVertexToken_,primaryVertexHandle_);
    iEvent.getByToken(beamspotToken_,beamspotHandle_);
    iEvent.getByToken(conversionsToken_,conversionsHandle_);
@@ -229,16 +463,40 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iEvent.getByToken(ootPhotonsToken_,ootPhotonsHandle_);
    iEvent.getByToken(PFMETToken_,PFMETHandle_);
    iEvent.getByToken(CaloMETToken_,CaloMETHandle_);
+   iEvent.getByToken(jetCorrectorToken_,jetCorrectorHandle_);
+   iEvent.getByToken(rhoToken_,rhoHandle_);
+   iEvent.getByToken(primaryVertexFilterToken_,primaryVertexFilterHandle_);
+   iEvent.getByToken(globalSuperTightHalo2016FilterToken_,globalSuperTightHalo2016FilterHandle_);
+   iEvent.getByToken(HBHENoiseFilterToken_,HBHENoiseFilterHandle_);
+   iEvent.getByToken(HBHENoiseIsoFilterToken_,HBHENoiseIsoFilterHandle_);
+   iEvent.getByToken(EcalDeadCellTriggerPrimitiveFilterToken_,EcalDeadCellTriggerPrimitiveFilterHandle_);
+   iEvent.getByToken(BadPFMuonFilterToken_,BadPFMuonFilterHandle_);
+   iEvent.getByToken(BadPFMuonDzFilterToken_,BadPFMuonDzFilterHandle_);
+   iEvent.getByToken(hfNoisyHitsFilterToken_,hfNoisyHitsFilterHandle_);
+   iEvent.getByToken(eeBadScFilterToken_,eeBadScFilterHandle_);
+   iEvent.getByToken(ecalBadCalibFilterToken_,ecalBadCalibFilterHandle_);
+   iEvent.getByToken(trigResultsToken_,trigResultsHandle_);
+   iEvent.getByToken(trigEventToken_,trigEventHandle_);
+
+   if (!isData) { 
+      iEvent.getByToken(genParticleToken_,genParticleHandle_);
+      iEvent.getByToken(genJetToken_,genJetHandle_);
+      iEvent.getByToken(genMETToken_,genMETHandle_);
+      iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
+   }
 
    // Clear tree branches before filling
    nt.ClearTreeBranches();
 
-   //////
-   // Computing derived quantities and filling the trees
-   //////
+   /////////////////////////////////////////////////////////////
+   // Computing derived quantities and filling the trees ///////
+   /////////////////////////////////////////////////////////////
+
+   // Prearing basic info
    nt.eventNum_ = iEvent.id().event();
    nt.lumiSec_ = iEvent.luminosityBlock();
    nt.runNum_ = iEvent.id().run();
+   //Vertex & beamspot information
    reco::Vertex pv = (*primaryVertexHandle_).at(0);
    reco::BeamSpot beamspot = *beamspotHandle_;
    // Set up objects for vertex reco
@@ -246,27 +504,73 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", theB);
    KalmanVertexFitter kvf(true);
 
-   // Handling Regular MET
+   // MET Filters (as recommended here https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2#UL_data)
+   if ((*primaryVertexFilterHandle_) == 0) nt.METFiltersFailBits_ |= (1<<0);
+   if (!(*globalSuperTightHalo2016FilterHandle_)) nt.METFiltersFailBits_ |= (1<<1);
+   if (!(*HBHENoiseFilterHandle_)) nt.METFiltersFailBits_ |= (1<<2);
+   if (!(*HBHENoiseIsoFilterHandle_)) nt.METFiltersFailBits_ |= (1<<3);
+   if (!(*EcalDeadCellTriggerPrimitiveFilterHandle_)) nt.METFiltersFailBits_ |= (1<<4);
+   if (!(*BadPFMuonFilterHandle_)) nt.METFiltersFailBits_ |= (1<<5);
+   if (!(*BadPFMuonDzFilterHandle_)) nt.METFiltersFailBits_ |= (1<<6);
+   if (!(*hfNoisyHitsFilterHandle_)) nt.METFiltersFailBits_ |= (1<<7);
+   if (!(*eeBadScFilterHandle_)) nt.METFiltersFailBits_ |= (1<<8);
+   if ((year == 2017) || (year == 2018)) { // ecalBadCalib filter only recommended for 2017/18
+      if (!(*ecalBadCalibFilterHandle_)) nt.METFiltersFailBits_ |= (1<<9);
+   }
    
-   if (PFMETHandle_->size() > 0) {
-      auto pfmet = (*PFMETHandle_).at(0);
-      nt.PFMET_ET_ = pfmet.sumEt();
-      nt.PFMET_Px_ = pfmet.px();
-      nt.PFMET_Py_ = pfmet.py();
-      nt.PFMET_Pt_ = pfmet.pt();
-      nt.PFMET_Phi_ = pfmet.phi();
+   // Triggers
+
+   // All triggers
+   nt.fired_ = 0;
+   for (size_t i = 0; i < allTrigPathsWithVersion_.size(); i++) {
+      if (trigExist_.at(i)) {
+         std::string trigPath = allTrigPathsWithVersion_[i];
+         nt.fired_ |= (trigResultsHandle_->accept(hltConfig_.triggerIndex(trigPath)) << i);
+      }
+      else {
+         nt.fired_ |= (0 <<i);
+      }
    }
 
-   if (CaloMETHandle_->size() > 0) {
-      auto calomet = (*CaloMETHandle_).at(0);
-      nt.CaloMET_ET_ = calomet.sumEt();
-      nt.CaloMET_Px_ = calomet.px();
-      nt.CaloMET_Py_ = calomet.py();
-      nt.CaloMET_Pt_ = calomet.pt();
-      nt.CaloMET_Phi_ = calomet.phi();
+   // 2016 triggers
+   nt.fired16_ = 0;
+   for (size_t i = 0; i < trigPaths16WithVersion_.size(); i++) {
+      if (trigExist16_.at(i)) {
+         std::string trigPath = trigPaths16WithVersion_[i];
+         nt.fired16_ |= (trigResultsHandle_->accept(hltConfig_.triggerIndex(trigPath)) << i);
+      }
+      else {
+         nt.fired16_ |= (0 <<i);
+      }
    }
-   
-   // Handling default electrons
+
+   // 2017 triggers
+   nt.fired17_ = 0;
+   for (size_t i = 0; i < trigPaths17WithVersion_.size(); i++) {
+      if (trigExist17_.at(i)) {
+         std::string trigPath = trigPaths17WithVersion_[i];
+         nt.fired17_ |= (trigResultsHandle_->accept(hltConfig_.triggerIndex(trigPath)) << i);
+      }
+      else {
+         nt.fired17_ |= (0 <<i);
+      }
+   }
+
+   // 2018 triggers
+   nt.fired18_ = 0;
+   for (size_t i = 0; i < trigPaths18WithVersion_.size(); i++) {
+      if (trigExist18_.at(i)) {
+         std::string trigPath = trigPaths18WithVersion_[i];
+         nt.fired18_ |= (trigResultsHandle_->accept(hltConfig_.triggerIndex(trigPath)) << i);
+      }
+      else {
+         nt.fired18_ |= (0 <<i);
+      }
+   }
+
+   ////////////////////////////////
+   // Handling default electrons // 
+   ////////////////////////////////
    nt.nElectronDefault_ = recoElectronHandle_->size();
    vector<reco::GsfTrackRef> reg_eleTracks{};
    vector<math::XYZTLorentzVector> reg_ele_p4s;
@@ -288,6 +592,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronVxy_.push_back(ele.trackPositionAtVtx().rho());
       nt.recoElectronVz_.push_back(ele.trackPositionAtVtx().z());
       nt.recoElectronTrkIso_.push_back(ele.dr04TkSumPt());
+      nt.recoElectronTrkRelIso_.push_back(ele.dr04TkSumPt()/ele.pt());
       nt.recoElectronCharge_.push_back(ele.charge());
       // Filling track info
       nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
@@ -295,12 +600,15 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronDz_.push_back(track->dz(pv.position()));
       nt.recoElectronDzError_.push_back(track->dzError());
       nt.recoElectronTrkChi2_.push_back(track->normalizedChi2());
+      nt.recoElectronTrkProb_.push_back(TMath::Prob(track->chi2(),(int)track->ndof()));
       nt.recoElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
    }
 
-   // Handling low-pT electrons
+   /////////////////////////////////
+   /// Handling low-pT electrons ///
+   /////////////////////////////////
    std::vector<reco::GsfTrackRef> lowpt_eleTracks{};
    vector<math::XYZTLorentzVector> lowpt_ele_p4s;
    for (unsigned int i = 0; i < lowPtElectronHandle_->size(); i++) {
@@ -330,6 +638,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronVxy_.push_back(ele->trackPositionAtVtx().rho());
       nt.recoLowPtElectronVz_.push_back(ele->trackPositionAtVtx().z());
       nt.recoLowPtElectronTrkIso_.push_back(ele->trackIso());
+      nt.recoLowPtElectronTrkRelIso_.push_back(ele->trackIso()/ele->pt());
       nt.recoLowPtElectronCharge_.push_back(ele->charge());
       // Filling tracks
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
@@ -337,6 +646,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronDz_.push_back(track->dz(pv.position()));
       nt.recoLowPtElectronDzError_.push_back(track->dzError());
       nt.recoLowPtElectronTrkChi2_.push_back(track->normalizedChi2());
+      nt.recoLowPtElectronTrkProb_.push_back(TMath::Prob(track->chi2(),(int)track->ndof()));
       nt.recoLowPtElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoLowPtElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoLowPtElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
@@ -759,6 +1069,36 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    computeVerticesCand(ind_lptele,ind_eleCand,"lowcand");
    nt.nEleVertex_LC_ = nt.LCvtx_recoVtxVxy_.size();
 
+
+   // Handling MET //
+   auto PFMET = PFMETHandle_->at(0);
+   if (PFMETHandle_->size() > 0) {
+      auto pfmet = (*PFMETHandle_).at(0);
+      nt.PFMET_ET_ = pfmet.sumEt();
+      nt.PFMET_Px_ = pfmet.px();
+      nt.PFMET_Py_ = pfmet.py();
+      nt.PFMET_Pt_ = pfmet.pt();
+      nt.PFMET_Phi_ = pfmet.phi();
+   }
+   if (CaloMETHandle_->size() > 0) {
+      auto calomet = (*CaloMETHandle_).at(0);
+      nt.CaloMET_ET_ = calomet.sumEt();
+      nt.CaloMET_Px_ = calomet.px();
+      nt.CaloMET_Py_ = calomet.py();
+      nt.CaloMET_Pt_ = calomet.pt();
+      nt.CaloMET_Phi_ = calomet.phi();
+   }
+
+   ///////////////////
+   // Handling Jets //
+   ///////////////////
+   
+   // Loading/executing module to compute & apply jet corrections, and write to output tree
+   JME::JetResolution resolution = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
+   JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PFchs");
+   
+   JetCorrections jc(recoJetHandle_, jetCorrectorHandle_, nt, bTagProbbHandle_, bTagProbbbHandle_, recoElectronHandle_, year, isData);
+   jc.Correct(resolution, resolution_sf, *jecUnc, rhoHandle_, genJetHandle_, PFMET);
    ///////////////////////////////////////
 
    //Handling gen particles

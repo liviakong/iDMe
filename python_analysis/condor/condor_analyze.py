@@ -14,7 +14,8 @@ if __name__ == "__main__":
     from analysisTools import Analyzer
     files = "samples.json"
     histos = "histos.json"
-    az = Analyzer(files,histos)
+    cuts = "cuts.py"
+    az = Analyzer(files,histos,cuts)
     out = az.process(execr="futures")
     
     outName = "output_{0}.coffea".format(jobname)

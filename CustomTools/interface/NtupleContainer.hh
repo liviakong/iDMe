@@ -17,12 +17,21 @@ public:
     void ClearTreeBranches();
 
     // Trigger and event-level branches
+    unsigned int fired_;
+    unsigned int fired16_;
+    unsigned int fired17_;
+    unsigned int fired18_;
     unsigned long long eventNum_;
     unsigned long long runNum_;
     unsigned long long lumiSec_;
     bool isData_;
 
-    // Gen branches
+    // MET Filters
+    uint32_t METFiltersFailBits_;
+
+    //////////////////////
+    //// Gen branches ////
+    //////////////////////
     
     // Gen particles
     int nGen_;
@@ -133,6 +142,8 @@ public:
     vector<float> recoElectronDzError_;
     vector<float> recoElectronTrkChi2_;
     vector<float> recoElectronTrkIso_;
+    vector<float> recoElectronTrkRelIso_;
+    vector<float> recoElectronTrkProb_;
     vector<int> recoElectronTrkNumTrackerHits_;
     vector<int> recoElectronTrkNumPixHits_;
     vector<int> recoElectronTrkNumStripHits_;
@@ -158,6 +169,8 @@ public:
     vector<float> recoLowPtElectronDzError_;
     vector<float> recoLowPtElectronTrkChi2_;
     vector<float> recoLowPtElectronTrkIso_;
+    vector<float> recoLowPtElectronTrkRelIso_;
+    vector<float> recoLowPtElectronTrkProb_;
     vector<int> recoLowPtElectronTrkNumTrackerHits_;
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;
@@ -202,12 +215,58 @@ public:
     vector<float> conversion_Trk2_outerEta_;
     vector<float> conversion_Trk2_outerPhi_;
 
+    // Jets
+    int PFNJet_;
+    int PFNPassIDJet_;
+    int PFNHighPtJet_;
+    vector<float> PFJetPt_;
+    vector<float> PFJetEta_;
+    vector<float> PFJetPhi_;
+    vector<float> PFJetCorrectedPt_;
+    vector<float> PFJetCorrectedEta_;
+    vector<float> PFJetCorrectedPhi_;
+    vector<float> PFJetCorrectedBTag_;
+    vector<float> PFJetCorrectedCHEF_;
+    vector<float> PFJetCorrectedNHEF_;
+    vector<float> PFJetCorrectedCEEF_;
+    vector<float> PFJetCorrectedNEEF_;
+    vector<float> PFJetCorrectedNumDaughters_;
+    vector<float> PFJetCorrectedChargedMultiplicity_;
+    vector<float> PFJetCorrectedJESUpPt_;
+    vector<float> PFJetCorrectedJESUpEta_;
+    vector<float> PFJetCorrectedJESUpPhi_;
+    vector<float> PFJetCorrectedJESDownPt_;
+    vector<float> PFJetCorrectedJESDownEta_;
+    vector<float> PFJetCorrectedJESDownPhi_;
+    vector<float> PFJetCorrectedJERUpPt_;
+    vector<float> PFJetCorrectedJERUpEta_;
+    vector<float> PFJetCorrectedJERUpPhi_;
+    vector<float> PFJetCorrectedJERDownPt_;
+    vector<float> PFJetCorrectedJERDownEta_;
+    vector<float> PFJetCorrectedJERDownPhi_;
+    bool PFHEMFlag_;
+
     // MET
     float PFMET_ET_;
     float PFMET_Px_;
     float PFMET_Py_;
     float PFMET_Pt_;
     float PFMET_Phi_;
+    float PFMETSmearingOnlyPt_;
+    float PFMETSmearingOnlyPhi_;
+    float PFMETCorrectedPt_;
+    float PFMETCorrectedPhi_;
+    float PFMETEEDeltaPx_;
+    float PFMETEEDeltaPy_;
+    float PFMETJESUpPt_;
+    float PFMETJESUpPhi_;
+    float PFMETJESDownPt_;
+    float PFMETJESDownPhi_;
+    float PFMETJERUpPt_;
+    float PFMETJERUpPhi_;
+    float PFMETJERDownPt_;
+    float PFMETJERDownPhi_;
+    float PFMETMuonEtFraction_;
     
     float CaloMET_ET_;
     float CaloMET_Px_;

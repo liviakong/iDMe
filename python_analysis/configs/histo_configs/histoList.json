@@ -4,6 +4,7 @@
         "name" : "Electron Kinematics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "ele_type" : "Electron Type"
         },
         "bins" : [
@@ -16,7 +17,8 @@
         "varname": "gen_ee_kinematics",
         "name": "Gen Dielectron Kinematics",
         "categories" : {
-            "sample":"Signal Sample"
+            "sample":"Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["mass","Gen $m_{e^+e^-}$ [GeV]",100,0,50],
@@ -28,6 +30,7 @@
         "name" : "Gen Electron Match Matrix",
         "categories" : {
             "sample": "Signal Sample",
+            "cut" : "Cut",
             "set": "Collections Used",
             "scheme" : "Matching Scheme"
         },
@@ -41,6 +44,7 @@
         "name" : "Gen Electron Number of Matches",
         "categories" : {
             "sample": "Signal Sample",
+            "cut" : "Cut",
             "set": "Collections Used"
         },
         "bins" : [
@@ -53,6 +57,7 @@
         "name" : "Gen Electron Matching Class",
         "categories" : {
             "sample" :"Signal Sample",
+            "cut" : "Cut",
             "set" : "Collections Used"
         },
         "bins" : [
@@ -64,6 +69,7 @@
         "name" : "Gen-Matched Electron Kinematics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "set" : "Collections Used"
         },
         "bins" : [
@@ -77,6 +83,7 @@
         "name" : "Gen-Matched Electron Truth Kinematics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "set" : "Collections Used"
         },
         "bins" : [
@@ -90,6 +97,7 @@
         "name" : "Electron Track Hits",
         "categories" : {
             "sample": "Signal Sample",
+            "cut" : "Cut",
             "ele_type" : "Electron Type"
         },
         "bins" : [
@@ -103,6 +111,7 @@
         "name" : "Matched Electron Track Hits",
         "categories" : {
             "sample": "Signal Sample",
+            "cut" : "Cut",
             "set":"Collections Used"
         },
         "bins" : [
@@ -116,6 +125,7 @@
         "name" : "Electron Track Quality",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "ele_type" : "Electron Type"
         },
         "bins" : [
@@ -128,6 +138,7 @@
         "name" : "Matched Electron Track Quality",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "set" :"Collections Used"
         },
         "bins" : [
@@ -136,10 +147,23 @@
         ]
     },
     {
+        "varname" : "matched_ele_trackRes",
+        "name" : "Matched Electron Track Resolution",
+        "categories" : {
+            "sample" : "Signal Sample",
+            "cut" : "Cut",
+            "set":"Collections Used"
+        },
+        "bins" : [
+            ["angRes","Angular Resolution $\\sqrt{\\sigma_\\eta^2 + \\sigma_\\phi^2}$", 100, 0, 0.1]
+        ]
+    },
+    {
         "varname" : "gen_displacement",
         "name": "Generated Electron Displacement",
         "categories" : {
-            "sample" :"Signal Sample"
+            "sample" :"Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["vxy","Generated Electron $v_{xy}$ [cm]",2000,0,50],
@@ -151,6 +175,7 @@
         "name": "Gen-Matched Electron Truth Displacement",
         "categories" : {
             "sample" :"Signal Sample",
+            "cut" : "Cut",
             "set":"Collections Used"
         },
         "bins" : [
@@ -163,6 +188,7 @@
         "name" : "Reg-Reg Reconstructed Vertex Vxy",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" : "Relative Sign"
         },
         "bins" : [
@@ -175,6 +201,7 @@
         "name" : "Reg-Reg Reconstructed Vertex Statistics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" :"Relative Sign"
         },
         "bins" : [
@@ -187,6 +214,7 @@
         "name" : "Low-Low Reconstructed Vertex Vxy",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" : "Relative Sign"
         },
         "bins" : [
@@ -199,6 +227,7 @@
         "name" : "Low-Low Reconstructed Vertex Statistics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" :"Relative Sign"
         },
         "bins" : [
@@ -211,6 +240,7 @@
         "name" : "Low-Reg Reconstructed Vertex Vxy",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" : "Relative Sign"
         },
         "bins" : [
@@ -223,6 +253,7 @@
         "name" : "Low-Reg Reconstructed Vertex Statistics",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "sign" :"Relative Sign"
         },
         "bins" : [
@@ -235,6 +266,7 @@
         "name" : "Nearest Reco Vertex to Gen Vertex",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type"
         },
         "bins" : [
@@ -248,6 +280,7 @@
         "name" : "Nearest Reco Vertex to Gen Vertex",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type"
         },
         "bins" : [
@@ -260,6 +293,7 @@
         "name" : "Nearest Reco Vertex to Gen Vertex",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type"
         },
         "bins" : [
@@ -271,7 +305,8 @@
         "varname" : "vtx_nearestMatchByDr",
         "name" : "Global Nearest Reco Vertex to Gen Vertex",
         "categories" : {
-            "sample":"Signal Sample"
+            "sample":"Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["type","Vertex Type",3,1,4],
@@ -284,7 +319,8 @@
         "varname" : "vtx_disp_nearestMatchByDr",
         "name" : "Nearest Reco Vertex to Gen Vertex",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["type","Vertex Type",3,1,4],
@@ -296,7 +332,8 @@
         "varname" : "vtx_kin_nearestMatchByDr",
         "name" : "Nearest Reco Vertex to Gen Vertex",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["type","Vertex Type",3,1,4],
@@ -308,7 +345,8 @@
         "varname" : "vtx_nearestMatchTypeByDr",
         "name" : "Global Nearest Reco Vertex to Gen Vertex Type",
         "categories" : {
-            "sample":"Signal Sample"
+            "sample":"Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["type","Vertex Type",4,0,4]
@@ -319,6 +357,7 @@
         "name" : "Vertex from Gen-Matched Electrons",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type",
             "set":"Collections Used"
         },
@@ -328,10 +367,53 @@
         ]
     },
     {
+        "varname" : "vtx_qual_genMatchByEle",
+        "name" : "Vertex Quality from Gen-Matched Electrons",
+        "categories" : {
+            "sample":"Signal Sample",
+            "cut" : "Cut",
+            "type" : "Vertex Type",
+            "set" :"Collections Used"
+        },
+        "bins" : [
+            ["chi2","Vertex Fit $\\chi^2/df$",80,0,20],
+            ["prob","Vertex $\\chi^2$ Probability",100,0,1]
+        ]
+    },
+    {
+        "varname" : "vtx_chi2_vs_vxy_genMatchByEle",
+        "name" : "Vertex Quality from Gen-Matched Electrons",
+        "categories" : {
+            "sample":"Signal Sample",
+            "cut" : "Cut",
+            "type" : "Vertex Type",
+            "set" :"Collections Used"
+        },
+        "bins" : [
+            ["chi2","Vertex Fit $\\chi^2/df$",80,0,20],
+            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50]
+        ]
+    },
+    {
+        "varname" : "vtx_prob_vs_vxy_genMatchByEle",
+        "name" : "Vertex Quality from Gen-Matched Electrons",
+        "categories" : {
+            "sample":"Signal Sample",
+            "cut" : "Cut",
+            "type" : "Vertex Type",
+            "set" :"Collections Used"
+        },
+        "bins" : [
+            ["prob","Vertex $\\chi^2$ Probability",100,0,1],
+            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50]
+        ]
+    },
+    {
         "varname" : "vtx_disp_genMatchByEle",
         "name" : "Vertex from Gen-Matched Electrons",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type",
             "set":"Collections Used"
         },
@@ -345,6 +427,7 @@
         "name" : "Vertex from Gen-Matched Electrons",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "type" : "Vertex Type",
             "set": "Collections Used"
         },
@@ -358,6 +441,7 @@
         "name" : "Vertex Type from Gen-Matched electrons",
         "categories" : {
             "sample":"Signal Sample",
+            "cut" : "Cut",
             "set" : "Collections Used"
         },
         "bins" : [
@@ -369,6 +453,7 @@
         "name" : "Displaced Dielectron Vertex Kinematics",
         "categories" : {
             "sample" :"Signal Sample",
+            "cut" : "Cut",
             "denom" : "Denominator"
         },
         "bins": [
@@ -382,6 +467,7 @@
         "name": "Displaced Dielectron Vertex Quality",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "denom": "Denominator"
         },
         "bins": [
@@ -395,6 +481,7 @@
         "name": "Displaced Dielectron Efficiencies",
         "categories" : {
             "sample":"Signal Sample",
+            "cut" : "Cut",
             "denom":"Denominator"
         },
         "bins" : [
@@ -405,7 +492,8 @@
         "varname" : "match_conv_kinematics",
         "name" : "Matched Conversion Electron Kinematics",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["pt","$p_{T}$ [GeV]",100,0,50],
@@ -417,7 +505,8 @@
         "varname" : "match_conv_vtx",
         "name" : "Matched Conversion Electron Vertex",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["vxy","Conversion $v_{xy}$ [cm]",2000,0,50],
@@ -428,7 +517,8 @@
         "varname" : "match_matrix",
         "name": "Gen Electron Match Matrix",
         "categories" : {
-            "sample" : "Signal Sample"
+            "sample" : "Signal Sample",
+            "cut" : "Cut"
         },
         "bins" : [
             ["e_matchType","Electron Match Type",4,0,4],
@@ -440,6 +530,7 @@
         "name" : "Conversion Electron Gen-Match Matrix",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "match" : "Match Category"
         },
         "bins": [
@@ -452,6 +543,7 @@
         "name" : "Disambiguated Conversion Electron Gen-Match Matrix",
         "categories" : {
             "sample" : "Signal Sample",
+            "cut" : "Cut",
             "match" : "Match Category"
         },
         "bins": [

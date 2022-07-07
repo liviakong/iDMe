@@ -3,10 +3,11 @@ import FWCore.ParameterSet.VarParsing as VarParsing
 import FWCore.Utilities.FileUtils as FileUtils
 from TrackingTools.TrackAssociator.default_cfi import TrackAssociatorParameterBlock
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+from Configuration.Eras.Era_Run2_2017_cff import Run2_2017
+from Configuration.Eras.Era_Run2_2016_cff import Run2_2016
 from Configuration.ProcessModifiers.run2_miniAOD_UL_cff import run2_miniAOD_UL
 import json
 
-process = cms.Process("USER",Run2_2018,run2_miniAOD_UL)
 options = VarParsing.VarParsing('analysis')
 options.register('data',
         False,
@@ -14,6 +15,11 @@ options.register('data',
         VarParsing.VarParsing.varType.bool,
         "Run on data (1) or MC (0)"
         )
+options.register('year',
+        2018,
+        VarParsing.VarParsing.multiplicity.singleton,
+        VarParsing.VarParsing.varType.int,
+        "Data/MC year")
 options.register('numThreads',
         8,
         VarParsing.VarParsing.multiplicity.singleton,
@@ -47,6 +53,22 @@ if options.flist != "":
         # we have passed a file name directly
         options.inputFiles = options.flist 
 
+globaltag = ''
+if options.year == 2016:
+    globaltag = '106X_mcRun2_asymptotic_v13'
+    era = Run2_2016
+elif options.year == 2017:
+    globaltag = '106X_mc2017_realistic_v6'
+    era = Run2_2017
+elif options.year == 2018:
+    globaltag = '106X_upgrade2018_realistic_v16_L1v1'
+    era = Run2_2018
+else:
+    print("Invalid year given for run 2 : {0}".format(options.year))
+    exit
+
+process = cms.Process("USER",era,run2_miniAOD_UL)
+
 process.load("FWCore.MessageService.MessageLogger_cfi")
 process.load('Configuration.StandardSequences.Services_cff')
 process.load("Configuration.EventContent.EventContent_cff")
@@ -55,7 +77,6 @@ process.load("Configuration.StandardSequences.GeometryRecoDB_cff")
 process.load('Configuration.StandardSequences.MagneticField_38T_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
-globaltag = '106X_upgrade2018_realistic_v16_L1v1'
 process.GlobalTag.globaltag = globaltag
 
 process.options = cms.untracked.PSet(
@@ -74,19 +95,123 @@ process.TFileService = cms.Service("TFileService",
     closeFileFast = cms.untracked.bool(True)
     )
 
-## Main iDM analyzer 
+##############################
+### Jet Energy Corrections ###
+##############################
+process.load('JetMETCorrections.Configuration.JetCorrectors_cff')
+if options.data:
+    jetCorrector = cms.InputTag('ak4PFCHSL1FastL2L3ResidualCorrector')
+else:
+    jetCorrector = cms.InputTag('ak4PFCHSL1FastL2L3Corrector')
+
+#######################
+### MET Corrections ###
+#######################
+process.load("JetMETCorrections.Type1MET.correctionTermsPfMetType0RecoTrack_cff")
+process.load("JetMETCorrections.Type1MET.correctionTermsPfMetType1Type2_cff")
+process.load("JetMETCorrections.Type1MET.correctionTermsPfMetMult_cff")
+process.load("JetMETCorrections.Type1MET.correctedMet_cff")
+
+#######################
+##### MET Filters #####
+#######################
+process.load('iDMeAnalysis.AODSkimmer.myMETFilters_cff')
+
+#######################
+###### Triggers #######
+#######################
+triggerPaths16 = [
+    "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT250",
+    "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele12_CaloIdL_TrackIdL_IsoVL",
+    "HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele25_WPTight_Gsf",
+    "HLT_Ele27_WPTight_Gsf",
+    "HLT_PFMET90_PFMHT90_IDTight",
+    "HLT_PFMET100_PFMHT100_IDTight",
+    "HLT_PFMET110_PFMHT110_IDTight",
+    "HLT_PFMET120_PFMHT120_IDTight"
+]
+
+triggerPaths17 = [
+    "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT350",
+    "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL",
+    "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele27_WPTight_Gsf",
+    "HLT_Ele32_WPTight_Gsf",
+    "HLT_Ele35_WPTight_Gsf",
+    "HLT_Ele38_WPTight_Gsf",
+    "HLT_Ele40_WPTight_Gsf",
+    "HLT_PFMET110_PFMHT110_IDTight",
+    "HLT_PFMET120_PFMHT120_IDTight",
+    "HLT_PFMET130_PFMHT130_IDTight",
+    "HLT_PFMET140_PFMHT140_IDTight",
+    "HLT_PFMETTypeOne110_PFMHT110_IDTight",
+    "HLT_PFMETTypeOne120_PFMHT120_IDTight",
+    "HLT_PFMETTypeOne130_PFMHT130_IDTight",
+    "HLT_PFMETTypeOne140_PFMHT140_IDTight"
+]
+
+triggerPaths18 = [
+    "HLT_DoubleEle8_CaloIdM_TrackIdM_Mass8_PFHT350",
+    "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL",
+    "HLT_Ele27_WPTight_Gsf",
+    "HLT_Ele28_WPTight_Gsf",
+    "HLT_Ele30_WPTight_Gsf",
+    "HLT_Ele32_WPTight_Gsf",
+    "HLT_Ele35_WPTight_Gsf",
+    "HLT_Ele38_WPTight_Gsf",
+    "HLT_Ele40_WPTight_Gsf",
+    "HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele8_CaloIdM_TrackIdM_PFJet30",
+    "HLT_PFMET110_PFMHT110_IDTight",
+    "HLT_PFMET120_PFMHT120_IDTight",
+    "HLT_PFMET130_PFMHT130_IDTight",
+    "HLT_PFMET140_PFMHT140_IDTight",
+    "HLT_PFMETTypeOne110_PFMHT110_IDTight",
+    "HLT_PFMETTypeOne120_PFMHT120_IDTight",
+    "HLT_PFMETTypeOne130_PFMHT130_IDTight",
+    "HLT_PFMETTypeOne140_PFMHT140_IDTight"
+]
+
+##############################
+###### Main iDM analyzer #####
+##############################
 ## (note: cfi with default options is generated by fillDescriptions when compiling -- not found in python/)
 ## (the only options specified below after cloning are the non-default ones)
 from iDMeAnalysis.AODSkimmer.AODSkimmer_cfi import AODSkimmer
-# setting up skimer & process path
+# setting up skimmer & process path
 process.ntuples = AODSkimmer.clone(
-    isData = cms.bool(options.data)
+    isData = cms.bool(options.data),
+    jetCorrector = jetCorrector,
+    triggerPaths16 = cms.vstring(triggerPaths16),
+    triggerPaths17 = cms.vstring(triggerPaths17),
+    triggerPaths18 = cms.vstring(triggerPaths18),
+    allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18)))
 )
 process.commonSequence = cms.Sequence(
-    process.ntuples
+    process.correctionTermsPfMetType0RecoTrack
+    + process.correctionTermsPfMetType1Type2
+    + process.correctionTermsPfMetMult
+    + process.pfMetT0rtT1Txy
+    + process.ntuples
 )
-process.commonPath = cms.Path(process.commonSequence)
-process.schedule = cms.Schedule(process.commonPath)
+
+if options.data:
+    process.totalPath = cms.Path(
+        process.myMetFilters 
+        + process.ak4PFCHSL1FastL2L3ResidualCorrectorChain
+        + process.commonSequence
+    )
+else:
+    process.totalPath = cms.Path(
+        process.myMetFilters 
+        + process.ak4PFCHSL1FastL2L3CorrectorChain
+        + process.commonSequence
+    )
+
+process.schedule = cms.Schedule(process.totalPath)
 # Running the PAT producers (from PhysicsTools/PatAlgos/test/patMiniAOD_standard_cfg.py)
 process.load("Configuration.StandardSequences.PATMC_cff")
 process.schedule.associate(process.patTask) # add the PAT algos

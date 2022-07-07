@@ -18,19 +18,32 @@ from XRootD import client
 import re
 NanoAODSchema.warn_missing_crossrefs = False
 import analysisSubroutines as routines
+import sys
 
 match_names = {"Default":"match0","lowpt":"match1"}
 vxy_range = {1:[0,20],10:[0,50],100:[0,50],1000:[0,50]}
 vxy_rebin = {1:5,10:20,100:20,1000:20}
 
 class Analyzer:
-    def __init__(self,fileList,histoList,routines=[],histoStyle=None,max_samples=-1):
-        # load in configs
-        with open(fileList) as f:
-            self.fileList = json.load(f)
+    def __init__(self,fileList,histoList,cuts,routines=[],histoStyle=None,max_samples=-1):
+        # load in file config
+        if type(fileList) == str and ".json" in fileList:
+            with open(fileList) as f:
+                self.fileList = json.load(f)
+        else:
+            self.fileList = fileList
+        
+        #load in histogram config
         with open(histoList) as f:
             self.histoList = json.load(f)
+
+        # load in cuts config (should be a path to a .py file with cut methods)
+        self.cuts = cuts
+
+        # load in list of routines to run (not implemented yet)
         self.routines = routines
+
+        # load in histogram style file (obsolete)
         if histoStyle != None:
             with open(histoStyle) as f:
                 self.histoStyle = json.load(f)
@@ -45,6 +58,7 @@ class Analyzer:
         self.nEvents = {}
         self.nEventsProcessed = {}
         self.totalEvents = 0
+        self.mode = None
         
         self.loadFiles()
         self.loadHistos()
@@ -61,6 +75,13 @@ class Analyzer:
                 name = "bkg_{0}_{1}".format(sample['year'],sample['name'])
             elif mode == 'data':
                 name = "data_{0}_{1}".format(sample['year'],sample['name'])
+            if self.mode is None:
+                self.mode = mode
+            else:
+                if self.mode != mode:
+                    print("Error! You're mixing samples of differing types (e.g. signal and bkg, signal and data, etc)")
+                    print("Please split up different kinds of samples into different configs")
+                    exit()
             loc = sample['location']
             if '.root' in loc:
                 # if the location is just a single file, load it in
@@ -109,7 +130,7 @@ class Analyzer:
 
     def process(self,treename='ntuples/outT',execr="iterative"):
         fileset = self.sample_locs
-        proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histos)
+        proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histos,self.cuts,mode=self.mode)
         if execr == "iterative":
             executor = processor.iterative_executor
             executor_args = {"schema":NanoAODSchema}
@@ -158,11 +179,33 @@ class fileAnalyzer(Analyzer):
         self.loadHistos()
 
 class iDMeProcessor(processor.ProcessorABC):
-    def __init__(self,samples,sampleInfo,fileSet,histos,mode='signal'):
+    def __init__(self,samples,sampleInfo,fileSet,histos,cutFile,mode='signal'):
         self.samples = samples
         self.sampleInfo = sampleInfo
         self.sampleLocs = fileSet
         self.mode = mode
+        self.cutFile = cutFile
+        
+        # load in cuts module
+        if "/" in self.cutFile: # if cut file is in a different directory
+            sys.path.append("/".join(self.cutFile.split("/")[:-1]))
+            cutFileName = self.cutFile.split("/")[-1].split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
+        else: # cut file is in the same directory (e.g. running on condor)
+            cutFileName = self.cutFile.split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
+
+        # make a cutflow dictionary for the output
+        histos['cutflow'] = processor.defaultdict_accumulator(int)
+        histos['cutDesc'] = processor.defaultdict_accumulator(str)
+
+        # creating the accumulator
         self._accumulator = processor.dict_accumulator(histos)
 
     @property
@@ -172,20 +215,27 @@ class iDMeProcessor(processor.ProcessorABC):
     def process(self,events):
         samp = events.metadata["dataset"]
         histos = self.accumulator.identity()
+        info = self.sample_info[samp]
         
         ################ FILLING START ################    
         # Filling basic electron kinematics
-        histos = routines.electron_basics(events,histos,samp)
-        
-        ################ Gen-matching ################
-        if self.mode == "signal":
-            histos = routines.ele_genMatching(events,histos,samp)
-            histos = routines.conversions(events,histos,samp)
-            histos = routines.genParticles(events,histos,samp)
-            histos = routines.recoEE_vertices_genMatchDr(events,histos,samp)
-            histos = routines.recoEE_vertices_genMatchByEles(events,histos,samp)
-              
-        histos = routines.recoEE_vertices(events,histos,samp)
+        for cut in self.cuts:
+            events, cutName, cutDesc = cut(events,info)
+
+            histos['cutflow'][cutName] += len(events)
+            if cutName not in histos['cutDesc'].keys():
+                histos['cutDesc'][cutName] = cutDesc
+
+            histos = routines.electron_basics(events,histos,samp,cutName)
+            
+            ################ Gen-matching ################
+            if self.mode == "signal":
+                histos = routines.ele_genMatching(events,histos,samp,cutName)
+                histos = routines.conversions(events,histos,samp,cutName)
+                histos = routines.genParticles(events,histos,samp,cutName)
+                histos = routines.recoEE_vertices_genMatchByEles(events,histos,samp,cutName)
+                
+            histos = routines.recoEE_vertices(events,histos,samp,cutName)
         
         return histos
 

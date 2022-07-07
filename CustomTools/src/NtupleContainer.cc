@@ -1,4 +1,4 @@
-#include "NtupleContainer.hh"
+#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
 
 NtupleContainer::NtupleContainer() {}
 
@@ -12,9 +12,16 @@ void NtupleContainer::CreateTreeBranches() {
     //outT->Branch("isData",&isData_);
 
     // Reco information
+    outT->Branch("trigFired",&fired_);
+    outT->Branch("trigFired16",&fired16_);
+    outT->Branch("trigFired17",&fired17_);
+    outT->Branch("trigFired18",&fired18_);
     outT->Branch("eventNum", &eventNum_);
     outT->Branch("lumiSec", &lumiSec_);
     outT->Branch("runNum", &runNum_);
+
+    // MET Filters
+    outT->Branch("METFiltersFailBits",&METFiltersFailBits_);
 
     // Normal Electrons
     outT->Branch("nElectron",&nElectronDefault_);
@@ -36,6 +43,8 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("Electron_dzErr",&recoElectronDzError_);
     outT->Branch("Electron_trkChi2",&recoElectronTrkChi2_);
     outT->Branch("Electron_trkIso",&recoElectronTrkIso_);
+    outT->Branch("Electron_trkRelIso",&recoElectronTrkRelIso_);
+    outT->Branch("Electron-trkProb",&recoElectronTrkProb_);
     outT->Branch("Electron_numTrackerHits",&recoElectronTrkNumTrackerHits_);
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
     outT->Branch("Electron_numStripHits",&recoElectronTrkNumStripHits_);
@@ -61,6 +70,8 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("LptElectron_dzErr",&recoLowPtElectronDzError_);
     outT->Branch("LptElectron_trkChi2",&recoLowPtElectronTrkChi2_);
     outT->Branch("LptElectron_trkIso",&recoLowPtElectronTrkIso_);
+    outT->Branch("LptElectron_trkRelIso",&recoLowPtElectronTrkRelIso_);
+    outT->Branch("LptElectron_trkProb",&recoLowPtElectronTrkProb_);
     outT->Branch("LptElectron_numTrackerHits",&recoLowPtElectronTrkNumTrackerHits_);
     outT->Branch("LptElectron_numPixHits",&recoLowPtElectronTrkNumPixHits_);
     outT->Branch("LptElectron_numStripHits",&recoLowPtElectronTrkNumStripHits_);
@@ -105,30 +116,76 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("Conversion_trk2_outerEta",&conversion_Trk2_outerEta_);
     outT->Branch("Conversion_trk2_outerPhi",&conversion_Trk2_outerPhi_);
 
-    // MET
-    outT->Branch("MET_PFMET_ET",&PFMET_ET_);
-    outT->Branch("MET_PFMET_px",&PFMET_Px_);
-    outT->Branch("MET_PFMET_py",&PFMET_Py_);
-    outT->Branch("MET_PFMET_pt",&PFMET_Pt_);
-    outT->Branch("MET_PFMET_phi",&PFMET_Phi_);
+    // Jets
+    outT->Branch("nPFJetAll",&PFNJet_);
+    outT->Branch("nPFJetPassID",&PFNPassIDJet_);
+    outT->Branch("nPFJet",&PFNHighPtJet_);
+    outT->Branch("PFJet_pt",&PFJetPt_);
+    outT->Branch("PFJet_eta",&PFJetEta_);
+    outT->Branch("PFJet_phi",&PFJetPhi_);
+    outT->Branch("PFJet_corrPt",&PFJetCorrectedPt_);
+    outT->Branch("PFJet_corrEta",&PFJetCorrectedEta_);
+    outT->Branch("PFJet_corrPhi",&PFJetCorrectedPhi_);
+    outT->Branch("PFJet_bTag",&PFJetCorrectedBTag_);
+    outT->Branch("PFJet_CHEF",&PFJetCorrectedCHEF_);
+    outT->Branch("PFJet_NHEF",&PFJetCorrectedNHEF_);
+    outT->Branch("PFJet_CEEF",&PFJetCorrectedCEEF_);
+    outT->Branch("PFJet_NEEF",&PFJetCorrectedNEEF_);
+    outT->Branch("PFJet_corrNumDaughters",&PFJetCorrectedNumDaughters_);
+    outT->Branch("PFJet_corrCHM",&PFJetCorrectedChargedMultiplicity_);
+    outT->Branch("PFJet_corrJESUp_pt",&PFJetCorrectedJESUpPt_);
+    outT->Branch("PFJet_corrJESUp_eta",&PFJetCorrectedJESUpEta_);
+    outT->Branch("PFJet_corrJESUp_phi",&PFJetCorrectedJESUpPhi_);
+    outT->Branch("PFJet_corrJESDown_pt",&PFJetCorrectedJESDownPt_);
+    outT->Branch("PFJet_corrJESDown_eta",&PFJetCorrectedJESDownEta_);
+    outT->Branch("PFJet_corrJESDown_phi",&PFJetCorrectedJESDownPhi_);
+    outT->Branch("PFJet_corrJERUp_pt",&PFJetCorrectedJERUpPt_);
+    outT->Branch("PFJet_corrJERUp_eta",&PFJetCorrectedJERUpEta_);
+    outT->Branch("PFJet_corrJERUp_phi",&PFJetCorrectedJERUpPhi_);
+    outT->Branch("PFJet_corrJERDown_pt",&PFJetCorrectedJERDownPt_);
+    outT->Branch("PFJet_corrJERDown_eta",&PFJetCorrectedJERDownEta_);
+    outT->Branch("PFJet_corrJERDown_phi",&PFJetCorrectedJERDownPhi_);
+    outT->Branch("HEM_flag",&PFHEMFlag_);
 
-    outT->Branch("MET_CaloMET_ET",&CaloMET_ET_);
-    outT->Branch("MET_CaloMET_px",&CaloMET_Px_);
-    outT->Branch("MET_CaloMET_py",&CaloMET_Py_);
-    outT->Branch("MET_CaloMET_pt",&CaloMET_Pt_);
-    outT->Branch("MET_CaloMET_phi",&CaloMET_Phi_);
+    // MET
+    outT->Branch("PFMET_ET",&PFMET_ET_);
+    outT->Branch("PFMET_px",&PFMET_Px_);
+    outT->Branch("PFMET_py",&PFMET_Py_);
+    outT->Branch("PFMET_pt",&PFMET_Pt_);
+    outT->Branch("PFMET_phi",&PFMET_Phi_);
+    outT->Branch("PFMET_smearingPt",&PFMETSmearingOnlyPt_);
+    outT->Branch("PFMET_smearingPhi",&PFMETSmearingOnlyPhi_);
+    outT->Branch("PFMET_correctedPt",&PFMETCorrectedPt_);
+    outT->Branch("PFMET_correctedPhi",&PFMETCorrectedPhi_);
+    outT->Branch("PFMET_deltaPx",&PFMETEEDeltaPx_);
+    outT->Branch("PFMET_deltaPy",&PFMETEEDeltaPy_);
+    outT->Branch("PFMET_JESUpPt",&PFMETJESUpPt_);
+    outT->Branch("PFMET_JESUpPhi",&PFMETJESUpPhi_);
+    outT->Branch("PFMET_JESDownPt",&PFMETJESDownPt_);
+    outT->Branch("PFMET_JESDownPhi",&PFMETJESDownPhi_);
+    outT->Branch("PFMET_JERUpPt",&PFMETJERUpPt_);
+    outT->Branch("PFMET_JERUpPhi",&PFMETJERUpPhi_);
+    outT->Branch("PFMET_JERDownPt",&PFMETJERDownPt_);
+    outT->Branch("PFMET_JERDownPhi",&PFMETJERDownPhi_);
+    outT->Branch("PFMET_muonEtFrac",&PFMETMuonEtFraction_);
+
+    outT->Branch("CaloMET_ET",&CaloMET_ET_);
+    outT->Branch("CaloMET_px",&CaloMET_Px_);
+    outT->Branch("CaloMET_py",&CaloMET_Py_);
+    outT->Branch("CaloMET_pt",&CaloMET_Pt_);
+    outT->Branch("CaloMET_phi",&CaloMET_Phi_);
     
-    outT->Branch("PuppiMET_PFMET_ET",&PuppiPFMET_ET_);
-    outT->Branch("PuppiMET_PFMET_px",&PuppiPFMET_Px_);
-    outT->Branch("PuppiMET_PFMET_py",&PuppiPFMET_Py_);
-    outT->Branch("PuppiMET_PFMET_pt",&PuppiPFMET_Pt_);
-    outT->Branch("PuppiMET_PFMET_phi",&PuppiPFMET_Phi_);
+    outT->Branch("PuppiMETPF_ET",&PuppiPFMET_ET_);
+    outT->Branch("PuppiMETPF_px",&PuppiPFMET_Px_);
+    outT->Branch("PuppiMETPF_py",&PuppiPFMET_Py_);
+    outT->Branch("PuppiMETPF_pt",&PuppiPFMET_Pt_);
+    outT->Branch("PuppiMETPF_phi",&PuppiPFMET_Phi_);
     
-    outT->Branch("PuppiMET_CaloMET_ET",&PuppiCaloMET_ET_);
-    outT->Branch("PuppiMET_CaloMET_px",&PuppiCaloMET_Px_);
-    outT->Branch("PuppiMET_CaloMET_py",&PuppiCaloMET_Py_);
-    outT->Branch("PuppiMET_CaloMET_pt",&PuppiCaloMET_Pt_);
-    outT->Branch("PuppiMET_CaloMET_phi",&PuppiCaloMET_Phi_);
+    outT->Branch("PuppiMETCalo_ET",&PuppiCaloMET_ET_);
+    outT->Branch("PuppiMETCalo_px",&PuppiCaloMET_Px_);
+    outT->Branch("PuppiMETCalo_py",&PuppiCaloMET_Py_);
+    outT->Branch("PuppiMETCalo_pt",&PuppiCaloMET_Pt_);
+    outT->Branch("PuppiMETCalo_phi",&PuppiCaloMET_Phi_);
 
 
     // Electron-positron vertex branches
@@ -396,7 +453,15 @@ void NtupleContainer::CreateTreeBranches() {
 }
 
 void NtupleContainer::ClearTreeBranches() {
-    
+    // Reset trigger
+    fired_ = 0;
+    fired16_ = 0;
+    fired17_ = 0;
+    fired18_ = 0;
+
+    // MET Filters
+    METFiltersFailBits_ = 0;
+
     // Gen particles
     nGen_ = 0;
     genID_.clear();
@@ -502,6 +567,8 @@ void NtupleContainer::ClearTreeBranches() {
     recoElectronDzError_.clear();
     recoElectronTrkChi2_.clear();
     recoElectronTrkIso_.clear();
+    recoElectronTrkRelIso_.clear();
+    recoElectronTrkProb_.clear();
     recoElectronTrkNumTrackerHits_.clear();
     recoElectronTrkNumPixHits_.clear();
     recoElectronTrkNumStripHits_.clear();
@@ -527,6 +594,8 @@ void NtupleContainer::ClearTreeBranches() {
     recoLowPtElectronDzError_.clear();
     recoLowPtElectronTrkChi2_.clear();
     recoLowPtElectronTrkIso_.clear();
+    recoLowPtElectronTrkRelIso_.clear();
+    recoLowPtElectronTrkProb_.clear();
     recoLowPtElectronTrkNumTrackerHits_.clear();
     recoLowPtElectronTrkNumPixHits_.clear();
     recoLowPtElectronTrkNumStripHits_.clear();
@@ -571,12 +640,55 @@ void NtupleContainer::ClearTreeBranches() {
     conversion_Trk2_outerEta_.clear();
     conversion_Trk2_outerPhi_.clear();
 
+    // Jets
+    PFJetPt_.clear();
+    PFJetEta_.clear();
+    PFJetPhi_.clear();
+    PFJetCorrectedPt_.clear();
+    PFJetCorrectedEta_.clear();
+    PFJetCorrectedPhi_.clear();
+    PFJetCorrectedBTag_.clear();
+    PFJetCorrectedCHEF_.clear();
+    PFJetCorrectedNHEF_.clear();
+    PFJetCorrectedCEEF_.clear();
+    PFJetCorrectedNEEF_.clear();
+    PFJetCorrectedNumDaughters_.clear();
+    PFJetCorrectedChargedMultiplicity_.clear();
+    PFJetCorrectedJESUpPt_.clear();
+    PFJetCorrectedJESUpEta_.clear();
+    PFJetCorrectedJESUpPhi_.clear();
+    PFJetCorrectedJESDownPt_.clear();
+    PFJetCorrectedJESDownEta_.clear();
+    PFJetCorrectedJESDownPhi_.clear();
+    PFJetCorrectedJERUpPt_.clear();
+    PFJetCorrectedJERUpEta_.clear();
+    PFJetCorrectedJERUpPhi_.clear();
+    PFJetCorrectedJERDownPt_.clear();
+    PFJetCorrectedJERDownEta_.clear();
+    PFJetCorrectedJERDownPhi_.clear();
+    PFHEMFlag_ = false;
+
     // MET 
     PFMET_ET_ = -999;
     PFMET_Px_ = -999;
     PFMET_Py_ = -999;
     PFMET_Pt_ = -999;
     PFMET_Phi_ = -999;
+    PFMETSmearingOnlyPt_ = -9999;
+    PFMETSmearingOnlyPhi_ = -9999;
+    PFMETCorrectedPt_ = -9999;
+    PFMETCorrectedPhi_ = -9999;
+    PFMETEEDeltaPx_ = 0.0;
+    PFMETEEDeltaPy_ = 0.0;
+    PFMETJESUpPt_ = -9999;
+    PFMETJESUpPhi_ = -9999;
+    PFMETJESDownPt_ = -9999;
+    PFMETJESDownPhi_ = -9999;
+    PFMETJERUpPt_ = -9999;
+    PFMETJERUpPhi_ = -9999;
+    PFMETJERDownPt_ = -9999;
+    PFMETJERDownPhi_ = -9999;
+    PFMETMuonEtFraction_ = -9999;
     
     CaloMET_ET_ = -999;
     CaloMET_Px_ = -999;

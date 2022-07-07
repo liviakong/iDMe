@@ -3,12 +3,13 @@ import shutil
 import sys
 import json
 
-if len(sys.argv) < 3:
+if len(sys.argv) < 4:
     print("Wrong inputs!")
-    print("Usage: python submit_condor.py sampleConfig.json histoConfig.json")
+    print("Usage: python submit_condor.py sampleConfig.json histoConfig.json cutConfig.py")
 
 samples = sys.argv[1]
 histos = sys.argv[2]
+cuts = sys.argv[3]
 
 sampFile = samples.split("/")[-1]
 histFile = histos.split("/")[-1]
@@ -33,6 +34,7 @@ for i in range(0,n_samp,n_per):
     os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
     os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
     os.system("cp {0} {1}/histos.json".format(histos,dirname))
+    os.system("cp {0} {1}/cuts.py".format(cuts,dirname))
 
     if os.path.exists("submissions/{0}_{1}.tar.gz".format(jobname,idx)):
         os.remove("submissions/{0}_{1}.tar.gz".format(jobname,idx))

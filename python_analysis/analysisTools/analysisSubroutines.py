@@ -270,7 +270,11 @@ def findUniqueMatches_old(gen1,gen2,reco,recoType,allow11=False):
 
     return index1_out, type1_out, dr1_out, index2_out, type2_out, dr2_out
 
-def electron_basics(events,histos,samp):
+def selectVertex(events):
+    return None
+
+# Functions to fill histograms
+def electron_basics(events,histos,samp,cut):
     eles = events.Electron
     lpt_eles = events.LptElectron
     cand_eles = events.EleCand
@@ -279,54 +283,54 @@ def electron_basics(events,histos,samp):
     ele_trkHits = histos['ele_trackHits']
     ele_trkQual = histos['ele_trackQual']
 
-    ele_kin.fill(sample=samp,
+    ele_kin.fill(sample=samp,cut=cut,
                 ele_type="Default",
                 pt=ak.flatten(eles.pt),
                 eta=ak.flatten(eles.eta),
                 phi=ak.flatten(eles.phi))
-    ele_kin.fill(sample=samp,
+    ele_kin.fill(sample=samp,cut=cut,
                 ele_type="Low pT",
                 pt=ak.flatten(lpt_eles.pt),
                 eta=ak.flatten(lpt_eles.eta),
                 phi=ak.flatten(lpt_eles.phi))
-    ele_kin.fill(sample=samp,
+    ele_kin.fill(sample=samp,cut=cut,
                 ele_type="Candidate",
                 pt=ak.flatten(cand_eles.pt),
                 eta=ak.flatten(cand_eles.eta),
                 phi=ak.flatten(cand_eles.phi))
     
-    ele_trkHits.fill(sample=samp,
+    ele_trkHits.fill(sample=samp,cut=cut,
                     ele_type="Default",
                     numTrkHits=ak.flatten(eles.numTrackerHits),
                     numPixHits=ak.flatten(eles.numPixHits),
                     numStripHits=ak.flatten(eles.numStripHits))
-    ele_trkHits.fill(sample=samp,
+    ele_trkHits.fill(sample=samp,cut=cut,
                     ele_type="Low pT",
                     numTrkHits=ak.flatten(lpt_eles.numTrackerHits),
                     numPixHits=ak.flatten(lpt_eles.numPixHits),
                     numStripHits=ak.flatten(lpt_eles.numStripHits))
-    ele_trkHits.fill(sample=samp,
+    ele_trkHits.fill(sample=samp,cut=cut,
                     ele_type="Candidate",
                     numTrkHits=ak.flatten(cand_eles.numTrackerHits),
                     numPixHits=ak.flatten(cand_eles.numPixHits),
                     numStripHits=ak.flatten(cand_eles.numStripHits))
 
-    ele_trkQual.fill(sample=samp,
+    ele_trkQual.fill(sample=samp,cut=cut,
                     ele_type="Default",
                     chi2=ak.flatten(eles.trkChi2),
                     trkIso=ak.flatten(eles.trkIso))
-    ele_trkQual.fill(sample=samp,
+    ele_trkQual.fill(sample=samp,cut=cut,
                     ele_type="Low pT",
                     chi2=ak.flatten(lpt_eles.trkChi2),
                     trkIso=ak.flatten(lpt_eles.trkIso))
-    ele_trkQual.fill(sample=samp,
+    ele_trkQual.fill(sample=samp,cut=cut,
                     ele_type="Candidate",
                     chi2=ak.flatten(cand_eles.trkChi2),
                     trkIso=ak.flatten(cand_eles.trkIso))
     
     return histos
 
-def ele_genMatching(events,histos,samp):
+def ele_genMatching(events,histos,samp,cut):
     match_ele_kin = histos['matched_ele_kinematics']
     match_ele_gen_kin = histos['matched_ele_gen_kinematics']
     match_ele_trkHits = histos['matched_ele_trackHits']
@@ -385,43 +389,43 @@ def ele_genMatching(events,histos,samp):
     matchClassC = ak.where(uniqMatchC,3*ones,matchClassC)
 
     # Fill match matrices, reg & low-pT matching
-    match_mtx.fill(sample=samp,
+    match_mtx.fill(sample=samp,cut=cut,
                     set="RL",
                     scheme="unique",
                     Etype=ematch.typ,
                     Ptype=pmatch.typ)
-    match_mtx.fill(sample=samp,
+    match_mtx.fill(sample=samp,cut=cut,
                     set="RL",
                     scheme="nearUnique",
                     Etype=ematch11.typ,
                     Ptype=pmatch11.typ)
     # Fill match matrices, reg & low-pT & cand matching
-    match_mtx.fill(sample=samp,
+    match_mtx.fill(sample=samp,cut=cut,
                     set="RLC",
                     scheme="unique",
                     Etype=ematchC.typ,
                     Ptype=pmatchC.typ)
-    match_mtx.fill(sample=samp,
+    match_mtx.fill(sample=samp,cut=cut,
                     set="RLC",
                     scheme="nearUnique",
                     Etype=ematchC11.typ,
                     Ptype=pmatchC11.typ)
     
     # Filling number-of-match matrices
-    nMatch_mtx.fill(sample=samp,
+    nMatch_mtx.fill(sample=samp,cut=cut,
                     set="RL",
                     nEmatch=nEmatch,
                     nPmatch=nPmatch)
-    nMatch_mtx.fill(sample=samp,
+    nMatch_mtx.fill(sample=samp,cut=cut,
                     set="RLC",
                     nEmatch=nEmatchC,
                     nPmatch=nPmatchC)
 
     # Filling match class matrices
-    match_class.fill(sample=samp,
+    match_class.fill(sample=samp,cut=cut,
                     set="RL",
                     matchClass=matchClass)
-    match_class.fill(sample=samp,
+    match_class.fill(sample=samp,cut=cut,
                     set="RLC",
                     matchClass=matchClassC)
 
@@ -463,58 +467,58 @@ def ele_genMatching(events,histos,samp):
     matches_genC = ak.concatenate([matches_gen_eleC,matches_gen_posC])
 
     # Filling with reg/lowpT matches
-    match_ele_kin.fill(sample=samp,
+    match_ele_kin.fill(sample=samp,cut=cut,
                         set="RL",
                         pt=matches.pt,
                         eta=matches.eta,
                         phi=matches.phi)
-    match_ele_gen_kin.fill(sample=samp,
+    match_ele_gen_kin.fill(sample=samp,cut=cut,
                             set="RL",
                             pt=matches_gen.pt,
                             eta=matches_gen.eta,
                             phi=matches_gen.phi)
-    match_ele_trkHits.fill(sample=samp,
+    match_ele_trkHits.fill(sample=samp,cut=cut,
                             set="RL",
                             numTrkHits=matches.numTrackerHits,
                             numPixHits=matches.numPixHits,
                             numStripHits=matches.numStripHits)
-    match_ele_trkQual.fill(sample=samp,
+    match_ele_trkQual.fill(sample=samp,cut=cut,
                             set="RL",
                             chi2=matches.trkChi2,
                             trkIso=matches.trkIso)
-    match_ele_gen_disp.fill(sample=samp,
+    match_ele_gen_disp.fill(sample=samp,cut=cut,
                             set="RL",
                             vxy=matches_gen.vxy,
                             vz=matches_gen.vz)
     
     # Filling with reg/lowpT/cand matches
-    match_ele_kin.fill(sample=samp,
+    match_ele_kin.fill(sample=samp,cut=cut,
                         set="RLC",
                         pt=matchesC.pt,
                         eta=matchesC.eta,
                         phi=matchesC.phi)
-    match_ele_gen_kin.fill(sample=samp,
+    match_ele_gen_kin.fill(sample=samp,cut=cut,
                             set="RLC",
                             pt=matches_genC.pt,
                             eta=matches_genC.eta,
                             phi=matches_genC.phi)
-    match_ele_trkHits.fill(sample=samp,
+    match_ele_trkHits.fill(sample=samp,cut=cut,
                             set="RLC",
                             numTrkHits=matchesC.numTrackerHits,
                             numPixHits=matchesC.numPixHits,
                             numStripHits=matchesC.numStripHits)
-    match_ele_trkQual.fill(sample=samp,
+    match_ele_trkQual.fill(sample=samp,cut=cut,
                             set="RLC",
                             chi2=matchesC.trkChi2,
                             trkIso=matchesC.trkIso)
-    match_ele_gen_disp.fill(sample=samp,
+    match_ele_gen_disp.fill(sample=samp,cut=cut,
                             set="RLC",
                             vxy=matches_genC.vxy,
                             vz=matches_genC.vz)
     
     return histos
 
-def genParticles(events,histos,samp):
+def genParticles(events,histos,samp,cut):
     gen_ele_disp = histos['gen_displacement']
     ele_kin = histos['ele_kinematics']
     ee_kin = histos["gen_ee_kinematics"]
@@ -524,18 +528,18 @@ def genParticles(events,histos,samp):
     gen_pos = events.GenPos
     ee = events.genEE
 
-    ele_kin.fill(sample=samp,ele_type="Generator",
+    ele_kin.fill(sample=samp,cut=cut,ele_type="Generator",
                         pt=gen_eles.pt,eta=gen_eles.eta,phi=gen_eles.phi)
-    gen_ele_disp.fill(sample=samp,
+    gen_ele_disp.fill(sample=samp,cut=cut,
                         vxy=gen_eles.vxy,
                         vz=gen_eles.vz)
-    ee_kin.fill(sample=samp,
+    ee_kin.fill(sample=samp,cut=cut,
                 mass=ee.mass,
                 dR=ee.dr)
     
     return histos
 
-def conversions(events,histos,samp):
+def conversions(events,histos,samp,cut):
     eles = events.Electron
     lpt_eles = events.LptElectron
     convs = events.Conversion
@@ -626,19 +630,19 @@ def conversions(events,histos,samp):
     fullUniqMatch = ((matchType_conv1 == 1) & (matchType_conv2 == 2)) | ((matchType_conv1 == 2) & (matchType_conv2 == 1))
     fullMatch = (matchType_conv1 > 0) & (matchType_conv2 > 0)
     anyMatch = (matchType_conv1 > 0) | (matchType_conv2 > 0)
-    conv_match_mtx.fill(sample=samp,
+    conv_match_mtx.fill(sample=samp,cut=cut,
                         match="all",
                         c1_matchType=matchType_conv1,
                         c2_matchType=matchType_conv2)
-    conv_match_mtx.fill(sample=samp,
+    conv_match_mtx.fill(sample=samp,cut=cut,
                         match="fullUnique",
                         c1_matchType=matchType_conv1[fullUniqMatch],
                         c2_matchType=matchType_conv2[fullUniqMatch])
-    conv_match_mtx.fill(sample=samp,
+    conv_match_mtx.fill(sample=samp,cut=cut,
                         match="full",
                         c1_matchType=matchType_conv1[fullMatch],
                         c2_matchType=matchType_conv2[fullMatch])
-    conv_match_mtx.fill(sample=samp,
+    conv_match_mtx.fill(sample=samp,cut=cut,
                         match="any",
                         c1_matchType=matchType_conv1[anyMatch],
                         c2_matchType=matchType_conv2[anyMatch])
@@ -671,22 +675,22 @@ def conversions(events,histos,samp):
     uniqMatch_conv1 = uniqMatch_conv1 + ak.values_astype(switch1_p2e,int) + 2*ak.values_astype(switch1_e2p,int) + oldMatch_conv1*ak.values_astype(no_switch1,int)
     uniqMatch_conv2 = uniqMatch_conv2 + ak.values_astype(switch2_p2e,int) + 2*ak.values_astype(switch2_e2p,int) + oldMatch_conv2*ak.values_astype(no_switch2,int)
 
-    conv_match_mtx_uniq.fill(sample=samp,
+    conv_match_mtx_uniq.fill(sample=samp,cut=cut,
                                 match="all",
                                 c1_matchType=uniqMatch_conv1,
                                 c2_matchType=uniqMatch_conv2)
-    conv_match_mtx_uniq.fill(sample=samp,
+    conv_match_mtx_uniq.fill(sample=samp,cut=cut,
                                 match="full",
                                 c1_matchType=uniqMatch_conv1[fullMatch],
                                 c2_matchType=uniqMatch_conv2[fullMatch])
-    conv_match_mtx_uniq.fill(sample=samp,
+    conv_match_mtx_uniq.fill(sample=samp,cut=cut,
                                 match="any",
                                 c1_matchType=uniqMatch_conv1[anyMatch],
                                 c2_matchType=uniqMatch_conv2[anyMatch])
 
     return histos
 
-def recoEE_vertices(events,histos,samp):
+def recoEE_vertices(events,histos,samp,cut):
     rr_vtx_vxy = histos["RRvtx_vxy"]
     rr_vtx_stats = histos["RRvtx_stats"]
     ll_vtx_vxy = histos["LLvtx_vxy"]
@@ -710,53 +714,53 @@ def recoEE_vertices(events,histos,samp):
     opp_ll = vtx_ll.sign == -1
     opp_lr = vtx_lr.sign == -1
     # reg-reg, i.e. two regular electrons matched to a vertex
-    rr_vtx_vxy.fill(sample=samp,
+    rr_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="all",
                         vxy=ak.flatten(vtx_rr.vxy),
                         sigma_vxy=ak.flatten(vtx_rr.sigmavxy))
-    rr_vtx_vxy.fill(sample=samp,
+    rr_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="opp",
                         vxy=ak.flatten(vtx_rr[opp_rr].vxy),
                         sigma_vxy=ak.flatten(vtx_rr[opp_rr].sigmavxy))
-    rr_vtx_stats.fill(sample=samp,
+    rr_vtx_stats.fill(sample=samp,cut=cut,
                             sign="all",
                             chi2=ak.flatten(vtx_rr.reduced_chi2),
                             signif=ak.flatten(vtx_rr.vxy/vtx_rr.sigmavxy))
-    rr_vtx_stats.fill(sample=samp,
+    rr_vtx_stats.fill(sample=samp,cut=cut,
                             sign="opp",
                             chi2=ak.flatten(vtx_rr[opp_rr].reduced_chi2),
                             signif=ak.flatten(vtx_rr[opp_rr].vxy/vtx_rr[opp_rr].sigmavxy))
     # low-low, i.e. two low-pT electrons matched to a vertex
-    ll_vtx_vxy.fill(sample=samp,
+    ll_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="all",
                         vxy=ak.flatten(vtx_ll.vxy),
                         sigma_vxy=ak.flatten(vtx_ll.sigmavxy))
-    ll_vtx_vxy.fill(sample=samp,
+    ll_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="opp",
                         vxy=ak.flatten(vtx_ll[opp_ll].vxy),
                         sigma_vxy=ak.flatten(vtx_ll[opp_ll].sigmavxy))
-    ll_vtx_stats.fill(sample=samp,
+    ll_vtx_stats.fill(sample=samp,cut=cut,
                             sign="all",
                             chi2=ak.flatten(vtx_ll.reduced_chi2),
                             signif=ak.flatten(vtx_ll.vxy/vtx_ll.sigmavxy))
-    ll_vtx_stats.fill(sample=samp,
+    ll_vtx_stats.fill(sample=samp,cut=cut,
                             sign="opp",
                             chi2=ak.flatten(vtx_ll[opp_ll].reduced_chi2),
                             signif=ak.flatten(vtx_ll[opp_ll].vxy/vtx_ll[opp_ll].sigmavxy))
     # low-reg, i.e. one low-pT and one default electron matched to a vertex
-    lr_vtx_vxy.fill(sample=samp,
+    lr_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="all",
                         vxy=ak.flatten(vtx_lr.vxy),
                         sigma_vxy=ak.flatten(vtx_lr.sigmavxy))
-    lr_vtx_vxy.fill(sample=samp,
+    lr_vtx_vxy.fill(sample=samp,cut=cut,
                         sign="opp",
                         vxy=ak.flatten(vtx_lr[opp_lr].vxy),
                         sigma_vxy=ak.flatten(vtx_lr[opp_lr].sigmavxy))
-    lr_vtx_stats.fill(sample=samp,
+    lr_vtx_stats.fill(sample=samp,cut=cut,
                             sign="all",
                             chi2=ak.flatten(vtx_lr.reduced_chi2),
                             signif=ak.flatten(vtx_lr.vxy/vtx_lr.sigmavxy))
-    lr_vtx_stats.fill(sample=samp,
+    lr_vtx_stats.fill(sample=samp,cut=cut,
                             sign="opp",
                             chi2=ak.flatten(vtx_lr[opp_lr].reduced_chi2),
                             signif=ak.flatten(vtx_lr[opp_lr].vxy/vtx_lr[opp_lr].sigmavxy))
@@ -775,30 +779,30 @@ def recoEE_vertices(events,histos,samp):
     noRegVtx = (n_rr == 0) & (n_lr == 0) & (n_ll == 0)
 
     # inclusive
-    h_dEE_eff.fill(sample=samp,
+    h_dEE_eff.fill(sample=samp,cut=cut,
                     denom="all",
                     ndEE=ndEE)
-    h_dEE_kin.fill(sample=samp,
+    h_dEE_kin.fill(sample=samp,cut=cut,
                     denom="all",
                     mass=ak.flatten(dEE[has_dEE].mass),
                     leadPt=ak.flatten(dEE[has_dEE].leadingPt),
                     dR=ak.flatten(dEE[has_dEE].dR))
-    h_dEE_qual.fill(sample=samp,
+    h_dEE_qual.fill(sample=samp,cut=cut,
                     denom="all",
                     vxy=ak.flatten(dEE_vxy[has_dEE]),
                     dxy=ak.flatten(dEE[has_dEE].trackDxy_PV),
                     chi2=ak.flatten(dEE[has_dEE].normalizedChi2))
 
     # events with no RR, LR, or LL vertices
-    h_dEE_eff.fill(sample=samp,
+    h_dEE_eff.fill(sample=samp,cut=cut,
                     denom="noRegVtx",
                     ndEE=ndEE[noRegVtx])
-    h_dEE_kin.fill(sample=samp,
+    h_dEE_kin.fill(sample=samp,cut=cut,
                     denom="noRegVtx",
                     mass=ak.flatten(dEE[has_dEE & noRegVtx].mass),
                     leadPt=ak.flatten(dEE[has_dEE & noRegVtx].leadingPt),
                     dR=ak.flatten(dEE[has_dEE & noRegVtx].dR))
-    h_dEE_qual.fill(sample=samp,
+    h_dEE_qual.fill(sample=samp,cut=cut,
                     denom="noRegVtx",
                     vxy=ak.flatten(dEE_vxy[has_dEE & noRegVtx]),
                     dxy=ak.flatten(dEE[has_dEE & noRegVtx].trackDxy_PV),
@@ -806,176 +810,7 @@ def recoEE_vertices(events,histos,samp):
 
     return histos
 
-def recoEE_vertices_genMatchDr(events,histos,samp):
-    reco_vtx_genmatch = histos["vtx_genMatchByDr"]
-    reco_vtx_kin_genmatch = histos["vtx_kin_genMatchByDr"]
-    reco_vtx_disp_genmatch = histos["vtx_disp_genMatchByDr"]
-    nearest_vtx_genmatch = histos["vtx_nearestMatchByDr"]
-    nearest_vtx_kin_genmatch = histos["vtx_kin_nearestMatchByDr"]
-    nearest_vtx_disp_genmatch = histos["vtx_disp_nearestMatchByDr"]
-    nearest_vtx_matchType = histos["vtx_nearestMatchTypeByDr"]
-
-    vtx_rr = events.RRvtx
-    vtx_ll = events.LLvtx
-    vtx_lr = events.LRvtx
-    vtx_rc = events.RCvtx
-    vtx_lc = events.LCvtx
-
-    n_rr = ak.count(vtx_rr.vx,axis=1)
-    n_ll = ak.count(vtx_ll.vx,axis=1)
-    n_lr = ak.count(vtx_lr.vx,axis=1)
-    n_rc = ak.count(vtx_rc.vx,axis=1)
-    n_lc = ak.count(vtx_lc.vx,axis=1)
-
-    gen_ele = ak.flatten(events.GenPart[events.GenPart.ID == 11])
-
-    vtx_rr_r = ak.zip(
-        {
-            "x": vtx_rr.vx,
-            "y": vtx_rr.vy,
-            "z": vtx_rr.vz
-        },
-        with_name="ThreeVector"
-    )
-
-    vtx_lr_r = ak.zip(
-        {
-            "x": vtx_lr.vx,
-            "y": vtx_lr.vy,
-            "z": vtx_lr.vz
-        },
-        with_name="ThreeVector"
-    )
-
-    vtx_ll_r = ak.zip(
-        {
-            "x": vtx_ll.vx,
-            "y": vtx_ll.vy,
-            "z": vtx_ll.vz
-        },
-        with_name="ThreeVector"
-    )
-
-    vtx_rc_r = ak.zip(
-        {
-            "x": vtx_rc.vx,
-            "y": vtx_rc.vy,
-            "z": vtx_rc.vz
-        },
-        with_name="ThreeVector"
-    )
-
-    vtx_lc_r = ak.zip(
-        {
-            "x": vtx_lc.vx,
-            "y": vtx_lc.vy,
-            "z": vtx_lc.vz
-        },
-        with_name="ThreeVector"
-    )
-
-    gen_vtx_r = ak.zip(
-        {
-            "x": gen_ele.vx,
-            "y": gen_ele.vy,
-            "z": gen_ele.vz
-        },
-        with_name="ThreeVector"
-    )
-    
-    rr_nearest = ak.argmin((vtx_rr_r - gen_vtx_r).rho,axis=1,keepdims=True)
-    lr_nearest = ak.argmin((vtx_lr_r - gen_vtx_r).rho,axis=1,keepdims=True)
-    ll_nearest = ak.argmin((vtx_ll_r - gen_vtx_r).rho,axis=1,keepdims=True)
-
-    vtx_rr_nearest = ak.flatten(vtx_rr[rr_nearest])
-    vtx_lr_nearest = ak.flatten(vtx_lr[lr_nearest])
-    vtx_ll_nearest = ak.flatten(vtx_ll[ll_nearest])
-    all_vtx_nearest = ak.concatenate([vtx_rr[rr_nearest],vtx_lr[lr_nearest],vtx_ll[ll_nearest]],axis=1)
-
-    dist_rr_nearest = (vtx_rr_r[rr_nearest] - gen_vtx_r).rho
-    dist_lr_nearest = (vtx_lr_r[lr_nearest] - gen_vtx_r).rho
-    dist_ll_nearest = (vtx_ll_r[ll_nearest] - gen_vtx_r).rho
-
-    all_dist_nearest = ak.concatenate([dist_rr_nearest,dist_lr_nearest,dist_ll_nearest],axis=1)
-    nearest_ind = ak.argmin(all_dist_nearest,axis=1,keepdims=True)
-    global_nearest = ak.flatten(nearest_ind) + 1 # 1 = RR, 2 = LR, 3 = LL
-    global_nearest = ak.fill_none(global_nearest,0) # 0 = no vertices in the event!
-    has_vtx = global_nearest > 0
-    nearest_vtx = ak.flatten(all_vtx_nearest[nearest_ind])
-    dist_nearest = ak.flatten(all_dist_nearest[nearest_ind])
-
-    dist_rr_nearest = ak.flatten(dist_rr_nearest)
-    dist_lr_nearest = ak.flatten(dist_lr_nearest)
-    dist_ll_nearest = ak.flatten(dist_ll_nearest)
-
-    has_rr = ak.count(vtx_rr.vx,axis=1) > 0
-    has_lr = ak.count(vtx_lr.vx,axis=1) > 0
-    has_ll = ak.count(vtx_ll.vx,axis=1) > 0
-
-    # Filling histograms with nearest vertex info split up by type
-    reco_vtx_genmatch.fill(sample=samp,
-                            type="Reg-Reg",
-                            dist=dist_rr_nearest[has_rr],
-                            chi2=vtx_rr_nearest.reduced_chi2[has_rr],
-                            dR=vtx_rr_nearest.dR[has_rr])
-    reco_vtx_genmatch.fill(sample=samp,
-                            type="Low-Reg",
-                            dist=dist_lr_nearest[has_lr],
-                            chi2=vtx_lr_nearest.reduced_chi2[has_lr],
-                            dR=vtx_lr_nearest.dR[has_lr])
-    reco_vtx_genmatch.fill(sample=samp,
-                            type="Low-Low",
-                            dist=dist_ll_nearest[has_ll],
-                            chi2=vtx_ll_nearest.reduced_chi2[has_ll],
-                            dR=vtx_ll_nearest.dR[has_ll])
-
-    reco_vtx_kin_genmatch.fill(sample=samp,
-                                type="Reg-Reg",
-                                mass=vtx_rr_nearest.m[has_rr],
-                                energy=vtx_rr_nearest.energy[has_rr])
-    reco_vtx_kin_genmatch.fill(sample=samp,
-                                type="Low-Reg",
-                                mass=vtx_lr_nearest.m[has_lr],
-                                energy=vtx_lr_nearest.energy[has_lr])
-    reco_vtx_kin_genmatch.fill(sample=samp,
-                                type="Low-Low",
-                                mass=vtx_ll_nearest.m[has_ll],
-                                energy=vtx_ll_nearest.energy[has_ll])
-
-    reco_vtx_disp_genmatch.fill(sample=samp,
-                                type="Reg-Reg",
-                                vxy=vtx_rr_nearest.vxy[has_rr],
-                                vxy_signif=(vtx_rr_nearest.vxy/vtx_rr_nearest.sigmavxy)[has_rr])
-    reco_vtx_disp_genmatch.fill(sample=samp,
-                                type="Low-Reg",
-                                vxy=vtx_lr_nearest.vxy[has_lr],
-                                vxy_signif=(vtx_lr_nearest.vxy/vtx_lr_nearest.sigmavxy)[has_lr])
-    reco_vtx_disp_genmatch.fill(sample=samp,
-                                type="Low-Low",
-                                vxy=vtx_ll_nearest.vxy[has_ll],
-                                vxy_signif=(vtx_ll_nearest.vxy/vtx_ll_nearest.sigmavxy)[has_ll])
-
-    # Filling histos with globally nearest vertex
-    nearest_vtx_genmatch.fill(sample=samp,
-                            type=global_nearest[has_vtx],
-                            dist=dist_nearest[has_vtx],
-                            chi2=nearest_vtx.reduced_chi2[has_vtx],
-                            dR=nearest_vtx.dR[has_vtx])
-    nearest_vtx_kin_genmatch.fill(sample=samp,
-                                  type=global_nearest[has_vtx],
-                                  mass=nearest_vtx.m[has_vtx],
-                                  energy=nearest_vtx.energy[has_vtx])
-    nearest_vtx_disp_genmatch.fill(sample=samp,
-                                   type=global_nearest[has_vtx],
-                                   vxy=nearest_vtx.vxy[has_vtx],
-                                   vxy_signif=(nearest_vtx.vxy/nearest_vtx.sigmavxy)[has_vtx])
-
-    nearest_vtx_matchType.fill(sample=samp,
-                                type=global_nearest)
-
-    return histos
-
-def recoEE_vertices_genMatchByEles(events,histos,samp):
+def recoEE_vertices_genMatchByEles(events,histos,samp,cut):
     # Reco vertices
     vtx_rr = events.RRvtx
     vtx_ll = events.LLvtx
@@ -1076,138 +911,189 @@ def recoEE_vertices_genMatchByEles(events,histos,samp):
     h_vtx_kin = histos["vtx_kin_genMatchByEle"]
     h_vtx_disp = histos["vtx_disp_genMatchByEle"]
     h_vtx_type = histos["vtx_matchTypeByEle"]
+    h_vtx_qual = histos["vtx_qual_genMatchByEle"]
+    h_vtx_chi2_vs_vxy = histos["vtx_chi2_vs_vxy_genMatchByEle"]
+    h_vtx_prob_vs_vxy = histos["vtx_prob_vs_vxy_genMatchByEle"]
 
     # filling with the reco/lowpT set first
-    h_vtx_type.fill(sample=samp,
+    h_vtx_type.fill(sample=samp,cut=cut,
                     set="RL",
                     type=matchType_RL)
 
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Reg-Reg",
                set="RL",
                chi2=RRvtx_RL.reduced_chi2,
                dR=RRvtx_RL.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Low-Reg",
                set="RL",
                chi2=LRvtx_RL.reduced_chi2,
                dR=LRvtx_RL.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Low-Low",
                set="RL",
                chi2=LLvtx_RL.reduced_chi2,
                dR=LLvtx_RL.dR)
     
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Reg-Reg",
                    set="RL",
                    mass=RRvtx_RL.m,
                    energy=RRvtx_RL.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Low-Reg",
                    set="RL",
                    mass=LRvtx_RL.m,
                    energy=LRvtx_RL.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Low-Low",
                    set="RL",
                    mass=LLvtx_RL.m,
                    energy=LLvtx_RL.energy)
     
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Reg-Reg",
                     set="RL",
                     vxy=RRvtx_RL.vxy,
                     vxy_signif=(RRvtx_RL.vxy/RRvtx_RL.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Low-Reg",
                     set="RL",
                     vxy=LRvtx_RL.vxy,
                     vxy_signif=(LRvtx_RL.vxy/LRvtx_RL.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Low-Low",
                     set="RL",
                     vxy=LLvtx_RL.vxy,
                     vxy_signif=(LLvtx_RL.vxy/LLvtx_RL.sigmavxy))
 
+    h_vtx_qual.fill(sample=samp,cut=cut,
+                    type="Reg-Reg",
+                    set="RL",
+                    prob=RRvtx_RL.prob,
+                    chi2=RRvtx_RL.reduced_chi2)
+    h_vtx_qual.fill(sample=samp,cut=cut,
+                    type="Low-Reg",
+                    set="RL",
+                    prob=LRvtx_RL.prob,
+                    chi2=LRvtx_RL.reduced_chi2)
+    h_vtx_qual.fill(sample=samp,cut=cut,
+                    type="Low-Low",
+                    set="RL",
+                    prob=LLvtx_RL.prob,
+                    chi2=LLvtx_RL.reduced_chi2)
+
+    h_vtx_chi2_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Reg-Reg",
+                    set="RL",
+                    vxy=RRvtx_RL.vxy,
+                    chi2=RRvtx_RL.reduced_chi2)
+    h_vtx_chi2_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Low-Reg",
+                    set="RL",
+                    vxy=LRvtx_RL.vxy,
+                    chi2=LRvtx_RL.reduced_chi2)
+    h_vtx_chi2_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Low-Low",
+                    set="RL",
+                    vxy=LLvtx_RL.vxy,
+                    chi2=LLvtx_RL.reduced_chi2)
+
+    h_vtx_prob_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Reg-Reg",
+                    set="RL",
+                    vxy=RRvtx_RL.vxy,
+                    prob=RRvtx_RL.prob)
+    h_vtx_prob_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Low-Reg",
+                    set="RL",
+                    vxy=LRvtx_RL.vxy,
+                    prob=LRvtx_RL.prob)
+    h_vtx_prob_vs_vxy.fill(sample=samp,cut=cut,
+                    type="Low-Low",
+                    set="RL",
+                    vxy=LLvtx_RL.vxy,
+                    prob=LLvtx_RL.prob)
+
     # Filling with reg/lowpT/cand set
-    h_vtx_type.fill(sample=samp,
+    h_vtx_type.fill(sample=samp,cut=cut,
                     set="RLC",
                     type=matchType_RLC)
 
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Reg-Reg",
                set="RLC",
                chi2=RRvtx_RLC.reduced_chi2,
                dR=RRvtx_RLC.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Reg-Cand",
                set="RLC",
                chi2=RCvtx_RLC.reduced_chi2,
                dR=RCvtx_RLC.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Low-Reg",
                set="RLC",
                chi2=LRvtx_RLC.reduced_chi2,
                dR=LRvtx_RLC.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Low-Cand",
                set="RLC",
                chi2=LCvtx_RLC.reduced_chi2,
                dR=LCvtx_RLC.dR)
-    h_vtx.fill(sample=samp,
+    h_vtx.fill(sample=samp,cut=cut,
                type="Low-Low",
                set="RLC",
                chi2=LLvtx_RLC.reduced_chi2,
                dR=LLvtx_RLC.dR)
     
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Reg-Reg",
                    set="RLC",
                    mass=RRvtx_RLC.m,
                    energy=RRvtx_RLC.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Reg-Cand",
                    set="RLC",
                    mass=RCvtx_RLC.m,
                    energy=RCvtx_RLC.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Low-Reg",
                    set="RLC",
                    mass=LRvtx_RLC.m,
                    energy=LRvtx_RLC.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Low-Cand",
                    set="RLC",
                    mass=LCvtx_RLC.m,
                    energy=LCvtx_RLC.energy)
-    h_vtx_kin.fill(sample=samp,
+    h_vtx_kin.fill(sample=samp,cut=cut,
                    type="Low-Low",
                    set="RLC",
                    mass=LLvtx_RLC.m,
                    energy=LLvtx_RLC.energy)
     
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Reg-Reg",
                     set="RLC",
                     vxy=RRvtx_RLC.vxy,
                     vxy_signif=(RRvtx_RLC.vxy/RRvtx_RLC.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Reg-Cand",
                     set="RLC",
                     vxy=RCvtx_RLC.vxy,
                     vxy_signif=(RCvtx_RLC.vxy/RCvtx_RLC.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Low-Reg",
                     set="RLC",
                     vxy=LRvtx_RLC.vxy,
                     vxy_signif=(LRvtx_RLC.vxy/LRvtx_RLC.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Low-Cand",
                     set="RLC",
                     vxy=LCvtx_RLC.vxy,
                     vxy_signif=(LCvtx_RLC.vxy/LCvtx_RLC.sigmavxy))
-    h_vtx_disp.fill(sample=samp,
+    h_vtx_disp.fill(sample=samp,cut=cut,
                     type="Low-Low",
                     set="RLC",
                     vxy=LLvtx_RLC.vxy,
@@ -1226,15 +1112,15 @@ def recoEE_vertices_genMatchByEles(events,histos,samp):
     noGenMatchVtx = (ematch.typ == 0) | (pmatch.typ == 0)
 
 
-    h_dEE_eff.fill(sample=samp,
+    h_dEE_eff.fill(sample=samp,cut=cut,
                     denom="noGenMatchVtx",
                     ndEE=ndEE[noGenMatchVtx])
-    h_dEE_kin.fill(sample=samp,
+    h_dEE_kin.fill(sample=samp,cut=cut,
                     denom="noGenMatchVtx",
                     mass=ak.flatten(dEE[has_dEE & noGenMatchVtx].mass),
                     leadPt=ak.flatten(dEE[has_dEE & noGenMatchVtx].leadingPt),
                     dR=ak.flatten(dEE[has_dEE & noGenMatchVtx].dR))
-    h_dEE_qual.fill(sample=samp,
+    h_dEE_qual.fill(sample=samp,cut=cut,
                     denom="noGenMatchVtx",
                     vxy=ak.flatten(dEE_vxy[has_dEE & noGenMatchVtx]),
                     dxy=ak.flatten(dEE[has_dEE & noGenMatchVtx].trackDxy_PV),

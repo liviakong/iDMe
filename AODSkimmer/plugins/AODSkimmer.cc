@@ -879,7 +879,7 @@ AODSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
 
             if (type == "lowlow") {
                math::XYZTLorentzVector ll = lowpt_ele_p4s[ind1] + lowpt_ele_p4s[ind2];
-               nt.LLvtx_idx1_.push_back(ind1); 
+               nt.LLvtx_idx1_.push_back(ind1);
                nt.LLvtx_idx2_.push_back(ind2);
                nt.LLvtx_recoVtxReducedChi2_.push_back(vtx_chi2);
                nt.LLvtx_prob_.push_back(vtx_prob);

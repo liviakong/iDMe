@@ -2,6 +2,7 @@ from XRootD import client
 import json
 import sys
 import subprocess
+import numpy as np
 
 mode = str(sys.argv[1])
 year = str(sys.argv[2])
@@ -32,15 +33,18 @@ if mode == "sig":
         for l in lifetimes:
             ct = int(l.split("-")[1])
             info = {}
-            info["location"] = prefix+year+"/"+p+"/"+l+"/"
+            info["location"] = prefix+year+"/"+p+"/"+l+"/"  
             info["Mchi"] = mchi
             info["dMchi"] = dmchi
             info["ctau"] = ct
+            info["name"] = "sig_Mchi-{0}_dMchi-{1}_ct-{2}".format(info["Mchi"],info["dMchi"],info["ctau"])
             info["sum_wgt"] = 0.0
             info["type"] = "signal"
             info["year"] = int(year)
             info["alphaD"] = alpha
             info["xsec"] = 0.0
+            rootFiles = [rf.name for rf in xrdClient.dirlist(info["location"])[1] if '.root' in rf.name]
+            info["nFiles"] = len(rootFiles)
             output.append(info)
 
     out_json = "signal_{0}_{1}.json".format(year,alpha)
@@ -82,6 +86,8 @@ else:
             info["type"] = "bkg"
             info["year"] = int(year)
             info["xsec"] = 0.0
+            rootFiles = [rf.name for rf in xrdClient.dirlist(info["location"])[1] if '.root' in rf.name]
+            info["nFiles"] = len(rootFiles)
             output.append(info)
 
         out_json = "bkg_{}_{}.json".format(year,bkg)

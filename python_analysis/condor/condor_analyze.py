@@ -5,15 +5,17 @@ import json
 import sys
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
+    if len(sys.argv) != 4:
         print("Bad input!")
-        print("Usage: ./condor_analyze jobname")
+        print("Usage: ./condor_analyze jobname_base jobname mode")
 
-    jobname = sys.argv[1]
+    jobname_base = sys.argv[1]
+    jobname = sys.argv[2]
+    mode = sys.argv[3]
     os.system("tar xzf {0}.tar.gz".format(jobname))
     from analysisTools import Analyzer
     files = "samples.json"
-    histos = "histos.json"
+    histos = "histos.py"
     cuts = "cuts.py"
     az = Analyzer(files,histos,cuts)
     out = az.process(execr="futures")
@@ -21,5 +23,7 @@ if __name__ == "__main__":
     outName = "output_{0}.coffea".format(jobname)
     util.save(out,outName)
 
-    copy_cmd = "xrdcp -f {0} root://cmseos.fnal.gov//store/group/lpcmetx/iDMe/analysis_output/signal/{0}".format(outName)
+    outDir = "/store/group/lpcmetx/iDMe/analysis_output/{0}/{1}/".format(mode,jobname_base)
+
+    copy_cmd = "xrdcp -f {0} root://cmseos.fnal.gov/{1}/{2}".format(outName,outDir,outName)
     os.system(copy_cmd)

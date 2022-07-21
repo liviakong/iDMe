@@ -262,97 +262,6 @@
         ]
     },
     {
-        "varname" : "vtx_genMatchByDr",
-        "name" : "Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "type" : "Vertex Type"
-        },
-        "bins" : [
-            ["dist","Distance to Nearest Gen Vertex",100,0,50],
-            ["chi2","Vertex Fit $\\chi^2/df$",80,0,20],
-            ["dR","Electron $\\Delta R$",80,0,4]
-        ]
-    },
-    {
-        "varname" : "vtx_disp_genMatchByDr",
-        "name" : "Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "type" : "Vertex Type"
-        },
-        "bins" : [
-            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
-            ["vxy_signif","Vertex $v_{xy}$ Significance",100,0,100]
-        ]
-    },
-    {
-        "varname" : "vtx_kin_genMatchByDr",
-        "name" : "Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "type" : "Vertex Type"
-        },
-        "bins" : [
-            ["mass","Dielectron Mass [GeV]",100,0,50],
-            ["energy","Dielectron Energy [GeV]",200,0,100]
-        ]
-    },
-    {
-        "varname" : "vtx_nearestMatchByDr",
-        "name" : "Global Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample":"Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["type","Vertex Type",3,1,4],
-            ["dist","Distance to Nearest Gen Vertex",50,0,50],
-            ["chi2","Vertex Fit $\\chi^2/df$",80,0,20],
-            ["dR","Electron $\\Delta R$",80,0,4]
-        ]
-    },
-    {
-        "varname" : "vtx_disp_nearestMatchByDr",
-        "name" : "Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["type","Vertex Type",3,1,4],
-            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
-            ["vxy_signif","Vertex $v_{xy}$ Significance",100,0,100]
-        ]
-    },
-    {
-        "varname" : "vtx_kin_nearestMatchByDr",
-        "name" : "Nearest Reco Vertex to Gen Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["type","Vertex Type",3,1,4],
-            ["mass","Dielectron Mass [GeV]",100,0,50],
-            ["energy","Dielectron Energy [GeV]",200,0,100]
-        ]
-    },
-    {
-        "varname" : "vtx_nearestMatchTypeByDr",
-        "name" : "Global Nearest Reco Vertex to Gen Vertex Type",
-        "categories" : {
-            "sample":"Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["type","Vertex Type",4,0,4]
-        ]
-    },
-    {
         "varname" : "vtx_genMatchByEle",
         "name" : "Vertex from Gen-Matched Electrons",
         "categories" : {
@@ -449,71 +358,6 @@
         ]
     },
     {
-        "varname" : "dispEE_vtx_kinematics",
-        "name" : "Displaced Dielectron Vertex Kinematics",
-        "categories" : {
-            "sample" :"Signal Sample",
-            "cut" : "Cut",
-            "denom" : "Denominator"
-        },
-        "bins": [
-            ["mass","Dielectron Mass [GeV]",80,0,40],
-            ["leadPt","Leading Electron $p_T$ [GeV]",50,0,50],
-            ["dR","Electron $\\Delta R$",80,0,4]
-        ]
-    },
-    {
-        "varname": "dispEE_vtx_qual",
-        "name": "Displaced Dielectron Vertex Quality",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "denom": "Denominator"
-        },
-        "bins": [
-            ["vxy","Vertex $v_{xy}$ [cm]",500,0,50],
-            ["dxy","Electron $d_{xy}$ [cm]",100,0,10],
-            ["chi2","Vertex $\\chi^2/df$",80,0,20]
-        ]
-    },
-    {
-        "varname": "dispEE_eff",
-        "name": "Displaced Dielectron Efficiencies",
-        "categories" : {
-            "sample":"Signal Sample",
-            "cut" : "Cut",
-            "denom":"Denominator"
-        },
-        "bins" : [
-            ["ndEE","Number of Displaced Dielectron Vertices",5,0,5]
-        ]
-    },
-    {
-        "varname" : "match_conv_kinematics",
-        "name" : "Matched Conversion Electron Kinematics",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["pt","$p_{T}$ [GeV]",100,0,50],
-            ["eta","$\\eta$",60,-3,3],
-            ["phi","$\\phi$",64,-3.2,3.2]
-        ]
-    },
-    {
-        "varname" : "match_conv_vtx",
-        "name" : "Matched Conversion Electron Vertex",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut"
-        },
-        "bins" : [
-            ["vxy","Conversion $v_{xy}$ [cm]",2000,0,50],
-            ["vz","Conversion $v_{z}$ [cm]",2000,0,50]
-        ]
-    },
-    {
         "varname" : "match_matrix",
         "name": "Gen Electron Match Matrix",
         "categories" : {
@@ -523,32 +367,6 @@
         "bins" : [
             ["e_matchType","Electron Match Type",4,0,4],
             ["p_matchType","Positron Match Type",4,0,4]
-        ]
-    },
-    {
-        "varname": "conv_match_matrix",
-        "name" : "Conversion Electron Gen-Match Matrix",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "match" : "Match Category"
-        },
-        "bins": [
-            ["c1_matchType","Conversion 1 Match Type",4,0,4],
-            ["c2_matchType","Conversion 2 Match Type",4,0,4]
-        ]
-    },
-    {
-        "varname": "conv_match_matrix_uniq",
-        "name" : "Disambiguated Conversion Electron Gen-Match Matrix",
-        "categories" : {
-            "sample" : "Signal Sample",
-            "cut" : "Cut",
-            "match" : "Match Category"
-        },
-        "bins": [
-            ["c1_matchType","Conversion 1 Match Type",4,0,4],
-            ["c2_matchType","Conversion 2 Match Type",4,0,4]
         ]
     }
 ]

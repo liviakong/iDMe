@@ -44,7 +44,7 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("Electron_trkChi2",&recoElectronTrkChi2_);
     outT->Branch("Electron_trkIso",&recoElectronTrkIso_);
     outT->Branch("Electron_trkRelIso",&recoElectronTrkRelIso_);
-    outT->Branch("Electron-trkProb",&recoElectronTrkProb_);
+    outT->Branch("Electron_trkProb",&recoElectronTrkProb_);
     outT->Branch("Electron_numTrackerHits",&recoElectronTrkNumTrackerHits_);
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
     outT->Branch("Electron_numStripHits",&recoElectronTrkNumStripHits_);

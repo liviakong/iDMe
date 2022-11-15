@@ -185,6 +185,7 @@ from iDMeAnalysis.AODSkimmer.AODSkimmer_cfi import AODSkimmer
 process.ntuples = AODSkimmer.clone(
     isData = cms.bool(options.data),
     jetCorrector = jetCorrector,
+    year = options.year,
     triggerPaths16 = cms.vstring(triggerPaths16),
     triggerPaths17 = cms.vstring(triggerPaths17),
     triggerPaths18 = cms.vstring(triggerPaths18),

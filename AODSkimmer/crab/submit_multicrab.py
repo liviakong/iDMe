@@ -21,7 +21,7 @@ def parseArguments():
 
     parser.add_option('-y', '--year',
                       dest = 'year',
-                      default = '2018',
+                      default = '',
                       help = "Which year to process ('2018'(default)/'2017'/'2016')",
                       metavar = 'YEAR')
 
@@ -30,6 +30,12 @@ def parseArguments():
                       default = '',
                       help = 'JSON file with input data or MC lists',
                       metavar = 'INFILE')
+
+    parser.add_option("-t","--type",
+                      dest="type",
+                      default='',
+                      help='Sample type, Data (1) or MC (0)',
+                      metavar="TYPE")
     
     (options, arguments) = parser.parse_args()
     
@@ -41,6 +47,8 @@ def parseArguments():
         parser.error("-y year option not provided")
     if not options.inFile:
         parser.error("-f input file option not provided")
+    if not options.type:
+        parser.error("-t type data (1) or mc (0) option not specified")
 
     return options
 
@@ -53,6 +61,7 @@ def main():
     base_dir = os.environ['CMSSW_BASE']
 
     year = options.year
+    samp_type = options.type
 
     config = CRABClient.UserUtilities.config()
 
@@ -83,7 +92,7 @@ def main():
             config.Data.outLFNDirBase = output_base
             config.Data.inputDataset = dataset
             config.General.requestName = 'iDMe_'+subsample
-            config.JobType.pyCfgParams = ['numThreads=1','outfile={0}.root'.format(subsample)]
+            config.JobType.pyCfgParams = ['numThreads=1','outfile={0}.root'.format(subsample),'data={0}'.format(samp_type)]
             print 'Submitting for input dataset {0}'.format(subsample)
             #crabCommand(options.crabCmd, config = config)
             kwargs = {'config':config}

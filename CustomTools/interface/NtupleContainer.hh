@@ -36,6 +36,8 @@ public:
     // Gen particles
     int nGen_;
     float genwgt_;
+    int genpuobs_;
+    int genputrue_;
     vector<int> genID_;
     // Only save hard-process gen particles
     vector<int> genCharge_;
@@ -54,6 +56,7 @@ public:
 
     // Gen Electron & Positron from iDM signal
     int genEleCharge_;
+    int genEleMotherID_;
     float genElePt_;
     float genEleEta_;
     float genElePhi_;
@@ -65,18 +68,17 @@ public:
     float genEleVz_;
     float genEleVx_;
     float genEleVy_;
-    int genEleBestMatchType_;
-    int genEleBestMatchInd_;
-    float genEleBestMatchDr_;
-    int genEleBestMatchType_withCands_;
-    int genEleBestMatchInd_withCands_;
-    float genEleBestMatchDr_withCands_;
-    int nGenEleMatches_;
-    vector<int> genEleMatchTypes_;
-    vector<int> genEleMatchInds_;
-    vector<float> genEleMatchDrs_;
+    int genEleClosestType_;
+    int genEleClosestInd_;
+    float genEleClosestDr_;
+    int genEleClosestInd_reg_;
+    float genEleClosestDr_reg_;
+    int genEleClosestInd_lpt_;
+    float genEleClosestDr_lpt_;
+
 
     int genPosCharge_;
+    int genPosMotherID_;
     float genPosPt_;
     float genPosEta_;
     float genPosPhi_;
@@ -88,16 +90,13 @@ public:
     float genPosVz_;
     float genPosVx_;
     float genPosVy_;
-    int genPosBestMatchType_;
-    int genPosBestMatchInd_;
-    float genPosBestMatchDr_;
-    int genPosBestMatchType_withCands_;
-    int genPosBestMatchInd_withCands_;
-    float genPosBestMatchDr_withCands_;
-    int nGenPosMatches_;
-    vector<int> genPosMatchTypes_;
-    vector<int> genPosMatchInds_;
-    vector<float> genPosMatchDrs_;
+    int genPosClosestType_;
+    int genPosClosestInd_;
+    float genPosClosestDr_;
+    int genPosClosestInd_reg_;
+    float genPosClosestDr_reg_;
+    int genPosClosestInd_lpt_;
+    float genPosClosestDr_lpt_;
 
     // Gen Electron + Positron info
     float genEEPt_;
@@ -124,6 +123,9 @@ public:
 
     // Normal Electrons
     int nElectronDefault_;
+    vector<bool> recoElectronMatched_;
+    vector<int> recoElectronMatchType_;
+    vector<float> recoElectronMatchdR_;
     vector<float> recoElectronPt_;
     vector<float> recoElectronEta_;
     vector<float> recoElectronEtaError_;
@@ -151,11 +153,15 @@ public:
 
     // Low pT electrons
     int nElectronLowPt_;
+    vector<bool> recoLowPtElectronMatched_;
+    vector<int> recoLowPtElectronMatchType_;
+    vector<float> recoLowPtElectronMatchdR_;
     vector<float> recoLowPtElectronPt_;
     vector<float> recoLowPtElectronEta_;
     vector<float> recoLowPtElectronEtaError_;
     vector<float> recoLowPtElectronPhi_;
     vector<float> recoLowPtElectronPhiError_;
+    vector<float> recoLowPtElectronID_;
     vector<float> recoLowPtElectronAngularRes_;
     vector<float> recoLowPtElectronE_;
     vector<float> recoLowPtElectronPx_;
@@ -175,6 +181,7 @@ public:
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;
     vector<int> recoLowPtElectronCharge_;
+    vector<float> recoLowPtElectronMinDrToReg_;
 
     // Photons
     int nPhotons_;
@@ -286,6 +293,9 @@ public:
     float PuppiCaloMET_Pt_;
     float PuppiCaloMET_Phi_;
 
+    // Pileup density
+    float rho_;
+
     // Electron-positron vertices
     int nEleVertex_RR_;
     vector<int> RRvtx_idx1_;
@@ -350,122 +360,7 @@ public:
     vector<float> LRvtx_ll_py_;
     vector<float> LRvtx_ll_pz_;
 
-    int nEleVertex_RC_;
-    vector<int> RCvtx_idx1_;
-    vector<int> RCvtx_idx2_;
-    vector<float> RCvtx_recoVtxVxy_;
-    vector<float> RCvtx_recoVtxSigmaVxy_;
-    vector<float> RCvtx_recoVtxVx_;
-    vector<float> RCvtx_recoVtxVy_;
-    vector<float> RCvtx_recoVtxVz_;
-    vector<float> RCvtx_recoVtxReducedChi2_;
-    vector<float> RCvtx_prob_;
-    vector<float> RCvtx_recoVtxDr_;
-    vector<int> RCvtx_recoVtxSign_;
-    vector<float> RCvtx_ll_pt_;
-    vector<float> RCvtx_ll_eta_;
-    vector<float> RCvtx_ll_phi_;
-    vector<float> RCvtx_ll_e_;
-    vector<float> RCvtx_ll_m_;
-    vector<float> RCvtx_ll_px_;
-    vector<float> RCvtx_ll_py_;
-    vector<float> RCvtx_ll_pz_;
-
-    int nEleVertex_LC_;
-    vector<int> LCvtx_idx1_;
-    vector<int> LCvtx_idx2_;
-    vector<float> LCvtx_recoVtxVxy_;
-    vector<float> LCvtx_recoVtxSigmaVxy_;
-    vector<float> LCvtx_recoVtxVx_;
-    vector<float> LCvtx_recoVtxVy_;
-    vector<float> LCvtx_recoVtxVz_;
-    vector<float> LCvtx_recoVtxReducedChi2_;
-    vector<float> LCvtx_prob_;
-    vector<float> LCvtx_recoVtxDr_;
-    vector<int> LCvtx_recoVtxSign_;
-    vector<float> LCvtx_ll_pt_;
-    vector<float> LCvtx_ll_eta_;
-    vector<float> LCvtx_ll_phi_;
-    vector<float> LCvtx_ll_e_;
-    vector<float> LCvtx_ll_m_;
-    vector<float> LCvtx_ll_px_;
-    vector<float> LCvtx_ll_py_;
-    vector<float> LCvtx_ll_pz_;
-
-    // Electron candidates reconstructed from isoTracks + ECAL clusters
-    int nEleCand_;
-    vector<float> EleCand_pt_;
-    vector<float> EleCand_et_;
-    vector<float> EleCand_eta_;
-    vector<float> EleCand_phi_;
-    vector<float> EleCand_dxy_;
-    vector<float> EleCand_dxyError_;
-    vector<float> EleCand_dxy_PV_;
-    vector<float> EleCand_dxyError_PV_;
-    vector<float> EleCand_relPFiso_;
-    vector<float> EleCand_relTrkiso_;
-    vector<float> EleCand_ptDiff_;
-    vector<float> EleCand_trkIso_;
-    vector<float> EleCand_trkChi2_;
-    vector<int> EleCand_numTrackerHits_;
-    vector<int> EleCand_numPixHits_;
-    vector<int> EleCand_numStripHits_;
-
-    // Displaced dileptons from dedicated algorithm
-    int ndispEE_;
-    vector<int> dispEE_maxIxy_;
-    vector<float> dispEE_Lxy_;
-    vector<float> dispEE_Ixy_;
-    vector<float> dispEE_trackDxy_;
-    vector<float> dispEE_trackIxy_;
-    vector<float> dispEE_vx_;
-    vector<float> dispEE_vy_;
-    vector<float> dispEE_mass_;
-    vector<float> dispEE_normalizedChi2_;
-    vector<float> dispEE_leadingPt_;
-    vector<float> dispEE_subleadingPt_;
-    vector<float> dispEE_leadingEt_;
-    vector<float> dispEE_subleadingEt_;
-    vector<float> dispEE_cosAlpha_;
-    vector<float> dispEE_dPhi_;
-    vector<float> dispEE_relisoA_;
-    vector<float> dispEE_relisoB_;
-    vector<int> dispEE_fromPVA_;
-    vector<int> dispEE_fromPVB_;
-    vector<int> dispEE_PVAssociation_;
-
-    // Displaced dilepton candidates (aren't required to pass a baseline selection)
-    int nEECand_;
-    vector<float> EECand_Lxy_PV_;
-    vector<float> EECand_Ixy_PV_;
-    vector<float> EECand_Lxy_0_;
-    vector<float> EECand_Ixy_0_;
-    vector<float> EECand_Lxy_BS_;
-    vector<float> EECand_Ixy_BS_;
-    vector<float> EECand_trackDxy_;
-    vector<float> EECand_trackIxy_;
-    vector<float> EECand_trackDxy_PV_;
-    vector<float> EECand_trackIxy_PV_;
-    vector<float> EECand_trackDxy_0_;
-    vector<float> EECand_trackIxy_0_;
-    vector<float> EECand_trackDxy_BS_;
-    vector<float> EECand_trackIxy_BS_;
-    vector<float> EECand_vx_;
-    vector<float> EECand_vy_;
-    vector<float> EECand_mass_;
-    vector<float> EECand_normalizedChi2_;
-    vector<float> EECand_leadingPt_;
-    vector<float> EECand_subleadingPt_;
-    vector<float> EECand_leadingEt_;
-    vector<float> EECand_subleadingEt_;
-    vector<float> EECand_cosAlpha_;
-    vector<float> EECand_dR_;
-    vector<float> EECand_dPhi_;
-    vector<float> EECand_lldPhi_;
-    vector<float> EECand_relisoA_;
-    vector<float> EECand_relisoB_;
-
-private:
+protected:
     // Reco and gen TTrees
     TTree * outT;
 

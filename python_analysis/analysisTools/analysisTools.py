@@ -243,6 +243,11 @@ def loadSchema(fileLoc):
     tree = NanoEventsFactory.from_root(loc,treepath="ntuples/outT",schemaclass=MySchema).events()
     return tree
 
+def loadNano(fileLoc):
+    loc = uproot.open(fileLoc)
+    tree = NanoEventsFactory.from_root(loc,treepath="ntuples/outT",schemaclass=NanoAODSchema).events()
+    return tree
+
 def flatten_fillNone(arr,val):
     return ak.fill_none(ak.flatten(arr),val)
 

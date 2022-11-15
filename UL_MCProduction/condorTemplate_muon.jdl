@@ -1,0 +1,10 @@
+universe = vanilla
+executable = runGeneration_muon.sh 
+should_transfer_files = YES
+when_to_transfer_output = ON_EXIT
+transfer_output_files = ""
+input = /dev/null
+rank = Mips
+request_memory = 6000
++AcctGroup = "analysis"
++ProjectName = "DarkMatterSimulation"

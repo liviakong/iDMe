@@ -1,1 +1,2 @@
-split_fileLists/
+**/split_fileLists
+**/Logs

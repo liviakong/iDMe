@@ -32,6 +32,7 @@ cp -r $BASE/CustomTools/* iDMeAnalysis/CustomTools/
 
 cp $BASE/iDMeSkimmer/scripts/run_ntuplizer_cfg.py iDMeAnalysis/iDMeSkimmer/
 cp $BASE/AODSkimmer/scripts/run_AODntuplizer_cfg.py iDMeAnalysis/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/run_isoNtuplizer_cfg.py iDMeAnalysis/AODSkimmer/
 
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoVertex .
 

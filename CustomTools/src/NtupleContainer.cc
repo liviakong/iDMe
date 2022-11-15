@@ -25,6 +25,9 @@ void NtupleContainer::CreateTreeBranches() {
 
     // Normal Electrons
     outT->Branch("nElectron",&nElectronDefault_);
+    outT->Branch("Electron_matched",&recoElectronMatched_);
+    outT->Branch("Electron_matchType",&recoElectronMatchType_);
+    outT->Branch("Electron_matchdR",&recoElectronMatchdR_);
     outT->Branch("Electron_pt",&recoElectronPt_);
     outT->Branch("Electron_eta",&recoElectronEta_);
     outT->Branch("Electron_etaErr",&recoElectronEtaError_);
@@ -52,11 +55,15 @@ void NtupleContainer::CreateTreeBranches() {
 
     // Low pT electrons
     outT->Branch("nLptElectron",&nElectronLowPt_);
+    outT->Branch("LptElectron_matched",&recoLowPtElectronMatched_);
+    outT->Branch("LptElectron_matchType",&recoLowPtElectronMatchType_);
+    outT->Branch("LptElectron_matchdR",&recoLowPtElectronMatchdR_);
     outT->Branch("LptElectron_pt",&recoLowPtElectronPt_);
     outT->Branch("LptElectron_eta",&recoLowPtElectronEta_);
     outT->Branch("LptElectron_etaErr",&recoLowPtElectronEtaError_);
     outT->Branch("LptElectron_phi",&recoLowPtElectronPhi_);
     outT->Branch("LptElectron_phiErr",&recoLowPtElectronPhiError_);
+    outT->Branch("LptElectron_ID",&recoLowPtElectronID_);
     outT->Branch("LptElectron_angRes",&recoLowPtElectronAngularRes_);
     outT->Branch("LptElectron_energy",&recoLowPtElectronE_);
     outT->Branch("LptElectron_px",&recoLowPtElectronPx_);
@@ -76,6 +83,7 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("LptElectron_numPixHits",&recoLowPtElectronTrkNumPixHits_);
     outT->Branch("LptElectron_numStripHits",&recoLowPtElectronTrkNumStripHits_);
     outT->Branch("LptElectron_charge",&recoLowPtElectronCharge_);
+    outT->Branch("LptElectron_minDRtoReg",&recoLowPtElectronMinDrToReg_);
 
     // Photons
     outT->Branch("nPhoton",&nPhotons_);
@@ -187,6 +195,8 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("PuppiMETCalo_pt",&PuppiCaloMET_Pt_);
     outT->Branch("PuppiMETCalo_phi",&PuppiCaloMET_Phi_);
 
+    // Pileup density
+    outT->Branch("rho",&rho_);
 
     // Electron-positron vertex branches
     outT->Branch("nRRvtx",&nEleVertex_RR_);
@@ -252,124 +262,11 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("LRvtx_py",&LRvtx_ll_py_);
     outT->Branch("LRvtx_pz",&LRvtx_ll_pz_);
 
-    outT->Branch("nRCvtx",&nEleVertex_RC_);
-    outT->Branch("RCvtx_idx1", &RCvtx_idx1_);
-    outT->Branch("RCvtx_idx2", &RCvtx_idx2_);
-    outT->Branch("RCvtx_vxy", &RCvtx_recoVtxVxy_);
-    outT->Branch("RCvtx_sigmavxy", &RCvtx_recoVtxSigmaVxy_);
-    outT->Branch("RCvtx_vx",&RCvtx_recoVtxVx_);
-    outT->Branch("RCvtx_vy",&RCvtx_recoVtxVy_);
-    outT->Branch("RCvtx_vz",&RCvtx_recoVtxVz_);
-    outT->Branch("RCvtx_reduced_chi2", &RCvtx_recoVtxReducedChi2_);
-    outT->Branch("RCvtx_prob", &RCvtx_prob_);
-    outT->Branch("RCvtx_dR",  &RCvtx_recoVtxDr_);
-    outT->Branch("RCvtx_sign",&RCvtx_recoVtxSign_);
-    outT->Branch("RCvtx_pt",&RCvtx_ll_pt_);
-    outT->Branch("RCvtx_eta",&RCvtx_ll_eta_);
-    outT->Branch("RCvtx_phi",&RCvtx_ll_phi_);
-    outT->Branch("RCvtx_energy",&RCvtx_ll_e_);
-    outT->Branch("RCvtx_m",&RCvtx_ll_m_);
-    outT->Branch("RCvtx_px",&RCvtx_ll_px_);
-    outT->Branch("RCvtx_py",&RCvtx_ll_py_);
-    outT->Branch("RCvtx_pz",&RCvtx_ll_pz_);
-
-    outT->Branch("nLCvtx",&nEleVertex_LC_);
-    outT->Branch("LCvtx_idx1", &LCvtx_idx1_);
-    outT->Branch("LCvtx_idx2", &LCvtx_idx2_);
-    outT->Branch("LCvtx_vxy", &LCvtx_recoVtxVxy_);
-    outT->Branch("LCvtx_sigmavxy", &LCvtx_recoVtxSigmaVxy_);
-    outT->Branch("LCvtx_vx",&LCvtx_recoVtxVx_);
-    outT->Branch("LCvtx_vy",&LCvtx_recoVtxVy_);
-    outT->Branch("LCvtx_vz",&LCvtx_recoVtxVz_);
-    outT->Branch("LCvtx_reduced_chi2", &LCvtx_recoVtxReducedChi2_);
-    outT->Branch("LCvtx_prob", &LCvtx_prob_);
-    outT->Branch("LCvtx_dR",  &LCvtx_recoVtxDr_);
-    outT->Branch("LCvtx_sign",&LCvtx_recoVtxSign_);
-    outT->Branch("LCvtx_pt",&LCvtx_ll_pt_);
-    outT->Branch("LCvtx_eta",&LCvtx_ll_eta_);
-    outT->Branch("LCvtx_phi",&LCvtx_ll_phi_);
-    outT->Branch("LCvtx_energy",&LCvtx_ll_e_);
-    outT->Branch("LCvtx_m",&LCvtx_ll_m_);
-    outT->Branch("LCvtx_px",&LCvtx_ll_px_);
-    outT->Branch("LCvtx_py",&LCvtx_ll_py_);
-    outT->Branch("LCvtx_pz",&LCvtx_ll_pz_);
-
-    // Electron candidates from isoTracks / ECAL clusters
-    outT->Branch("nEleCand",&nEleCand_);
-    outT->Branch("EleCand_pt",&EleCand_pt_);
-    outT->Branch("EleCand_et",&EleCand_et_);
-    outT->Branch("EleCand_eta",&EleCand_eta_);
-    outT->Branch("EleCand_phi",&EleCand_phi_);
-    outT->Branch("EleCand_dxy",&EleCand_dxy_);
-    outT->Branch("EleCand_dxyErr",&EleCand_dxyError_);
-    outT->Branch("EleCand_dxy_PV",&EleCand_dxy_PV_);
-    outT->Branch("EleCand_dxyErr_PV",&EleCand_dxyError_PV_);
-    outT->Branch("EleCand_relPFiso",&EleCand_relPFiso_);
-    outT->Branch("EleCand_relTrkiso",&EleCand_relTrkiso_);
-    outT->Branch("EleCand_ptDiff",&EleCand_ptDiff_);
-    outT->Branch("EleCand_trkIso",&EleCand_trkIso_);
-    outT->Branch("EleCand_trkChi2",&EleCand_trkChi2_);
-    outT->Branch("EleCand_numTrackerHits",&EleCand_numTrackerHits_);
-    outT->Branch("EleCand_numPixHits",&EleCand_numPixHits_);
-    outT->Branch("EleCand_numStripHits",&EleCand_numStripHits_);
-
-    // Displaced dileptons
-    outT->Branch("ndispEE",&ndispEE_);
-    outT->Branch("dispEE_maxIxy",&dispEE_maxIxy_);
-    outT->Branch("dispEE_Lxy",&dispEE_Lxy_);
-    outT->Branch("dispEE_Ixy",&dispEE_Ixy_);
-    outT->Branch("dispEE_trackDxy",&dispEE_trackDxy_);
-    outT->Branch("dispEE_trackIxy",&dispEE_trackIxy_);
-    outT->Branch("dispEE_vx",&dispEE_vx_);
-    outT->Branch("dispEE_vy",&dispEE_vy_);
-    outT->Branch("dispEE_mass",&dispEE_mass_);
-    outT->Branch("dispEE_normalizedChi2",&dispEE_normalizedChi2_);
-    outT->Branch("dispEE_leadingPt",&dispEE_leadingPt_);
-    outT->Branch("dispEE_subleadingPt",&dispEE_subleadingPt_);
-    outT->Branch("dispEE_leadingEt",&dispEE_leadingEt_);
-    outT->Branch("dispEE_subleadingEt",&dispEE_subleadingEt_);
-    outT->Branch("dispEE_cosAlpha",&dispEE_cosAlpha_);
-    outT->Branch("dispEE_dPhi",&dispEE_dPhi_);
-    outT->Branch("dispEE_relisoA",&dispEE_relisoA_);
-    outT->Branch("dispEE_relisoB",&dispEE_relisoB_);
-    outT->Branch("dispEE_fromPVA",&dispEE_fromPVA_);
-    outT->Branch("dispEE_fromPVB",&dispEE_fromPVB_);
-    outT->Branch("dispEE_PVAssociation",&dispEE_PVAssociation_);
-
-    // Displaced dilepton candidates
-    outT->Branch("nEECand",&nEECand_);
-    outT->Branch("EECand_Lxy_PV",&EECand_Lxy_PV_);
-    outT->Branch("EECand_Ixy_PV",&EECand_Ixy_PV_);
-    outT->Branch("EECand_Lxy_0",&EECand_Lxy_0_);
-    outT->Branch("EECand_Ixy_0",&EECand_Ixy_0_);
-    outT->Branch("EECand_Lxy_BS",&EECand_Lxy_BS_);
-    outT->Branch("EECand_Ixy_BS",&EECand_Ixy_BS_);
-    outT->Branch("EECand_trackDxy",&EECand_trackDxy_);
-    outT->Branch("EECand_trackIxy",&EECand_trackIxy_);
-    outT->Branch("EECand_trackDxy_PV",&EECand_trackDxy_PV_);
-    outT->Branch("EECand_trackIxy_PV",&EECand_trackIxy_PV_);
-    outT->Branch("EECand_trackDxy_0",&EECand_trackDxy_0_);
-    outT->Branch("EECand_trackIxy_0",&EECand_trackIxy_0_);
-    outT->Branch("EECand_trackDxy_BS",&EECand_trackDxy_BS_);
-    outT->Branch("EECand_trackIxy_BS",&EECand_trackIxy_BS_);
-    outT->Branch("EECand_vx",&EECand_vx_);
-    outT->Branch("EECand_vy",&EECand_vy_);
-    outT->Branch("EECand_mass",&EECand_mass_);
-    outT->Branch("EECand_normalizedChi2",&EECand_normalizedChi2_);
-    outT->Branch("EECand_leadingPt",&EECand_leadingPt_);
-    outT->Branch("EECand_subleadingPt",&EECand_subleadingPt_);
-    outT->Branch("EECand_leadingEt",&EECand_leadingEt_);
-    outT->Branch("EECand_subleadingEt",&EECand_subleadingEt_);
-    outT->Branch("EECand_cosAlpha",&EECand_cosAlpha_);
-    outT->Branch("EECand_dR",&EECand_dR_);
-    outT->Branch("EECand_dPhi",&EECand_dPhi_);
-    outT->Branch("EECand_lldPhi",&EECand_lldPhi_);
-    outT->Branch("EECand_relisoA",&EECand_relisoA_);
-    outT->Branch("EECand_relisoB",&EECand_relisoB_);
-
     // Gen information
     if (!isData_) {
         outT->Branch("genWgt", &genwgt_);
+        outT->Branch("genPU_obs", &genpuobs_);
+        outT->Branch("genPU_true", &genputrue_);
         outT->Branch("nGenPart",&nGen_);
         outT->Branch("GenPart_ID", &genID_);
         outT->Branch("GenPart_charge", &genCharge_);
@@ -396,6 +293,7 @@ void NtupleContainer::CreateTreeBranches() {
         outT->Branch("GenMET_ET",&genLeadMETET_);
 
         outT->Branch("GenEle_charge",&genEleCharge_);
+        outT->Branch("GenEle_motherID",&genEleMotherID_);
         outT->Branch("GenEle_pt",&genElePt_);
         outT->Branch("GenEle_eta",&genEleEta_);
         outT->Branch("GenEle_phi",&genElePhi_);
@@ -407,18 +305,16 @@ void NtupleContainer::CreateTreeBranches() {
         outT->Branch("GenEle_vx",&genEleVz_);
         outT->Branch("GenEle_vy",&genEleVx_);
         outT->Branch("GenEle_vz",&genEleVy_);
-        outT->Branch("GenEleMatch_typ",&genEleBestMatchType_); // need to misspell type so it doesn't cause python issues
-        outT->Branch("GenEleMatch_ind",&genEleBestMatchInd_);
-        outT->Branch("GenEleMatch_dr",&genEleBestMatchDr_);
-        outT->Branch("GenEleMatchC_typ",&genEleBestMatchType_withCands_);
-        outT->Branch("GenEleMatchC_ind",&genEleBestMatchInd_withCands_);
-        outT->Branch("GenEleMatchC_dr",&genEleBestMatchDr_withCands_);
-        outT->Branch("nGenEleMatches",&nGenEleMatches_);
-        outT->Branch("GenEleMatches_typ",&genEleMatchTypes_);
-        outT->Branch("GenEleMatches_ind",&genEleMatchInds_);
-        outT->Branch("GenEleMatches_dr",&genEleMatchDrs_);
+        outT->Branch("GenEleClosest_typ",&genEleClosestType_); // need to misspell type so it doesn't cause python issues
+        outT->Branch("GenEleClosest_ind",&genEleClosestInd_);
+        outT->Branch("GenEleClosest_dr",&genEleClosestDr_);
+        outT->Branch("GenEleClosestReg_ind",&genEleClosestInd_reg_);
+        outT->Branch("GenEleClosestReg_dr",&genEleClosestDr_reg_);
+        outT->Branch("GenEleClosestLpt_ind",&genEleClosestInd_lpt_);
+        outT->Branch("GenEleClosestLpt_dr",&genEleClosestDr_lpt_);
 
         outT->Branch("GenPos_charge",&genPosCharge_);
+        outT->Branch("GenPos_motherID",&genPosMotherID_);
         outT->Branch("GenPos_pt",&genPosPt_);
         outT->Branch("GenPos_eta",&genPosEta_);
         outT->Branch("GenPos_phi",&genPosPhi_);
@@ -430,16 +326,13 @@ void NtupleContainer::CreateTreeBranches() {
         outT->Branch("GenPos_vx",&genPosVz_);
         outT->Branch("GenPos_vy",&genPosVx_);
         outT->Branch("GenPos_vz",&genPosVy_);
-        outT->Branch("GenPosMatch_typ",&genPosBestMatchType_);
-        outT->Branch("GenPosMatch_ind",&genPosBestMatchInd_);
-        outT->Branch("GenPosMatch_dr",&genPosBestMatchDr_);
-        outT->Branch("GenPosMatchC_typ",&genPosBestMatchType_withCands_);
-        outT->Branch("GenPosMatchC_ind",&genPosBestMatchInd_withCands_);
-        outT->Branch("GenPosMatchC_dr",&genPosBestMatchDr_withCands_);
-        outT->Branch("nGenPosMatches",&nGenPosMatches_);
-        outT->Branch("GenPosMatches_typ",&genPosMatchTypes_);
-        outT->Branch("GenPosMatches_ind",&genPosMatchInds_);
-        outT->Branch("GenPosMatches_dr",&genPosMatchDrs_);
+        outT->Branch("GenPosClosest_typ",&genPosClosestType_); // need to misspell type so it doesn't cause python issues
+        outT->Branch("GenPosClosest_ind",&genPosClosestInd_);
+        outT->Branch("GenPosClosest_dr",&genPosClosestDr_);
+        outT->Branch("GenPosClosestReg_ind",&genPosClosestInd_reg_);
+        outT->Branch("GenPosClosestReg_dr",&genPosClosestDr_reg_);
+        outT->Branch("GenPosClosestLpt_ind",&genPosClosestInd_lpt_);
+        outT->Branch("GenPosClosestLpt_dr",&genPosClosestDr_lpt_);
 
         // Gen Electron + Positron info
         outT->Branch("genEE_pt",&genEEPt_);
@@ -481,6 +374,7 @@ void NtupleContainer::ClearTreeBranches() {
 
     // Gen Electron & Positron from iDM signal
     genEleCharge_ = 0;
+    genEleMotherID_ = 0;
     genElePt_ = -999;
     genEleEta_ = -999;
     genElePhi_ = -999;
@@ -492,18 +386,16 @@ void NtupleContainer::ClearTreeBranches() {
     genEleVz_ = -999;
     genEleVx_ = -999;
     genEleVy_ = -999;
-    genEleBestMatchType_ = -1;
-    genEleBestMatchInd_ = -1;
-    genEleBestMatchDr_ = -1.0;
-    genEleBestMatchType_withCands_ = -1;
-    genEleBestMatchInd_withCands_ = -1;
-    genEleBestMatchDr_withCands_ = -1.0;
-    nGenEleMatches_ = 0;
-    genEleMatchTypes_.clear();
-    genEleMatchInds_.clear();
-    genEleMatchDrs_.clear();
+    genEleClosestType_ = -1;
+    genEleClosestInd_ = -1;
+    genEleClosestDr_ = 999.0;
+    genEleClosestInd_reg_ = -1;
+    genEleClosestDr_reg_ = 999.0;
+    genEleClosestInd_lpt_ = -1;
+    genEleClosestDr_lpt_ = 999.0;
 
     genPosCharge_ = 0;
+    genPosMotherID_ = 0;
     genPosPt_ = -999;
     genPosEta_ = -999;
     genPosPhi_ = -999;
@@ -515,16 +407,13 @@ void NtupleContainer::ClearTreeBranches() {
     genPosVz_ = -999;
     genPosVx_ = -999;
     genPosVy_ = -999;
-    genPosBestMatchType_ = -1;
-    genPosBestMatchInd_ = -1;
-    genPosBestMatchDr_ = -1.0;
-    genPosBestMatchType_withCands_ = -1;
-    genPosBestMatchInd_withCands_ = -1;
-    genPosBestMatchDr_withCands_ = -1.0;
-    nGenPosMatches_ = 0;
-    genPosMatchTypes_.clear();
-    genPosMatchInds_.clear();
-    genPosMatchDrs_.clear();
+    genPosClosestType_ = -1;
+    genPosClosestInd_ = -1;
+    genPosClosestDr_ = 999.0;
+    genPosClosestInd_reg_ = -1;
+    genPosClosestDr_reg_ = 999.0;
+    genPosClosestInd_lpt_ = -1;
+    genPosClosestDr_lpt_ = 999.0;
 
     // Gen Electron + Positron info
     genEEPt_ = -999;
@@ -549,6 +438,9 @@ void NtupleContainer::ClearTreeBranches() {
 
     // Electrons
     nElectronDefault_ = 0;
+    recoElectronMatched_.clear();
+    recoElectronMatchType_.clear();
+    recoElectronMatchdR_.clear();
     recoElectronPt_.clear();
     recoElectronEta_.clear();
     recoElectronEtaError_.clear();
@@ -576,11 +468,15 @@ void NtupleContainer::ClearTreeBranches() {
 
     // Low pT electrons
     nElectronLowPt_ = 0;
+    recoLowPtElectronMatched_.clear();
+    recoLowPtElectronMatchType_.clear();
+    recoLowPtElectronMatchdR_.clear();
     recoLowPtElectronPt_.clear();
     recoLowPtElectronEta_.clear();
     recoLowPtElectronEtaError_.clear();
     recoLowPtElectronPhi_.clear();
     recoLowPtElectronPhiError_.clear();
+    recoLowPtElectronID_.clear();
     recoLowPtElectronAngularRes_.clear();
     recoLowPtElectronE_.clear();
     recoLowPtElectronPx_.clear();
@@ -600,6 +496,12 @@ void NtupleContainer::ClearTreeBranches() {
     recoLowPtElectronTrkNumPixHits_.clear();
     recoLowPtElectronTrkNumStripHits_.clear();
     recoLowPtElectronCharge_.clear();
+    recoLowPtElectronMinDrToReg_.clear();
+
+    // Gen weight and pileup
+    genwgt_ = -9999;
+    genpuobs_ = -9999;
+    genputrue_ = -9999;
 
     // Photons
     nPhotons_ = 0;
@@ -641,6 +543,9 @@ void NtupleContainer::ClearTreeBranches() {
     conversion_Trk2_outerPhi_.clear();
 
     // Jets
+    PFNJet_ = 0;
+    PFNPassIDJet_ = 0;
+    PFNHighPtJet_ = 0;
     PFJetPt_.clear();
     PFJetEta_.clear();
     PFJetPhi_.clear();
@@ -708,6 +613,9 @@ void NtupleContainer::ClearTreeBranches() {
     PuppiCaloMET_Pt_ = -999;
     PuppiCaloMET_Phi_ = -999;
 
+    // Pileup density
+    rho_ = -9999;
+
     // Electron-positron vertices
     nEleVertex_RR_ = 0;
     RRvtx_idx1_.clear();
@@ -774,121 +682,4 @@ void NtupleContainer::ClearTreeBranches() {
     LRvtx_ll_px_.clear();
     LRvtx_ll_py_.clear();
     LRvtx_ll_pz_.clear();
-
-    nEleVertex_RC_ = 0;
-    RCvtx_idx1_.clear();
-    RCvtx_idx2_.clear();
-    RCvtx_recoVtxVxy_.clear();
-    RCvtx_recoVtxVz_.clear();
-    RCvtx_recoVtxSigmaVxy_.clear();
-    RCvtx_recoVtxVx_.clear();
-    RCvtx_recoVtxVy_.clear();
-    RCvtx_recoVtxVz_.clear();
-    RCvtx_recoVtxReducedChi2_.clear();
-    RCvtx_prob_.clear();
-    RCvtx_recoVtxDr_.clear();
-    RCvtx_recoVtxSign_.clear();
-    RCvtx_ll_pt_.clear();
-    RCvtx_ll_eta_.clear();
-    RCvtx_ll_phi_.clear();
-    RCvtx_ll_e_.clear();
-    RCvtx_ll_m_.clear();
-    RCvtx_ll_px_.clear();
-    RCvtx_ll_py_.clear();
-    RCvtx_ll_pz_.clear();
-
-    nEleVertex_LC_ = 0;
-    LCvtx_idx1_.clear();
-    LCvtx_idx2_.clear();
-    LCvtx_recoVtxVxy_.clear();
-    LCvtx_recoVtxVz_.clear();
-    LCvtx_recoVtxSigmaVxy_.clear();
-    LCvtx_recoVtxVx_.clear();
-    LCvtx_recoVtxVy_.clear();
-    LCvtx_recoVtxVz_.clear();
-    LCvtx_recoVtxReducedChi2_.clear();
-    LCvtx_prob_.clear();
-    LCvtx_recoVtxDr_.clear();
-    LCvtx_recoVtxSign_.clear();
-    LCvtx_ll_pt_.clear();
-    LCvtx_ll_eta_.clear();
-    LCvtx_ll_phi_.clear();
-    LCvtx_ll_e_.clear();
-    LCvtx_ll_m_.clear();
-    LCvtx_ll_px_.clear();
-    LCvtx_ll_py_.clear();
-    LCvtx_ll_pz_.clear();
-
-    // Electron candidates from isotracks / ECAL clusters in displaced dielectron algo
-    nEleCand_ = 0;
-    EleCand_pt_.clear();
-    EleCand_et_.clear();
-    EleCand_eta_.clear();
-    EleCand_phi_.clear();
-    EleCand_dxy_.clear();
-    EleCand_dxyError_.clear();
-    EleCand_dxy_PV_.clear();
-    EleCand_dxyError_PV_.clear();
-    EleCand_relPFiso_.clear();
-    EleCand_relTrkiso_.clear();
-    EleCand_ptDiff_.clear();
-    EleCand_trkIso_.clear();
-    EleCand_trkChi2_.clear();
-    EleCand_numTrackerHits_.clear();
-    EleCand_numPixHits_.clear();
-    EleCand_numStripHits_.clear();
-
-    // Displaced dileptons fromd dedicated algorithm
-    ndispEE_ = 0;
-    dispEE_maxIxy_.clear();
-    dispEE_Lxy_.clear();
-    dispEE_Ixy_.clear();
-    dispEE_trackDxy_.clear();
-    dispEE_trackIxy_.clear();
-    dispEE_vx_.clear();
-    dispEE_vy_.clear();
-    dispEE_mass_.clear();
-    dispEE_normalizedChi2_.clear();
-    dispEE_leadingPt_.clear();
-    dispEE_subleadingPt_.clear();
-    dispEE_leadingEt_.clear();
-    dispEE_subleadingEt_.clear();
-    dispEE_cosAlpha_.clear();
-    dispEE_dPhi_.clear();
-    dispEE_relisoA_.clear();
-    dispEE_relisoB_.clear();
-    dispEE_fromPVA_.clear();
-    dispEE_fromPVB_.clear();
-    dispEE_PVAssociation_.clear();
-
-    // Displaced dilepton candidates
-    nEECand_ = 0;
-    EECand_Lxy_PV_.clear();
-    EECand_Ixy_PV_.clear();
-    EECand_Lxy_0_.clear();
-    EECand_Ixy_0_.clear();
-    EECand_Lxy_BS_.clear();
-    EECand_Ixy_BS_.clear();
-    EECand_trackDxy_.clear();
-    EECand_trackIxy_.clear();
-    EECand_trackDxy_PV_.clear();
-    EECand_trackIxy_PV_.clear();
-    EECand_trackDxy_0_.clear();
-    EECand_trackIxy_0_.clear();
-    EECand_trackDxy_BS_.clear();
-    EECand_trackIxy_BS_.clear();
-    EECand_vx_.clear();
-    EECand_vy_.clear();
-    EECand_mass_.clear();
-    EECand_normalizedChi2_.clear();
-    EECand_leadingPt_.clear();
-    EECand_subleadingPt_.clear();
-    EECand_leadingEt_.clear();
-    EECand_subleadingEt_.clear();
-    EECand_cosAlpha_.clear();
-    EECand_dR_.clear();
-    EECand_dPhi_.clear();
-    EECand_lldPhi_.clear();
-    EECand_relisoA_.clear();
-    EECand_relisoB_.clear();
 }

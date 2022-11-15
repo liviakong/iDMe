@@ -104,6 +104,7 @@ public:
     vector<float> recoLowPtElectronDzError_;
     vector<float> recoLowPtElectronTrkChi2_;
     vector<float> recoLowPtElectronTrkIso_;
+    vector<float> recoLowPtElectronMinDrToReg_;
     vector<int> recoLowPtElectronTrkNumTrackerHits_;
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;

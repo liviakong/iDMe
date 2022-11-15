@@ -143,7 +143,7 @@ void JetCorrections::Correct(JME::JetResolution &resolution, JME::JetResolutionS
         corr_jet_i_jes_up->scaleEnergy(jesUp);
         corr_jet_i_jes_down->scaleEnergy(jesDown);
 
-        // Calculate jet energy resolution smearing factors
+        // Calculate jet energy resolution smearing factors https://twiki.cern.ch/twiki/bin/view/CMS/JetResolution
         // Should only be != 1 if running on MC
         double smearFactor = 1., smearFactor_up = 1., smearFactor_down = 1.;
         if (!isData) {
@@ -162,7 +162,7 @@ void JetCorrections::Correct(JME::JetResolution &resolution, JME::JetResolutionS
                 if (dR > min_dR) {
                     continue;
                 }
-                if (dR < 0.2) {
+                if (dR < 0.2) { // 0.2 = R_cone / 2
                     double dPt = std::abs(genJet.pt() - corr_jet_i->pt());
                     if (abs(dPt) > 3*jet_resolution*corr_jet_i->pt()) {
                         continue;
@@ -280,7 +280,8 @@ void JetCorrections::Correct(JME::JetResolution &resolution, JME::JetResolutionS
             // TODO: figure out how BtagProbb(b) collections actually behave
             // FIXME this might be problematic with the jet corrections, keep in mind
             if (bTagProbbHandle->size() > i && bTagProbbbHandle->size() > i)
-                nt.PFJetCorrectedBTag_.push_back((*bTagProbbHandle)[index].second + (*bTagProbbbHandle)[index].second);
+                nt.PFJetCorrectedBTag_.push_back((*bTagProbbHandle)[index].second +\
+                (*bTagProbbbHandle)[index].second);
             else 
                 nt.PFJetCorrectedBTag_.push_back(-9999);
             nt.PFJetCorrectedCHEF_.push_back(jet_i.chargedHadronEnergyFraction());

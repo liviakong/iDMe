@@ -6,7 +6,8 @@ import XRootD.client.flags as flags
 from optparse import OptionParser
 from multiprocessing import Process
 import os
-import json 
+import json
+from datetime import datetime
 
 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
 
@@ -74,16 +75,17 @@ def main():
     config = CRABClient.UserUtilities.config()
 
     # Basic settings common to all runs 
-    config.General.workArea = base_dir+'/src/iDMeAnalysis/AODSkimmer/crab/'
+    config.General.workArea = base_dir+'/src/iDMeAnalysis/AODSkimmer/crab/submissions_miniNtuplizer/'
     config.General.transferOutputs = True
     config.General.transferLogs = True
     config.JobType.pluginName = 'Analysis'
-    config.JobType.psetName = base_dir+'/src/iDMeAnalysis/AODSkimmer/scripts/run_AODntuplizer_cfg.py'
+    config.JobType.psetName = base_dir+'/src/iDMeAnalysis/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
-    #config.Data.splitting = 'Automatic'
-    config.Data.splitting = 'FileBased'
-    config.Data.unitsPerJob = 20
+    config.Data.splitting = 'Automatic'
+    #config.Data.totalUnits = 1
+    #config.Data.splitting = 'FileBased'
+    #config.Data.unitsPerJob = 1
     config.Data.publication = False
     config.Data.ignoreLocality = True
     config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']
@@ -99,8 +101,12 @@ def main():
             xrdClient.mkdir(output_base,flags.MkDirFlags.MAKEPATH)
             config.Data.outLFNDirBase = output_base
             config.Data.inputDataset = dataset
-            config.General.requestName = 'iDMe_'+subsample
-            config.JobType.pyCfgParams = ['numThreads=1','outfile={0}.root'.format(subsample),'data={0}'.format(samp_type)]
+            config.General.requestName = 'iDMe_' + subsample + datetime.now().strftime("_%Y_%m_%d-%H_%M")
+            config.JobType.outputFiles = ['{0}.root'.format(subsample)]
+            config.JobType.pyCfgParams = ['numThreads=1',
+                                          'outfile={0}.root'.format(subsample),
+                                          'data={0}'.format(samp_type),
+                                          'signal={0}'.format(options.signal)]
             print 'Submitting for input dataset {0}'.format(subsample)
             #crabCommand(options.crabCmd, config = config)
             kwargs = {'config':config}

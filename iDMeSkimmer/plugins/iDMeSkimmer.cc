@@ -110,7 +110,7 @@ class iDMeSkimmer : public edm::one::EDAnalyzer<edm::one::SharedResources>  {
       const edm::EDGetTokenT<vector<pat::MET> > METToken_;
       const edm::EDGetTokenT<vector<pat::MET> > PuppiMETToken_;
       const edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
-      const edm::EDGetTokenT<trigger::TriggerEvent> trigEventToken_;
+      //const edm::EDGetTokenT<trigger::TriggerEvent> trigEventToken_;
 
       // Handles
       edm::Handle<pat::ElectronCollection> recoElectronHandle_;

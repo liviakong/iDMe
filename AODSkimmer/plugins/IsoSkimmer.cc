@@ -9,7 +9,7 @@
 */
 //
 // Original Author:  Samuel Bright-Thonney
-//         Created:  Tue, 21 Sep 2021 17:00:38 GMT
+//
 //
 
 #include <algorithm>
@@ -47,6 +47,12 @@
 #include "DataFormats/HLTReco/interface/TriggerEvent.h"
 #include "DataFormats/TrackReco/interface/Track.h"
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
+#include "DataFormats/PatCandidates/interface/Electron.h"
+#include "DataFormats/PatCandidates/interface/MET.h"
+#include "DataFormats/PatCandidates/interface/Jet.h"
+#include "DataFormats/PatCandidates/interface/Photon.h"
+#include "DataFormats/PatCandidates/interface/Conversion.h"
+#include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/EgammaCandidates/interface/Photon.h"
 #include "DataFormats/EgammaCandidates/interface/Conversion.h"
@@ -57,7 +63,6 @@
 #include "DataFormats/METReco/interface/PFMETCollection.h"
 #include "DataFormats/METReco/interface/CaloMET.h"
 #include "DataFormats/METReco/interface/GenMET.h"
-#include "DataFormats/ParticleFlowCandidate/interface/PFCandidate.h"
 #include "DataFormats/VertexReco/interface/Vertex.h"
 #include "DataFormats/TrackReco/interface/HitPattern.h"
 #include "DataFormats/Math/interface/deltaR.h"
@@ -80,7 +85,9 @@
 
 #include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
 #include "iDMeAnalysis/CustomTools/interface/JetCorrections.hh"
+#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
 #include "iDMeAnalysis/CustomTools/interface/IsoNtupleContainer.hh"
+#include "iDMeAnalysis/CustomTools/interface/Helpers.hh"
 
 #include "TTree.h"
 #include "TMath.h"
@@ -109,85 +116,56 @@ class IsoSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::one::Sh
       std::mt19937 m_random_generator;
 
       bool isData;
+      bool isSignal;
       int year;
       const std::string triggerProcessName_;
+      std::vector<std::string> metFilters_;
       std::vector<std::string> trigPaths16_;
       std::vector<std::string> trigPaths17_;
       std::vector<std::string> trigPaths18_;
       std::vector<std::string> allTrigPaths_;
 
-      // Jet Corrector helpers
-      edm::ESHandle<JetCorrectorParametersCollection> JetCorParCollHandle_;
-      JetCorrectionUncertainty * jecUnc; 
-
       // Tokens 
-      const edm::EDGetTokenT<reco::JetTagCollection> bTagProbbToken_;
-      const edm::EDGetTokenT<reco::JetTagCollection> bTagProbbbToken_;
-      const edm::EDGetTokenT<vector<reco::GsfElectron> > recoElectronToken_;
-      const edm::EDGetTokenT<pat::ElectronCollection> lowPtElectronToken_;
-      const edm::EDGetTokenT<vector<pat::IsolatedTrack> > isoTracksToken_;
+      const edm::EDGetTokenT<vector<pat::Electron> > recoElectronToken_;
+      const edm::EDGetTokenT<vector<pat::Electron> >lowPtElectronToken_;
       const edm::EDGetTokenT<vector<pat::PackedCandidate> > packedPFCandToken_;
-      const edm::EDGetTokenT<vector<reco::PFCandidate> > pfCandToken_;
-      const edm::EDGetTokenT<vector<reco::GenParticle> > genParticleToken_;
-      const edm::EDGetTokenT<vector<reco::PFJet> > recoJetToken_; 
-      const edm::EDGetTokenT<vector<reco::GenJet> > genJetToken_;
-      const edm::EDGetTokenT<vector<reco::GenMET> > genMETToken_;
-      const edm::EDGetTokenT<GenEventInfoProduct   > genEvtInfoToken_;
-      const edm::EDGetTokenT<vector<reco::Vertex> > primaryVertexToken_;
-      const edm::EDGetTokenT<reco::BeamSpot> beamspotToken_;
-      const edm::EDGetTokenT<vector<reco::Photon> > photonsToken_;
-      const edm::EDGetTokenT<vector<reco::PFMET> > PFMETToken_;
-      const edm::EDGetTokenT<vector<reco::CaloMET> > CaloMETToken_;
-      const edm::EDGetTokenT<reco::JetCorrector> jetCorrectorToken_;
+      const edm::EDGetTokenT<vector<pat::Jet> > recoJetToken_;
+      const edm::EDGetTokenT<GenEventInfoProduct> genEvtInfoToken_;
       const edm::EDGetTokenT<std::vector<PileupSummaryInfo> > pileupInfosToken_;
       const edm::EDGetTokenT<double> rhoToken_;
-      const edm::EDGetTokenT<int> primaryVertexFilterToken_;
-      const edm::EDGetTokenT<bool> globalSuperTightHalo2016FilterToken_;
-      const edm::EDGetTokenT<bool> HBHENoiseFilterToken_;
-      const edm::EDGetTokenT<bool> HBHENoiseIsoFilterToken_;
-      const edm::EDGetTokenT<bool> EcalDeadCellTriggerPrimitiveFilterToken_;
-      const edm::EDGetTokenT<bool> BadPFMuonFilterToken_;
-      const edm::EDGetTokenT<bool> BadPFMuonDzFilterToken_;
-      const edm::EDGetTokenT<bool> hfNoisyHitsFilterToken_;
-      const edm::EDGetTokenT<bool> eeBadScFilterToken_;
-      const edm::EDGetTokenT<bool> ecalBadCalibFilterToken_;
+      const edm::EDGetTokenT<vector<reco::GenParticle> > genParticleToken_;
+      const edm::EDGetTokenT<vector<reco::GenJet> > genJetToken_;
+      const edm::EDGetTokenT<vector<reco::GenMET> > genMETToken_;
+      const edm::EDGetTokenT<vector<reco::Vertex> > primaryVertexToken_;
+      const edm::EDGetTokenT<reco::BeamSpot> beamspotToken_;
+      const edm::EDGetTokenT<vector<reco::Conversion> > conversionsToken_;
+      const edm::EDGetTokenT<vector<pat::Photon> > photonsToken_;
+      const edm::EDGetTokenT<vector<pat::Photon> > ootPhotonsToken_;
+      const edm::EDGetTokenT<vector<pat::MET> > METToken_;
+      const edm::EDGetTokenT<vector<pat::MET> > puppiMETToken_;
       const edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
-      const edm::EDGetTokenT<trigger::TriggerEvent> trigEventToken_;
 
       // Handles
-      edm::Handle<reco::JetTagCollection> bTagProbbHandle_;
-      edm::Handle<reco::JetTagCollection> bTagProbbbHandle_;
-      edm::Handle<vector<reco::GsfElectron> > recoElectronHandle_;
-      edm::Handle<pat::ElectronCollection> lowPtElectronHandle_;
-      edm::Handle<vector<pat::IsolatedTrack> > isoTracksHandle_;
+      edm::Handle<vector<pat::Electron> > recoElectronHandle_;
+      edm::Handle<vector<pat::Electron> > lowPtElectronHandle_;
       edm::Handle<vector<pat::PackedCandidate> > packedPFCandHandle_;
-      edm::Handle<vector<reco::PFCandidate> > pfCandHandle_;
-      edm::Handle<vector<reco::PFJet> > recoJetHandle_;
+      edm::Handle<vector<pat::Jet> > recoJetHandle_;
+      edm::Handle<GenEventInfoProduct> genEvtInfoHandle_;
+      edm::Handle<std::vector<PileupSummaryInfo> > pileupInfosHandle_;
+      edm::Handle<double> rhoHandle_;
       edm::Handle<vector<reco::GenParticle> > genParticleHandle_;
       edm::Handle<vector<reco::GenJet> > genJetHandle_;
       edm::Handle<vector<reco::GenMET> > genMETHandle_;
-      edm::Handle<GenEventInfoProduct> genEvtInfoHandle_;
       edm::Handle<vector<reco::Vertex> > primaryVertexHandle_;
       edm::Handle<reco::BeamSpot> beamspotHandle_;
-      edm::Handle<vector<reco::Photon> > photonsHandle_;
-      edm::Handle<vector<reco::PFMET> > PFMETHandle_;
-      edm::Handle<vector<reco::CaloMET> > CaloMETHandle_;
-      edm::Handle<reco::JetCorrector> jetCorrectorHandle_;
-      edm::Handle<std::vector<PileupSummaryInfo> > pileupInfosHandle_;
-      edm::Handle<double> rhoHandle_;
-      edm::Handle<int> primaryVertexFilterHandle_;
-      edm::Handle<bool> globalSuperTightHalo2016FilterHandle_;
-      edm::Handle<bool> HBHENoiseFilterHandle_;
-      edm::Handle<bool> HBHENoiseIsoFilterHandle_;
-      edm::Handle<bool> EcalDeadCellTriggerPrimitiveFilterHandle_;
-      edm::Handle<bool> BadPFMuonFilterHandle_;
-      edm::Handle<bool> BadPFMuonDzFilterHandle_;
-      edm::Handle<bool> hfNoisyHitsFilterHandle_;
-      edm::Handle<bool> eeBadScFilterHandle_;
-      edm::Handle<bool> ecalBadCalibFilterHandle_;
+      edm::Handle<vector<reco::Conversion> > conversionsHandle_;
+      edm::Handle<vector<pat::Photon> > photonsHandle_;
+      edm::Handle<vector<pat::Photon> > ootPhotonsHandle_;
+      edm::Handle<vector<pat::MET> > METHandle_;
+      edm::Handle<vector<pat::MET> > puppiMETHandle_;
       edm::Handle<edm::TriggerResults> trigResultsHandle_;
-      edm::Handle<trigger::TriggerEvent> trigEventHandle_;
 
+      // Trigger variables
       std::vector<std::string> trigPaths16WithVersion_;
       std::vector<std::string> trigPaths17WithVersion_;
       std::vector<std::string> trigPaths18WithVersion_;
@@ -212,44 +190,32 @@ class IsoSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::one::Sh
 IsoSkimmer::IsoSkimmer(const edm::ParameterSet& ps)
  :
    isData(ps.getParameter<bool>("isData")),
+   isSignal(ps.getParameter<bool>("isSignal")),
    year(ps.getParameter<int>("year")),
    triggerProcessName_(ps.getParameter<std::string>("triggerProcessName")),
+   metFilters_(ps.getParameter<std::vector<std::string> >("metFilters")),
    trigPaths16_(ps.getParameter<std::vector<std::string> >("triggerPaths16")),
    trigPaths17_(ps.getParameter<std::vector<std::string> >("triggerPaths17")),
    trigPaths18_(ps.getParameter<std::vector<std::string> >("triggerPaths18")),
    allTrigPaths_(ps.getParameter<std::vector<std::string> >("allTriggerPaths")),
-   bTagProbbToken_(consumes<reco::JetTagCollection>(ps.getParameter<edm::InputTag>("bTagProbb"))),
-   bTagProbbbToken_(consumes<reco::JetTagCollection>(ps.getParameter<edm::InputTag>("bTagProbbb"))),
-   recoElectronToken_(consumes<vector<reco::GsfElectron> >(ps.getParameter<edm::InputTag>("recoElectron"))),
-   lowPtElectronToken_(consumes<pat::ElectronCollection>(ps.getParameter<edm::InputTag>("lowPtElectron"))),
-   isoTracksToken_(consumes<vector<pat::IsolatedTrack> >(ps.getParameter<edm::InputTag>("isoTracks"))),
-   packedPFCandToken_(consumes<vector<pat::PackedCandidate> >(ps.getParameter<edm::InputTag>("packedPFCands"))),
-   pfCandToken_(consumes<vector<reco::PFCandidate> >(ps.getParameter<edm::InputTag>("pfCands"))),
+   recoElectronToken_(consumes<vector<pat::Electron> >(ps.getParameter<edm::InputTag>("recoElectron"))),
+   lowPtElectronToken_(consumes<vector<pat::Electron> >(ps.getParameter<edm::InputTag>("lowPtElectron"))),
+   packedPFCandToken_(consumes<vector<pat::PackedCandidate> >(ps.getParameter<edm::InputTag>("pfCands"))),
+   recoJetToken_(consumes<vector<pat::Jet> >(ps.getParameter<edm::InputTag>("jets"))),
+   genEvtInfoToken_(consumes<GenEventInfoProduct>(ps.getParameter<edm::InputTag>("genEvt"))),
+   pileupInfosToken_(consumes<std::vector<PileupSummaryInfo> >(ps.getParameter<edm::InputTag>("pileups"))),
+   rhoToken_(consumes<double>(ps.getParameter<edm::InputTag>("rho"))),
    genParticleToken_(consumes<vector<reco::GenParticle> >(ps.getParameter<edm::InputTag>("genParticle"))),
-   recoJetToken_(consumes<vector<reco::PFJet> >(ps.getParameter<edm::InputTag>("recoJetsCHS"))),
    genJetToken_(consumes<vector<reco::GenJet> >(ps.getParameter<edm::InputTag>("genJet"))),
    genMETToken_(consumes<vector<reco::GenMET> >(ps.getParameter<edm::InputTag>("genMET"))),
-   genEvtInfoToken_(consumes<GenEventInfoProduct>(ps.getParameter<edm::InputTag>("genEvt"))),
    primaryVertexToken_(consumes<vector<reco::Vertex> >(ps.getParameter<edm::InputTag>("primaryVertex"))),
-   beamspotToken_(consumes<reco::BeamSpot>(ps.getParameter<edm::InputTag>("beamSpot"))),
-   photonsToken_(consumes<vector<reco::Photon> >(ps.getParameter<edm::InputTag>("photons"))),
-   PFMETToken_(consumes<vector<reco::PFMET> >(ps.getParameter<edm::InputTag>("PFMET"))),
-   CaloMETToken_(consumes<vector<reco::CaloMET> >(ps.getParameter<edm::InputTag>("CaloMET"))),
-   jetCorrectorToken_(consumes<reco::JetCorrector>(ps.getParameter<edm::InputTag>("jetCorrector"))),
-   pileupInfosToken_(consumes<std::vector<PileupSummaryInfo>>(ps.getParameter<edm::InputTag>("pileups"))),
-   rhoToken_(consumes<double>(ps.getParameter<edm::InputTag>("rho"))),
-   primaryVertexFilterToken_(consumes<int>(ps.getParameter<edm::InputTag>("primaryVertexFilter"))),
-   globalSuperTightHalo2016FilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("globalSuperTight2016HaloFilter"))),
-   HBHENoiseFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("HBHENoiseFilter"))),
-   HBHENoiseIsoFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("HBHENoiseIsoFilter"))),
-   EcalDeadCellTriggerPrimitiveFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("EcalDeadCellTrigPrimFilter"))),
-   BadPFMuonFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("BadPFMuonFilter"))),
-   BadPFMuonDzFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("BadPFMuonDzFilter"))),
-   hfNoisyHitsFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("hfNoisyHitsFilter"))),
-   eeBadScFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("eeBadScFilter"))),
-   ecalBadCalibFilterToken_(consumes<bool>(ps.getParameter<edm::InputTag>("ecalBadCalibFilter"))),
-   trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResult"))),
-   trigEventToken_(consumes<trigger::TriggerEvent>(ps.getParameter<edm::InputTag>("trigEvent")))
+   beamspotToken_(consumes<reco::BeamSpot>(ps.getParameter<edm::InputTag>("beamspot"))),
+   conversionsToken_(consumes<vector<reco::Conversion> >(ps.getParameter<edm::InputTag>("conversions"))),
+   photonsToken_(consumes<vector<pat::Photon> >(ps.getParameter<edm::InputTag>("photons"))),
+   ootPhotonsToken_(consumes<vector<pat::Photon> >(ps.getParameter<edm::InputTag>("ootPhotons"))),
+   METToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("MET"))),
+   puppiMETToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("puppiMET"))),
+   trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResults")))
 {
    usesResource("TFileService");
    m_random_generator = std::mt19937(37428479);
@@ -267,7 +233,6 @@ IsoSkimmer::~IsoSkimmer() = default;
 void
 IsoSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
 {
-   
    // Set up HLT config
    using namespace edm;
 
@@ -369,13 +334,6 @@ IsoSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
       }
    }
 
-   // JEC Uncertainty object
-   iSetup.get<JetCorrectionsRecord>().get("AK4PFchs", JetCorParCollHandle_); 
-   JetCorrectorParameters const & JetCorPar = (*JetCorParCollHandle_)["Uncertainty"];
-   jecUnc = new JetCorrectionUncertainty(JetCorPar);
-   if (!jecUnc) {
-      edm::LogError("JECUncertainty") << "iDMAnalyzer::beginRun: failed to get jecUnc object!";
-   }
 }
 
 // ------------ method called once each job just before starting event loop  ------------
@@ -383,6 +341,7 @@ void IsoSkimmer::beginJob()
 {
    outT = fs->make<TTree>("outT", "outT");
    nt.isData_ = isData;
+   nt.isSignal_ = isSignal;
    nt.SetTree(outT);
    nt.CreateTreeBranches();
 }
@@ -399,47 +358,32 @@ IsoSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) {
 
    // Inputs from the run_ntuplizer_cfg python (cmsRun inputs)
    desc.add<bool>("isData", 0);
+   desc.add<bool>("isSignal",0);
    desc.add<int>("year",2018);
-   desc.add<std::string>("triggerProcessName", "HLT");
+   desc.add<std::string>("triggerProcessName", "PAT");
+   desc.add<std::vector<std::string> >("metFilters",{});
    desc.add<std::vector<std::string> >("triggerPaths16",{});
    desc.add<std::vector<std::string> >("triggerPaths17",{});
    desc.add<std::vector<std::string> >("triggerPaths18",{});
    desc.add<std::vector<std::string> >("allTriggerPaths",{});
-
-   desc.add<edm::InputTag>("jetCorrector", edm::InputTag("nodefault"));
-
-   desc.add<edm::InputTag>("bTagProbb",edm::InputTag("pfDeepCSVJetTags","probb","RECO"));
-   desc.add<edm::InputTag>("bTagProbbb",edm::InputTag("pfDeepCSVJetTags","probbb","RECO"));
-   desc.add<edm::InputTag>("recoElectron",edm::InputTag("gedGsfElectrons"));
+   desc.add<edm::InputTag>("recoElectron",edm::InputTag("slimmedElectrons"));
    desc.add<edm::InputTag>("lowPtElectron",edm::InputTag("slimmedLowPtElectrons"));
-   desc.add<edm::InputTag>("isoTracks",edm::InputTag("isolatedTracks"));
-   desc.add<edm::InputTag>("packedPFCands",edm::InputTag("packedPFCandidates"));
-   desc.add<edm::InputTag>("pfCands",edm::InputTag("particleFlow","","RECO"));
-   desc.add<edm::InputTag>("recoJetsCHS",edm::InputTag("ak4PFJetsCHS"));
-   desc.add<edm::InputTag>("genParticle",edm::InputTag("genParticles"));
-   desc.add<edm::InputTag>("genJet",edm::InputTag("ak4GenJets"));
-   desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
+   desc.add<edm::InputTag>("pfCands",edm::InputTag("packedPFCandidates"));
+   desc.add<edm::InputTag>("jets",edm::InputTag("slimmedJets"));
    desc.add<edm::InputTag>("genEvt", edm::InputTag("generator"));
-   desc.add<edm::InputTag>("primaryVertex",edm::InputTag("offlinePrimaryVertices"));
-   desc.add<edm::InputTag>("beamSpot",edm::InputTag("offlineBeamSpot"));
-   desc.add<edm::InputTag>("photons",edm::InputTag("photons"));
-   desc.add<edm::InputTag>("PFMET",edm::InputTag("pfMetT0rtT1Txy"));
-   desc.add<edm::InputTag>("CaloMET",edm::InputTag("caloMet"));
-   desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoFastjetAll"));
-   desc.add<edm::InputTag>("pileups", edm::InputTag("addPileupInfo"));
-   desc.add<edm::InputTag>("primaryVertexFilter",edm::InputTag("myPrimaryVertexFilter"));
-   desc.add<edm::InputTag>("globalSuperTight2016HaloFilter",edm::InputTag("globalSuperTightHalo2016Filter"));
-   desc.add<edm::InputTag>("HBHENoiseFilter",edm::InputTag("HBHENoiseFilterResultProducer","HBHENoiseFilterResult"));
-   desc.add<edm::InputTag>("HBHENoiseIsoFilter",edm::InputTag("HBHENoiseFilterResultProducer","HBHEIsoNoiseFilterResult"));
-   desc.add<edm::InputTag>("EcalDeadCellTrigPrimFilter",edm::InputTag("EcalDeadCellTriggerPrimitiveFilter"));
-   desc.add<edm::InputTag>("BadPFMuonFilter",edm::InputTag("BadPFMuonFilter"));
-   desc.add<edm::InputTag>("BadPFMuonDzFilter",edm::InputTag("BadPFMuonDzFilter"));
-   desc.add<edm::InputTag>("hfNoisyHitsFilter",edm::InputTag("hfNoisyHitsFilter"));
-   desc.add<edm::InputTag>("eeBadScFilter",edm::InputTag("eeBadScFilter"));
-   desc.add<edm::InputTag>("ecalBadCalibFilter",edm::InputTag("ecalBadCalibFilter"));
-   desc.add<edm::InputTag>("trigResult",edm::InputTag("TriggerResults","","HLT"));
-   desc.add<edm::InputTag>("trigEvent",edm::InputTag("hltTriggerSummaryAOD"));
-   
+   desc.add<edm::InputTag>("pileups", edm::InputTag("slimmedAddPileupInfo"));
+   desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoAll"));
+   desc.add<edm::InputTag>("genParticle",edm::InputTag("prunedGenParticles"));
+   desc.add<edm::InputTag>("genJet",edm::InputTag("slimmedGenJets"));
+   desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
+   desc.add<edm::InputTag>("primaryVertex",edm::InputTag("offlineSlimmedPrimaryVertices"));
+   desc.add<edm::InputTag>("beamspot",edm::InputTag("offlineBeamSpot"));
+   desc.add<edm::InputTag>("conversions",edm::InputTag("reducedEgamma","reducedConversions","PAT"));
+   desc.add<edm::InputTag>("photons",edm::InputTag("slimmedPhotons"));
+   desc.add<edm::InputTag>("ootPhotons",edm::InputTag("slimmedOOTPhotons"));
+   desc.add<edm::InputTag>("MET",edm::InputTag("slimmedMETs"));
+   desc.add<edm::InputTag>("puppiMET",edm::InputTag("slimmedMETsPuppi"));
+   desc.add<edm::InputTag>("trigResults",edm::InputTag("TriggerResults","","PAT"));
    descriptions.add("IsoSkimmer", desc);
 }
 
@@ -450,40 +394,26 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    using std::cout, std::endl; 
 
    // Retrieving event data and assigning to handles
-   iEvent.getByToken(bTagProbbToken_,bTagProbbHandle_);
-   iEvent.getByToken(bTagProbbbToken_,bTagProbbbHandle_);
    iEvent.getByToken(recoElectronToken_,recoElectronHandle_);
    iEvent.getByToken(lowPtElectronToken_,lowPtElectronHandle_);
-   iEvent.getByToken(isoTracksToken_,isoTracksHandle_);
    iEvent.getByToken(packedPFCandToken_,packedPFCandHandle_);
-   iEvent.getByToken(pfCandToken_,pfCandHandle_);
    iEvent.getByToken(recoJetToken_,recoJetHandle_);
-   iEvent.getByToken(primaryVertexToken_,primaryVertexHandle_);
-   iEvent.getByToken(beamspotToken_,beamspotHandle_);
-   iEvent.getByToken(photonsToken_,photonsHandle_);
-   iEvent.getByToken(PFMETToken_,PFMETHandle_);
-   iEvent.getByToken(CaloMETToken_,CaloMETHandle_);
-   iEvent.getByToken(jetCorrectorToken_,jetCorrectorHandle_);
    iEvent.getByToken(pileupInfosToken_,pileupInfosHandle_);
    iEvent.getByToken(rhoToken_,rhoHandle_);
-   iEvent.getByToken(primaryVertexFilterToken_,primaryVertexFilterHandle_);
-   iEvent.getByToken(globalSuperTightHalo2016FilterToken_,globalSuperTightHalo2016FilterHandle_);
-   iEvent.getByToken(HBHENoiseFilterToken_,HBHENoiseFilterHandle_);
-   iEvent.getByToken(HBHENoiseIsoFilterToken_,HBHENoiseIsoFilterHandle_);
-   iEvent.getByToken(EcalDeadCellTriggerPrimitiveFilterToken_,EcalDeadCellTriggerPrimitiveFilterHandle_);
-   iEvent.getByToken(BadPFMuonFilterToken_,BadPFMuonFilterHandle_);
-   iEvent.getByToken(BadPFMuonDzFilterToken_,BadPFMuonDzFilterHandle_);
-   iEvent.getByToken(hfNoisyHitsFilterToken_,hfNoisyHitsFilterHandle_);
-   iEvent.getByToken(eeBadScFilterToken_,eeBadScFilterHandle_);
-   iEvent.getByToken(ecalBadCalibFilterToken_,ecalBadCalibFilterHandle_);
+   iEvent.getByToken(primaryVertexToken_,primaryVertexHandle_);
+   iEvent.getByToken(beamspotToken_,beamspotHandle_);
+   iEvent.getByToken(conversionsToken_,conversionsHandle_);
+   iEvent.getByToken(photonsToken_,photonsHandle_);
+   iEvent.getByToken(ootPhotonsToken_,ootPhotonsHandle_);
+   iEvent.getByToken(METToken_,METHandle_);
+   iEvent.getByToken(puppiMETToken_,puppiMETHandle_);
    iEvent.getByToken(trigResultsToken_,trigResultsHandle_);
-   iEvent.getByToken(trigEventToken_,trigEventHandle_);
 
    if (!isData) { 
+      iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
       iEvent.getByToken(genParticleToken_,genParticleHandle_);
       iEvent.getByToken(genJetToken_,genJetHandle_);
       iEvent.getByToken(genMETToken_,genMETHandle_);
-      iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
    }
 
    // Clear tree branches before filling
@@ -493,32 +423,25 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    // Computing derived quantities and filling the trees ///////
    /////////////////////////////////////////////////////////////
 
+   // Creating helper function object
+   Helper helper;
+
    // Prearing basic info
    nt.eventNum_ = iEvent.id().event();
    nt.lumiSec_ = iEvent.luminosityBlock();
    nt.runNum_ = iEvent.id().run();
-   //Vertex & beamspot information
    reco::Vertex pv = (*primaryVertexHandle_).at(0);
+   //reco::BeamSpot beamspot = *beamspotHandle_;
    // Set up objects for vertex reco
    edm::ESHandle<TransientTrackBuilder> theB;
    iSetup.get<TransientTrackRecord>().get("TransientTrackBuilder", theB);
    KalmanVertexFitter kvf(true);
 
    // MET Filters (as recommended here https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2#UL_data)
-   if ((*primaryVertexFilterHandle_) == 0) nt.METFiltersFailBits_ |= (1<<0);
-   if (!(*globalSuperTightHalo2016FilterHandle_)) nt.METFiltersFailBits_ |= (1<<1);
-   if (!(*HBHENoiseFilterHandle_)) nt.METFiltersFailBits_ |= (1<<2);
-   if (!(*HBHENoiseIsoFilterHandle_)) nt.METFiltersFailBits_ |= (1<<3);
-   if (!(*EcalDeadCellTriggerPrimitiveFilterHandle_)) nt.METFiltersFailBits_ |= (1<<4);
-   if (!(*BadPFMuonFilterHandle_)) nt.METFiltersFailBits_ |= (1<<5);
-   if (!(*BadPFMuonDzFilterHandle_)) nt.METFiltersFailBits_ |= (1<<6);
-   if (!(*hfNoisyHitsFilterHandle_)) nt.METFiltersFailBits_ |= (1<<7);
-   if (!(*eeBadScFilterHandle_)) nt.METFiltersFailBits_ |= (1<<8);
-   if ((year == 2017) || (year == 2018)) { // ecalBadCalib filter only recommended for 2017/18
-      if (!(*ecalBadCalibFilterHandle_)) nt.METFiltersFailBits_ |= (1<<9);
+   for (size_t i = 0; i < metFilters_.size(); i++) {
+      //std::cout << "MET filter " << metFilters_[i] << " is at index " << hltConfig_.triggerIndex(metFilters_[i]) << std::endl;
+      nt.METFiltersFailBits_ |= ((!(trigResultsHandle_->accept(hltConfig_.triggerIndex(metFilters_[i])))) << i);
    }
-   
-   // Triggers
 
    // All triggers
    nt.fired_ = 0;
@@ -569,7 +492,7 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    }
 
    // Saving PF Candidates for isolation studies
-   for (const auto &pf : *pfCandHandle_) {
+   for (const auto &pf : *packedPFCandHandle_) {
       nt.nPFCand_++;
       nt.pfID_.push_back(pf.pdgId());
       nt.pfCharge_.push_back(pf.charge());
@@ -578,7 +501,7 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.pfPhi_.push_back(pf.phi());
       nt.pfE_.push_back(pf.energy());
    }
-
+   
    ////////////////////////////////
    // Handling default electrons // 
    ////////////////////////////////
@@ -615,6 +538,10 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
+      // Filling gen match info with dummy values
+      nt.recoElectronMatched_.push_back(false);
+      nt.recoElectronMatchType_.push_back(0);
+      nt.recoElectronMatchdR_.push_back(999);
    }
 
    /////////////////////////////////
@@ -622,35 +549,37 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    /////////////////////////////////
    std::vector<reco::GsfTrackRef> lowpt_eleTracks{};
    vector<math::XYZTLorentzVector> lowpt_ele_p4s;
-   for (unsigned int i = 0; i < lowPtElectronHandle_->size(); i++) {
-      pat::ElectronRef ele(lowPtElectronHandle_,i);
+   for (auto & ele : *lowPtElectronHandle_) {
       // Cross-cleaning with regular electrons
       float mindR = 999;
       for (auto & reg_ele : *recoElectronHandle_) {
-         float dR = reco::deltaR(reg_ele,*ele);
+         float dR = reco::deltaR(reg_ele,ele);
          if (dR < mindR) mindR = dR;
       }
-      if (mindR < 0.01) continue;
-      reco::GsfTrackRef track = ele->gsfTrack();
+      //if (mindR < 0.01) continue; // cross clean with 0.01 threshold
+      if (ele.pt() < 1 || ele.electronID("ID") < -0.25) continue; // PAT selection
+      nt.recoLowPtElectronMinDrToReg_.push_back(mindR);
+      reco::GsfTrackRef track = ele.gsfTrack();
       lowpt_eleTracks.push_back(track);
-      lowpt_ele_p4s.push_back(ele->p4());
+      lowpt_ele_p4s.push_back(ele.p4());
       nt.nElectronLowPt_++;
       // Filling basic info, if electron passes cross cleaning
-      nt.recoLowPtElectronPt_.push_back(ele->pt());
-      nt.recoLowPtElectronPhi_.push_back(ele->phi());
+      nt.recoLowPtElectronPt_.push_back(ele.pt());
+      nt.recoLowPtElectronPhi_.push_back(ele.phi());
       nt.recoLowPtElectronPhiError_.push_back(track->phiError());
-      nt.recoLowPtElectronEta_.push_back(ele->eta());
+      nt.recoLowPtElectronEta_.push_back(ele.eta());
       nt.recoLowPtElectronEtaError_.push_back(track->etaError());
+      nt.recoLowPtElectronID_.push_back(ele.electronID("ID"));
       nt.recoLowPtElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
-      nt.recoLowPtElectronE_.push_back(ele->energy());
-      nt.recoLowPtElectronPx_.push_back(ele->px());
-      nt.recoLowPtElectronPy_.push_back(ele->py());
-      nt.recoLowPtElectronPz_.push_back(ele->pz());
-      nt.recoLowPtElectronVxy_.push_back(ele->trackPositionAtVtx().rho());
-      nt.recoLowPtElectronVz_.push_back(ele->trackPositionAtVtx().z());
-      nt.recoLowPtElectronTrkIso_.push_back(ele->trackIso());
-      nt.recoLowPtElectronTrkRelIso_.push_back(ele->trackIso()/ele->pt());
-      nt.recoLowPtElectronCharge_.push_back(ele->charge());
+      nt.recoLowPtElectronE_.push_back(ele.energy());
+      nt.recoLowPtElectronPx_.push_back(ele.px());
+      nt.recoLowPtElectronPy_.push_back(ele.py());
+      nt.recoLowPtElectronPz_.push_back(ele.pz());
+      nt.recoLowPtElectronVxy_.push_back(ele.trackPositionAtVtx().rho());
+      nt.recoLowPtElectronVz_.push_back(ele.trackPositionAtVtx().z());
+      nt.recoLowPtElectronTrkIso_.push_back(ele.trackIso());
+      nt.recoLowPtElectronTrkRelIso_.push_back(ele.trackIso()/ele.pt());
+      nt.recoLowPtElectronCharge_.push_back(ele.charge());
       // Filling tracks
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
@@ -661,6 +590,10 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.recoLowPtElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoLowPtElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoLowPtElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
+      // Filling gen match info with dummy values
+      nt.recoLowPtElectronMatched_.push_back(false);
+      nt.recoLowPtElectronMatchType_.push_back(0);
+      nt.recoLowPtElectronMatchdR_.push_back(999);
    }
 
    // Handling photons
@@ -669,6 +602,14 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.PhotonEt_.push_back(ph.et());
       nt.PhotonEt_.push_back(ph.eta());
       nt.PhotonEt_.push_back(ph.phi());
+   }
+
+   // Handling OOT photons
+   for (const auto & ph : *ootPhotonsHandle_) {
+      nt.nOOTPhotons_++;
+      nt.ootPhotonEt_.push_back(ph.et());
+      nt.ootPhotonEt_.push_back(ph.eta());
+      nt.ootPhotonEt_.push_back(ph.phi());
    }
 
    // Define vertex reco function 
@@ -808,46 +749,44 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
    computeVertices(ind_lptele, ind_ele, "lowreg");
    nt.nEleVertex_LR_ = nt.LRvtx_recoVtxVxy_.size();
 
+   // Handling Jets
+   for (auto & jet : *recoJetHandle_) {
+      if (helper.JetID(jet,year) && jet.pt() > 30) {
+         nt.PFNHighPtJet_++;
+         nt.PFJetPt_.push_back(jet.pt());
+         nt.PFJetEta_.push_back(jet.eta());
+         nt.PFJetPhi_.push_back(jet.phi());
+         nt.PFJetCorrectedPt_.push_back(jet.pt());
+         nt.PFJetCorrectedEta_.push_back(jet.eta());
+         nt.PFJetCorrectedPhi_.push_back(jet.phi());
+         auto bTag = jet.bDiscriminator("pfDeepFlavourJetTags:probb") + 
+                     jet.bDiscriminator("pfDeepFlavourJetTags:probbb") + 
+                     jet.bDiscriminator("pfDeepFlavourJetTags:problepb");
+         nt.PFJetCorrectedBTag_.push_back(bTag);
+         if ((jet.pt() > 30) && (jet.eta() > -3.0) && (jet.eta() < -1.4) && (jet.phi() > -1.57) && (jet.phi() < -0.87)) {
+            nt.PFHEMFlag_ = true;
+         }
+      }
+   }
+
    // Handling MET //
-   auto PFMET = PFMETHandle_->at(0);
-   if (PFMETHandle_->size() > 0) {
-      auto pfmet = (*PFMETHandle_).at(0);
-      nt.PFMET_ET_ = pfmet.sumEt();
-      nt.PFMET_Px_ = pfmet.px();
-      nt.PFMET_Py_ = pfmet.py();
-      nt.PFMET_Pt_ = pfmet.pt();
-      nt.PFMET_Phi_ = pfmet.phi();
-   }
-   if (CaloMETHandle_->size() > 0) {
-      auto calomet = (*CaloMETHandle_).at(0);
-      nt.CaloMET_ET_ = calomet.sumEt();
-      nt.CaloMET_Px_ = calomet.px();
-      nt.CaloMET_Py_ = calomet.py();
-      nt.CaloMET_Pt_ = calomet.pt();
-      nt.CaloMET_Phi_ = calomet.phi();
+   if (METHandle_->size() > 0) {
+      auto pfmet = (*METHandle_).at(0);
+      // Current recommendation from JetMET is Type 1 : https://twiki.cern.ch/twiki/bin/view/CMS/MissingET#Recommendations_and_important_li
+      auto metType = pat::MET::Type1;
+      nt.PFMET_ET_ = pfmet.corSumEt(metType);
+      nt.PFMET_Px_ = pfmet.corPx(metType);
+      nt.PFMET_Py_ = pfmet.corPy(metType);
+      nt.PFMET_Pt_ = pfmet.corPt(metType);
+      nt.PFMET_Phi_ = pfmet.corPhi(metType);
    }
 
-   // Pileup //
-   nt.rho_ = *rhoHandle_;
-
-   ///////////////////
-   // Handling Jets //
-   ///////////////////
-   
-   // Loading/executing module to compute & apply jet corrections, and write to output tree
-   JME::JetResolution resolution = JME::JetResolution::get(iSetup, "AK4PFchs_pt");
-   JME::JetResolutionScaleFactor resolution_sf = JME::JetResolutionScaleFactor::get(iSetup, "AK4PFchs");
-   
-   JetCorrections jc(recoJetHandle_, jetCorrectorHandle_, nt, bTagProbbHandle_, bTagProbbbHandle_, recoElectronHandle_, year, isData);
-   jc.Correct(resolution, resolution_sf, *jecUnc, rhoHandle_, genJetHandle_, PFMET);
-   ///////////////////////////////////////
-
-   //Handling gen particles
+   // extra info from MC
    if (!isData) {
       // Gen weight
       nt.genwgt_ = genEvtInfoHandle_->weight();
-      
-      // Gen Pileup
+
+      // Gen pileup
       for (const auto & pileupInfo : *pileupInfosHandle_) {
          if (pileupInfo.getBunchCrossing() == 0) {
                nt.genpuobs_ = pileupInfo.getPU_NumInteractions();
@@ -856,6 +795,27 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
          }
       }
 
+      // Gen Jets
+      nt.nGenJet_ = (int)genJetHandle_->size();
+      for (const auto & jet : *genJetHandle_) {
+         nt.genJetPt_.push_back(jet.pt());
+         nt.genJetEta_.push_back(jet.eta());
+         nt.genJetPhi_.push_back(jet.phi());
+      }
+
+      // Lead gen MET
+      if (genMETHandle_->size() > 0) {
+         auto met = (*genMETHandle_).at(0);
+         nt.genLeadMETPt_ = met.pt();
+         nt.genLeadMETPhi_ = met.phi();
+         nt.genLeadMETET_ = met.sumEt();
+         nt.genLeadMETPx_ = met.px();
+         nt.genLeadMETPy_ = met.py();
+      }
+   }
+
+   //Handling gen particles (only for signal)
+   if (!isData && isSignal) {
       math::XYZTLorentzVector gen_ele_p4, gen_pos_p4;
       for (const auto & genParticle : *genParticleHandle_) {
          if (!genParticle.isHardProcess()) continue;
@@ -880,6 +840,7 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             if (genParticle.pdgId() == 11) {
                gen_ele_p4 = genParticle.p4();
                nt.genEleCharge_ = genParticle.charge();
+               nt.genEleMotherID_ = genParticle.mother(0)->pdgId();
                nt.genElePt_ = genParticle.pt();
                nt.genEleEta_ = genParticle.eta();
                nt.genElePhi_ = genParticle.phi();
@@ -895,6 +856,7 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
             else {
                gen_pos_p4 = genParticle.p4();
                nt.genPosCharge_ = genParticle.charge();
+               nt.genPosMotherID_ = genParticle.mother(0)->pdgId();
                nt.genPosPt_ = genParticle.pt();
                nt.genPosEta_ = genParticle.eta();
                nt.genPosPhi_ = genParticle.phi();
@@ -907,48 +869,110 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
                nt.genPosVz_ = genParticle.vz();
                nt.genPosVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
             }
+         }
+      }
 
-            // Finding reco-level matches
-            float mindR = 999;
-            int bestMatchType = 0;
-            int idxBestMatch = -1;
-            int ie = 0, ile = 0;
-            // looping through regular electrons
-            for (auto & ele : reg_ele_p4s) {
-               float dRe = reco::deltaR(ele,genParticle.p4());
-               if (dRe < 0.1) {
-                  if (dRe < mindR) {
-                     mindR = dRe;
-                     bestMatchType = 1;
-                     idxBestMatch = ie;
-                  }
-               }
-               ie++;
-            }
-            // looping through low-pT electrons
-            for (auto & ele : lowpt_ele_p4s) {
-               float dRe = reco::deltaR(ele,genParticle.p4());
-               if (dRe < 0.1) {
-                  if (dRe < mindR) {
-                     mindR = dRe;
-                     bestMatchType = 2;
-                     idxBestMatch = ile;
-                  }
-               }
-               ile++;
-            }
-            if (genParticle.pdgId() == 11) {
-               nt.genEleClosestType_ = bestMatchType;
-               nt.genEleClosestInd_ = idxBestMatch;
-               nt.genEleClosestDr_ = mindR;
+      vector<float> dR_genE;
+      vector<int> dRtype_genE;
+      vector<int> dRind_genE;
+      
+      vector<float> dR_genP;
+      vector<int> dRtype_genP;
+      vector<int> dRind_genP;
+      int icount = 0;
+      float mindR_e = 9999; float mindR_p = 9999;
+      for (auto & ele : reg_ele_p4s) {
+         float dRe = reco::deltaR(ele,gen_ele_p4);
+         float dRp = reco::deltaR(ele,gen_pos_p4);
+         if (dRe < mindR_e) {
+            mindR_e = dRe;
+            nt.genEleClosestDr_reg_ = dRe;
+            nt.genEleClosestInd_reg_ = icount;
+         }
+         if (dRp < mindR_p) {
+            mindR_p = dRp;
+            nt.genPosClosestDr_reg_ = dRp;
+            nt.genPosClosestInd_reg_ = icount;
+         }
+         dR_genE.push_back(dRe);
+         dRtype_genE.push_back(1);
+         dRind_genE.push_back(icount);
+         dR_genP.push_back(dRp);
+         dRtype_genP.push_back(1);
+         dRind_genP.push_back(icount);
+         icount++;
+      }
+      icount = 0;
+      mindR_e = 9999; mindR_p = 9999;
+      for (auto & ele : lowpt_ele_p4s) {
+         float dRe = reco::deltaR(ele,gen_ele_p4);
+         float dRp = reco::deltaR(ele,gen_pos_p4);
+         if (dRe < mindR_e) {
+            mindR_e = dRe;
+            nt.genEleClosestDr_lpt_ = dRe;
+            nt.genEleClosestInd_lpt_ = icount;
+         }
+         if (dRp < mindR_p) {
+            mindR_p = dRp;
+            nt.genPosClosestDr_lpt_ = dRp;
+            nt.genPosClosestInd_lpt_ = icount;
+         }
+         dR_genE.push_back(dRe);
+         dRtype_genE.push_back(2);
+         dRind_genE.push_back(icount);
+         dR_genP.push_back(dRp);
+         dRtype_genP.push_back(2);
+         dRind_genP.push_back(icount);
+         icount++;
+      }
+
+      if (dR_genE.size() > 0) {   
+         if (dR_genE.size() == 1) {
+            if (dR_genE[0] < dR_genP[0]) {
+               nt.genEleClosestDr_ = dR_genE[0];
+               nt.genEleClosestType_ = dRtype_genE[0];
+               nt.genEleClosestInd_ = dRind_genE[0];
             }
             else {
-               nt.genPosClosestType_ = bestMatchType;
-               nt.genPosClosestInd_ = idxBestMatch;
-               nt.genPosClosestDr_ = mindR;
+               nt.genPosClosestDr_ = dR_genP[0];
+               nt.genPosClosestType_ = dRtype_genP[0];
+               nt.genPosClosestInd_ = dRind_genP[0];
+            }
+         }
+         else {
+            vector<int> ind_genE(dR_genE.size());
+            std::iota(ind_genE.begin(),ind_genE.end(),0); // create index vector
+            std::sort(ind_genE.begin(), ind_genE.end(), [&](const int & l, const int & r) { // sort indices by dR (low to high)
+                     return dR_genE[l] < dR_genE[r];
+                     });
+            vector<int> ind_genP(dR_genP.size());
+            std::iota(ind_genP.begin(),ind_genP.end(),0); // create index vector
+            std::sort(ind_genP.begin(), ind_genP.end(), [&](const int & l, const int & r) { // sort indices by dR (low to high)
+                     return dR_genP[l] < dR_genP[r];
+                     });
+
+            if ((dRtype_genE[ind_genE[0]] == dRtype_genP[ind_genP[0]]) && (dRind_genE[ind_genE[0]] == dRind_genP[ind_genP[0]])) {
+               bool eCloser = dR_genE[ind_genE[0]] < dR_genP[ind_genP[0]];
+               nt.genEleClosestDr_ = eCloser ? dR_genE[ind_genE[0]] : dR_genE[ind_genE[1]];
+               nt.genEleClosestType_ = eCloser ? dRtype_genE[ind_genE[0]] : dRtype_genE[ind_genE[1]];
+               nt.genEleClosestInd_ = eCloser ? dRind_genE[ind_genE[0]] : dRind_genE[ind_genE[1]];
+
+               nt.genPosClosestDr_ = eCloser ? dR_genP[ind_genP[1]] : dR_genP[ind_genP[0]];
+               nt.genPosClosestType_ = eCloser ? dRtype_genP[ind_genP[1]] : dRtype_genP[ind_genP[0]];
+               nt.genPosClosestInd_ = eCloser ? dRind_genP[ind_genP[1]] : dRind_genP[ind_genP[0]];
+            }
+            else {
+               nt.genEleClosestDr_ = dR_genE[ind_genE[0]];
+               nt.genEleClosestType_ = dRtype_genE[ind_genE[0]];
+               nt.genEleClosestInd_ = dRind_genE[ind_genE[0]];
+               nt.genPosClosestDr_ = dR_genP[ind_genP[0]];
+               nt.genPosClosestType_ = dRtype_genP[ind_genP[0]];
+               nt.genPosClosestInd_ = dRind_genP[ind_genP[0]];
             }
          }
       }
+      
+      // constructing gen dilepton object
       auto gen_ll = gen_ele_p4 + gen_pos_p4;
       nt.genEEPt_ = gen_ll.pt();
       nt.genEEEta_ = gen_ll.eta();
@@ -956,24 +980,6 @@ IsoSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup)
       nt.genEEEn_ = gen_ll.energy();
       nt.genEEMass_ = gen_ll.mass();
       nt.genEEdR_ = reco::deltaR(gen_ele_p4,gen_pos_p4);
-
-      // all gen jets
-      nt.nGenJet_ = (int)genJetHandle_->size();
-      for (const auto & jet : *genJetHandle_) {
-         nt.genJetPt_.push_back(jet.pt());
-         nt.genJetEta_.push_back(jet.eta());
-         nt.genJetPhi_.push_back(jet.phi());
-      }
-
-      // Lead gen MET
-      if (genMETHandle_->size() > 0) {
-         auto met = (*genMETHandle_).at(0);
-         nt.genLeadMETPt_ = met.pt();
-         nt.genLeadMETPhi_ = met.phi();
-         nt.genLeadMETET_ = met.sumEt();
-         nt.genLeadMETPx_ = met.px();
-         nt.genLeadMETPy_ = met.py();
-      }
    }
 
    outT->Fill();

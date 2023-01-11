@@ -15,6 +15,11 @@ options.register('data',
         VarParsing.VarParsing.varType.bool,
         "Run on data (1) or MC (0)"
         )
+options.register('signal',
+        True,
+        VarParsing.VarParsing.multiplicity.singleton,
+        VarParsing.VarParsing.varType.bool,
+        "Run on signal (1) or not (0")
 options.register('year',
         2018,
         VarParsing.VarParsing.multiplicity.singleton,
@@ -192,6 +197,7 @@ from iDMeAnalysis.AODSkimmer.ElectronSkimmer_cfi import ElectronSkimmer
 # setting up skimmer & process path
 process.ntuples = ElectronSkimmer.clone(
     isData = cms.bool(options.data),
+    isSignal = cms.bool(options.signal),
     year=options.year,
     metFilters = cms.vstring(metFilters),
     triggerPaths16 = cms.vstring(triggerPaths16),

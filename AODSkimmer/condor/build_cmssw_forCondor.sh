@@ -5,6 +5,7 @@ source /cvmfs/cms.cern.ch/cmsset_default.sh
 BASE=/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/
 HEAD=/uscms/home/sbrightt/nobackup/iDMe/compiled_CMSSW_envs/ntuplizer_CMSSW_10_6_26
 
+mkdir -p $HEAD
 cd $HEAD
 
 if ! [ -r CMSSW_10_6_26/src ] ; then
@@ -33,8 +34,11 @@ cp -r $BASE/CustomTools/* iDMeAnalysis/CustomTools/
 cp $BASE/iDMeSkimmer/scripts/run_ntuplizer_cfg.py iDMeAnalysis/iDMeSkimmer/
 cp $BASE/AODSkimmer/scripts/run_AODntuplizer_cfg.py iDMeAnalysis/AODSkimmer/
 cp $BASE/AODSkimmer/scripts/run_isoNtuplizer_cfg.py iDMeAnalysis/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py iDMeAnalysis/AODSkimmer/
 
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoVertex .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoEgamma .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/PhysicsTools .
 
 scram b -j 8
 

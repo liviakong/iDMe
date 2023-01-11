@@ -1,5 +1,5 @@
-#ifndef NTUPLECONTAINER_HH
-#define NTUPLECONTAINER_HH
+#ifndef NTUPLECONTAINERV2_HH
+#define NTUPLECONTAINERV2_HH
 
 #include <vector>
 using std::vector;
@@ -7,11 +7,11 @@ using std::vector;
 
 #include <TTree.h>
 
-class NtupleContainer {
+class NtupleContainerV2 {
 
 public:
-    NtupleContainer();
-    virtual ~NtupleContainer();
+    NtupleContainerV2();
+    virtual ~NtupleContainerV2();
     void SetTree(TTree *tree);
     void CreateTreeBranches();
     void ClearTreeBranches();
@@ -77,7 +77,6 @@ public:
     int genEleClosestInd_lpt_;
     float genEleClosestDr_lpt_;
 
-
     int genPosCharge_;
     int genPosMotherID_;
     float genPosPt_;
@@ -124,15 +123,21 @@ public:
 
     // Normal Electrons
     int nElectronDefault_;
-    vector<bool> recoElectronMatched_;
-    vector<int> recoElectronMatchType_;
-    vector<float> recoElectronMatchdR_;
     vector<float> recoElectronPt_;
     vector<float> recoElectronEta_;
     vector<float> recoElectronEtaError_;
     vector<float> recoElectronPhi_;
     vector<float> recoElectronPhiError_;
-    vector<float> recoElectronID_;
+    vector<float> recoElectronID_cutVeto_;
+    vector<float> recoElectronID_cutLoose_;
+    vector<float> recoElectronID_cutMed_;
+    vector<float> recoElectronID_cutTight_;
+    vector<float> recoElectronID_mvaIso90_;
+    vector<float> recoElectronID_mvaIso80_;
+    vector<float> recoElectronID_mvaIsoLoose_;
+    vector<float> recoElectronID_mva90_;
+    vector<float> recoElectronID_mva80_;
+    vector<float> recoElectronID_mvaLoose_;
     vector<float> recoElectronAngularRes_;
     vector<float> recoElectronE_;
     vector<float> recoElectronPx_;
@@ -147,6 +152,14 @@ public:
     vector<float> recoElectronTrkChi2_;
     vector<float> recoElectronTrkIso_;
     vector<float> recoElectronTrkRelIso_;
+    vector<float> recoElectronCaloIso_;
+    vector<float> recoElectronCaloRelIso_;
+    vector<float> recoElectronPFIso_dR4_;
+    vector<float> recoElectronPFRelIso_dR4_;
+    vector<float> recoElectronPFIso_dR3_;
+    vector<float> recoElectronPFRelIso_dR3_;
+    vector<float> recoElectronPFIso_dR8_;
+    vector<float> recoElectronPFRelIso_dR8_;
     vector<float> recoElectronTrkProb_;
     vector<int> recoElectronTrkNumTrackerHits_;
     vector<int> recoElectronTrkNumPixHits_;
@@ -155,9 +168,6 @@ public:
 
     // Low pT electrons
     int nElectronLowPt_;
-    vector<bool> recoLowPtElectronMatched_;
-    vector<int> recoLowPtElectronMatchType_;
-    vector<float> recoLowPtElectronMatchdR_;
     vector<float> recoLowPtElectronPt_;
     vector<float> recoLowPtElectronEta_;
     vector<float> recoLowPtElectronEtaError_;
@@ -178,6 +188,14 @@ public:
     vector<float> recoLowPtElectronTrkChi2_;
     vector<float> recoLowPtElectronTrkIso_;
     vector<float> recoLowPtElectronTrkRelIso_;
+    vector<float> recoLowPtElectronCaloIso_;
+    vector<float> recoLowPtElectronCaloRelIso_;
+    vector<float> recoLowPtElectronPFIso_dR4_;
+    vector<float> recoLowPtElectronPFRelIso_dR4_;
+    vector<float> recoLowPtElectronPFIso_dR3_;
+    vector<float> recoLowPtElectronPFRelIso_dR3_;
+    vector<float> recoLowPtElectronPFIso_dR8_;
+    vector<float> recoLowPtElectronPFRelIso_dR8_;
     vector<float> recoLowPtElectronTrkProb_;
     vector<int> recoLowPtElectronTrkNumTrackerHits_;
     vector<int> recoLowPtElectronTrkNumPixHits_;
@@ -299,68 +317,36 @@ public:
     float rho_;
 
     // Electron-positron vertices
-    int nEleVertex_RR_;
-    vector<int> RRvtx_idx1_;
-    vector<int> RRvtx_idx2_;
-    vector<float> RRvtx_recoVtxVxy_;
-    vector<float> RRvtx_recoVtxSigmaVxy_;
-    vector<float> RRvtx_recoVtxVx_;
-    vector<float> RRvtx_recoVtxVy_;
-    vector<float> RRvtx_recoVtxVz_;
-    vector<float> RRvtx_recoVtxReducedChi2_;
-    vector<float> RRvtx_prob_;
-    vector<float> RRvtx_recoVtxDr_;
-    vector<int> RRvtx_recoVtxSign_;
-    vector<float> RRvtx_ll_pt_;
-    vector<float> RRvtx_ll_eta_;
-    vector<float> RRvtx_ll_phi_;
-    vector<float> RRvtx_ll_e_;
-    vector<float> RRvtx_ll_m_;
-    vector<float> RRvtx_ll_px_;
-    vector<float> RRvtx_ll_py_;
-    vector<float> RRvtx_ll_pz_;
+    int nvtx_;
+    vector<std::string> vtx_type_;
+    vector<float> vtx_recoVtxVxy_;
+    vector<float> vtx_recoVtxSigmaVxy_;
+    vector<float> vtx_recoVtxVx_;
+    vector<float> vtx_recoVtxVy_;
+    vector<float> vtx_recoVtxVz_;
+    vector<float> vtx_recoVtxReducedChi2_;
+    vector<float> vtx_prob_;
+    vector<float> vtx_recoVtxDr_;
+    vector<int> vtx_recoVtxSign_;
+    vector<float> vtx_ll_pt_;
+    vector<float> vtx_ll_eta_;
+    vector<float> vtx_ll_phi_;
+    vector<float> vtx_ll_e_;
+    vector<float> vtx_ll_m_;
+    vector<float> vtx_ll_px_;
+    vector<float> vtx_ll_py_;
+    vector<float> vtx_ll_pz_;
+    vector<float> vtx_ll_PFIso_dR4_;
+    vector<float> vtx_ll_PFRelIso_dR4_;
+    vector<float> vtx_ll_PFIso_dR3_;
+    vector<float> vtx_ll_PFRelIso_dR3_;
+    vector<float> vtx_ll_PFIso_dR8_;
+    vector<float> vtx_ll_PFRelIso_dR8_;
 
-    int nEleVertex_LL_;
-    vector<int> LLvtx_idx1_;
-    vector<int> LLvtx_idx2_;
-    vector<float> LLvtx_recoVtxVxy_;
-    vector<float> LLvtx_recoVtxSigmaVxy_;
-    vector<float> LLvtx_recoVtxVx_;
-    vector<float> LLvtx_recoVtxVy_;
-    vector<float> LLvtx_recoVtxVz_;
-    vector<float> LLvtx_recoVtxReducedChi2_;
-    vector<float> LLvtx_prob_;
-    vector<float> LLvtx_recoVtxDr_;
-    vector<int> LLvtx_recoVtxSign_;
-    vector<float> LLvtx_ll_pt_;
-    vector<float> LLvtx_ll_eta_;
-    vector<float> LLvtx_ll_phi_;
-    vector<float> LLvtx_ll_e_;
-    vector<float> LLvtx_ll_m_;
-    vector<float> LLvtx_ll_px_;
-    vector<float> LLvtx_ll_py_;
-    vector<float> LLvtx_ll_pz_;
-
-    int nEleVertex_LR_;
-    vector<int> LRvtx_idx1_;
-    vector<int> LRvtx_idx2_;
-    vector<float> LRvtx_recoVtxVxy_;
-    vector<float> LRvtx_recoVtxSigmaVxy_;
-    vector<float> LRvtx_recoVtxVx_;
-    vector<float> LRvtx_recoVtxVy_;
-    vector<float> LRvtx_recoVtxVz_;
-    vector<float> LRvtx_recoVtxReducedChi2_;
-    vector<float> LRvtx_prob_;
-    vector<float> LRvtx_recoVtxDr_;
-    vector<int> LRvtx_recoVtxSign_;
-    vector<float> LRvtx_ll_pt_;
-    vector<float> LRvtx_ll_eta_;
-    vector<float> LRvtx_ll_phi_;
-    vector<float> LRvtx_ll_e_;
-    vector<float> LRvtx_ll_m_;
-    vector<float> LRvtx_ll_px_;
-    vector<float> LRvtx_ll_py_;
-    vector<float> LRvtx_ll_pz_;
+    vector<std::string> vtx_e1_type_;
+    vector<int> vtx_e1_idx_;
+    vector<std::string> vtx_e2_type_;
+    vector<int> vtx_e2_idx_;
 
 protected:
     // Reco and gen TTrees

@@ -1,12 +1,12 @@
-#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
+#include "iDMeAnalysis/CustomTools/interface/NtupleContainerV2.hh"
 
-NtupleContainer::NtupleContainer() {}
+NtupleContainerV2::NtupleContainerV2() {}
 
-NtupleContainer::~NtupleContainer() {}
+NtupleContainerV2::~NtupleContainerV2() {}
 
-void NtupleContainer::SetTree(TTree *tree) { outT = tree; }
+void NtupleContainerV2::SetTree(TTree *tree) { outT = tree; }
 
-void NtupleContainer::CreateTreeBranches() {
+void NtupleContainerV2::CreateTreeBranches() {
 
     // Data or MC
     //outT->Branch("isData",&isData_);
@@ -25,15 +25,21 @@ void NtupleContainer::CreateTreeBranches() {
 
     // Normal Electrons
     outT->Branch("nElectron",&nElectronDefault_);
-    outT->Branch("Electron_matched",&recoElectronMatched_);
-    outT->Branch("Electron_matchType",&recoElectronMatchType_);
-    outT->Branch("Electron_matchdR",&recoElectronMatchdR_);
     outT->Branch("Electron_pt",&recoElectronPt_);
     outT->Branch("Electron_eta",&recoElectronEta_);
     outT->Branch("Electron_etaErr",&recoElectronEtaError_);
     outT->Branch("Electron_phi",&recoElectronPhi_);
     outT->Branch("Electron_phiErr",&recoElectronPhiError_);
-    outT->Branch("Electron_ID",&recoElectronID_);
+    outT->Branch("Electron_IDcutVeto",&recoElectronID_cutVeto_);
+    outT->Branch("Electron_IDcutLoose",&recoElectronID_cutLoose_);
+    outT->Branch("Electron_IDcutMed",&recoElectronID_cutMed_);
+    outT->Branch("Electron_IDcutTight",&recoElectronID_cutTight_);
+    outT->Branch("Electron_IDmvaIso90",&recoElectronID_mvaIso90_);
+    outT->Branch("Electron_IDmvaIso80",&recoElectronID_mvaIso80_);
+    outT->Branch("Electron_IDmvaIsoLoose",&recoElectronID_mvaIsoLoose_);
+    outT->Branch("Electron_IDmva90",&recoElectronID_mva90_);
+    outT->Branch("Electron_IDmva80",&recoElectronID_mva80_);
+    outT->Branch("Electron_IDmvaLoose",&recoElectronID_mvaLoose_);
     outT->Branch("Electron_angRes",&recoElectronAngularRes_);
     outT->Branch("Electron_e",&recoElectronE_);
     outT->Branch("Electron_px",&recoElectronPx_);
@@ -48,6 +54,14 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("Electron_trkChi2",&recoElectronTrkChi2_);
     outT->Branch("Electron_trkIso",&recoElectronTrkIso_);
     outT->Branch("Electron_trkRelIso",&recoElectronTrkRelIso_);
+    outT->Branch("Electron_calIso",&recoElectronCaloIso_);
+    outT->Branch("Electron_calRelIso",&recoElectronCaloRelIso_);
+    outT->Branch("Electron_PFIso4",&recoElectronPFIso_dR4_);
+    outT->Branch("Electron_PFRelIso4",&recoElectronPFRelIso_dR4_);
+    outT->Branch("Electron_PFIso3",&recoElectronPFIso_dR3_);
+    outT->Branch("Electron_PFRelIso3",&recoElectronPFRelIso_dR3_);
+    outT->Branch("Electron_PFIso8",&recoElectronPFIso_dR8_);
+    outT->Branch("Electron_PFRelIso8",&recoElectronPFRelIso_dR8_);
     outT->Branch("Electron_trkProb",&recoElectronTrkProb_);
     outT->Branch("Electron_numTrackerHits",&recoElectronTrkNumTrackerHits_);
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
@@ -56,9 +70,6 @@ void NtupleContainer::CreateTreeBranches() {
 
     // Low pT electrons
     outT->Branch("nLptElectron",&nElectronLowPt_);
-    outT->Branch("LptElectron_matched",&recoLowPtElectronMatched_);
-    outT->Branch("LptElectron_matchType",&recoLowPtElectronMatchType_);
-    outT->Branch("LptElectron_matchdR",&recoLowPtElectronMatchdR_);
     outT->Branch("LptElectron_pt",&recoLowPtElectronPt_);
     outT->Branch("LptElectron_eta",&recoLowPtElectronEta_);
     outT->Branch("LptElectron_etaErr",&recoLowPtElectronEtaError_);
@@ -79,6 +90,14 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("LptElectron_trkChi2",&recoLowPtElectronTrkChi2_);
     outT->Branch("LptElectron_trkIso",&recoLowPtElectronTrkIso_);
     outT->Branch("LptElectron_trkRelIso",&recoLowPtElectronTrkRelIso_);
+    outT->Branch("LptElectron_calIso",&recoLowPtElectronCaloIso_);
+    outT->Branch("LptElectron_calRelIso",&recoLowPtElectronCaloRelIso_);
+    outT->Branch("LptElectron_PFIso4",&recoLowPtElectronPFIso_dR4_);
+    outT->Branch("LptElectron_PFRelIso4",&recoLowPtElectronPFRelIso_dR4_);
+    outT->Branch("LptElectron_PFIso3",&recoLowPtElectronPFIso_dR3_);
+    outT->Branch("LptElectron_PFRelIso3",&recoLowPtElectronPFRelIso_dR3_);
+    outT->Branch("LptElectron_PFIso8",&recoLowPtElectronPFIso_dR8_);
+    outT->Branch("LptElectron_PFRelIso8",&recoLowPtElectronPFRelIso_dR8_);
     outT->Branch("LptElectron_trkProb",&recoLowPtElectronTrkProb_);
     outT->Branch("LptElectron_numTrackerHits",&recoLowPtElectronTrkNumTrackerHits_);
     outT->Branch("LptElectron_numPixHits",&recoLowPtElectronTrkNumPixHits_);
@@ -200,68 +219,36 @@ void NtupleContainer::CreateTreeBranches() {
     outT->Branch("rho",&rho_);
 
     // Electron-positron vertex branches
-    outT->Branch("nRRvtx",&nEleVertex_RR_);
-    outT->Branch("RRvtx_idx1", &RRvtx_idx1_);
-    outT->Branch("RRvtx_idx2", &RRvtx_idx2_);
-    outT->Branch("RRvtx_vxy", &RRvtx_recoVtxVxy_);
-    outT->Branch("RRvtx_sigmavxy", &RRvtx_recoVtxSigmaVxy_);
-    outT->Branch("RRvtx_vx",&RRvtx_recoVtxVx_);
-    outT->Branch("RRvtx_vy",&RRvtx_recoVtxVy_);
-    outT->Branch("RRvtx_vz",&RRvtx_recoVtxVz_);
-    outT->Branch("RRvtx_reduced_chi2", &RRvtx_recoVtxReducedChi2_);
-    outT->Branch("RRvtx_prob", &RRvtx_prob_);
-    outT->Branch("RRvtx_dR",  &RRvtx_recoVtxDr_);
-    outT->Branch("RRvtx_sign",&RRvtx_recoVtxSign_);
-    outT->Branch("RRvtx_pt",&RRvtx_ll_pt_);
-    outT->Branch("RRvtx_eta",&RRvtx_ll_eta_);
-    outT->Branch("RRvtx_phi",&RRvtx_ll_phi_);
-    outT->Branch("RRvtx_energy",&RRvtx_ll_e_);
-    outT->Branch("RRvtx_m",&RRvtx_ll_m_);
-    outT->Branch("RRvtx_px",&RRvtx_ll_px_);
-    outT->Branch("RRvtx_py",&RRvtx_ll_py_);
-    outT->Branch("RRvtx_pz",&RRvtx_ll_pz_);
+    outT->Branch("nvtx",&nvtx_);
+    outT->Branch("vtx_typ",&vtx_type_);
+    outT->Branch("vtx_vxy", &vtx_recoVtxVxy_);
+    outT->Branch("vtx_sigmavxy", &vtx_recoVtxSigmaVxy_);
+    outT->Branch("vtx_vx",&vtx_recoVtxVx_);
+    outT->Branch("vtx_vy",&vtx_recoVtxVy_);
+    outT->Branch("vtx_vz",&vtx_recoVtxVz_);
+    outT->Branch("vtx_reduced_chi2", &vtx_recoVtxReducedChi2_);
+    outT->Branch("vtx_prob", &vtx_prob_);
+    outT->Branch("vtx_dR",  &vtx_recoVtxDr_);
+    outT->Branch("vtx_sign",&vtx_recoVtxSign_);
+    outT->Branch("vtx_pt",&vtx_ll_pt_);
+    outT->Branch("vtx_eta",&vtx_ll_eta_);
+    outT->Branch("vtx_phi",&vtx_ll_phi_);
+    outT->Branch("vtx_energy",&vtx_ll_e_);
+    outT->Branch("vtx_m",&vtx_ll_m_);
+    outT->Branch("vtx_px",&vtx_ll_px_);
+    outT->Branch("vtx_py",&vtx_ll_py_);
+    outT->Branch("vtx_pz",&vtx_ll_pz_);
+    outT->Branch("vtx_PFIso4",&vtx_ll_PFIso_dR4_);
+    outT->Branch("vtx_PFRelIso4",&vtx_ll_PFRelIso_dR4_);
+    outT->Branch("vtx_PFIso3",&vtx_ll_PFIso_dR3_);
+    outT->Branch("vtx_PFRelIso3",&vtx_ll_PFRelIso_dR3_);
+    outT->Branch("vtx_PFIso8",&vtx_ll_PFIso_dR8_);
+    outT->Branch("vtx_PFRelIso8",&vtx_ll_PFRelIso_dR8_);
 
-    outT->Branch("nLLvtx",&nEleVertex_LL_);
-    outT->Branch("LLvtx_idx1", &LLvtx_idx1_);
-    outT->Branch("LLvtx_idx2", &LLvtx_idx2_);
-    outT->Branch("LLvtx_vxy", &LLvtx_recoVtxVxy_);
-    outT->Branch("LLvtx_sigmavxy", &LLvtx_recoVtxSigmaVxy_);
-    outT->Branch("LLvtx_vx",&LLvtx_recoVtxVx_);
-    outT->Branch("LLvtx_vy",&LLvtx_recoVtxVy_);
-    outT->Branch("LLvtx_vz",&LLvtx_recoVtxVz_);
-    outT->Branch("LLvtx_reduced_chi2", &LLvtx_recoVtxReducedChi2_);
-    outT->Branch("LLvtx_prob", &LLvtx_prob_);
-    outT->Branch("LLvtx_dR",  &LLvtx_recoVtxDr_);
-    outT->Branch("LLvtx_sign",&LLvtx_recoVtxSign_);
-    outT->Branch("LLvtx_pt",&LLvtx_ll_pt_);
-    outT->Branch("LLvtx_eta",&LLvtx_ll_eta_);
-    outT->Branch("LLvtx_phi",&LLvtx_ll_phi_);
-    outT->Branch("LLvtx_energy",&LLvtx_ll_e_);
-    outT->Branch("LLvtx_m",&LLvtx_ll_m_);
-    outT->Branch("LLvtx_px",&LLvtx_ll_px_);
-    outT->Branch("LLvtx_py",&LLvtx_ll_py_);
-    outT->Branch("LLvtx_pz",&LLvtx_ll_pz_);
-
-    outT->Branch("nLRvtx",&nEleVertex_LR_);
-    outT->Branch("LRvtx_idx1", &LRvtx_idx1_);
-    outT->Branch("LRvtx_idx2", &LRvtx_idx2_);
-    outT->Branch("LRvtx_vxy", &LRvtx_recoVtxVxy_);
-    outT->Branch("LRvtx_sigmavxy", &LRvtx_recoVtxSigmaVxy_);
-    outT->Branch("LRvtx_vx",&LRvtx_recoVtxVx_);
-    outT->Branch("LRvtx_vy",&LRvtx_recoVtxVy_);
-    outT->Branch("LRvtx_vz",&LRvtx_recoVtxVz_);
-    outT->Branch("LRvtx_reduced_chi2", &LRvtx_recoVtxReducedChi2_);
-    outT->Branch("LRvtx_prob", &LRvtx_prob_);
-    outT->Branch("LRvtx_dR",  &LRvtx_recoVtxDr_);
-    outT->Branch("LRvtx_sign",&LRvtx_recoVtxSign_);
-    outT->Branch("LRvtx_pt",&LRvtx_ll_pt_);
-    outT->Branch("LRvtx_eta",&LRvtx_ll_eta_);
-    outT->Branch("LRvtx_phi",&LRvtx_ll_phi_);
-    outT->Branch("LRvtx_energy",&LRvtx_ll_e_);
-    outT->Branch("LRvtx_m",&LRvtx_ll_m_);
-    outT->Branch("LRvtx_px",&LRvtx_ll_px_);
-    outT->Branch("LRvtx_py",&LRvtx_ll_py_);
-    outT->Branch("LRvtx_pz",&LRvtx_ll_pz_);
+    outT->Branch("vtx_e1_typ",&vtx_e1_type_);
+    outT->Branch("vtx_e1_idx",&vtx_e1_idx_);
+    outT->Branch("vtx_e2_typ",&vtx_e2_type_);
+    outT->Branch("vtx_e2_idx",&vtx_e2_idx_);
 
     // Gen information
     if (!isData_) {
@@ -348,7 +335,7 @@ void NtupleContainer::CreateTreeBranches() {
 
 }
 
-void NtupleContainer::ClearTreeBranches() {
+void NtupleContainerV2::ClearTreeBranches() {
     // Reset trigger
     fired_ = 0;
     fired16_ = 0;
@@ -446,7 +433,16 @@ void NtupleContainer::ClearTreeBranches() {
     recoElectronEtaError_.clear();
     recoElectronPhi_.clear();
     recoElectronPhiError_.clear();
-    recoElectronID_.clear();
+    recoElectronID_cutVeto_.clear();
+    recoElectronID_cutLoose_.clear();
+    recoElectronID_cutMed_.clear();
+    recoElectronID_cutTight_.clear();
+    recoElectronID_mvaIso90_.clear();
+    recoElectronID_mvaIso80_.clear();
+    recoElectronID_mvaIsoLoose_.clear();
+    recoElectronID_mva90_.clear();
+    recoElectronID_mva80_.clear();
+    recoElectronID_mvaLoose_.clear();
     recoElectronAngularRes_.clear();
     recoElectronE_.clear();
     recoElectronPx_.clear();
@@ -461,6 +457,14 @@ void NtupleContainer::ClearTreeBranches() {
     recoElectronTrkChi2_.clear();
     recoElectronTrkIso_.clear();
     recoElectronTrkRelIso_.clear();
+    recoElectronCaloIso_.clear();
+    recoElectronCaloRelIso_.clear();
+    recoElectronPFIso_dR4_.clear();
+    recoElectronPFRelIso_dR4_.clear();
+    recoElectronPFIso_dR3_.clear();
+    recoElectronPFRelIso_dR3_.clear();
+    recoElectronPFIso_dR8_.clear();
+    recoElectronPFRelIso_dR8_.clear();
     recoElectronTrkProb_.clear();
     recoElectronTrkNumTrackerHits_.clear();
     recoElectronTrkNumPixHits_.clear();
@@ -489,6 +493,14 @@ void NtupleContainer::ClearTreeBranches() {
     recoLowPtElectronTrkChi2_.clear();
     recoLowPtElectronTrkIso_.clear();
     recoLowPtElectronTrkRelIso_.clear();
+    recoLowPtElectronCaloIso_.clear();
+    recoLowPtElectronCaloRelIso_.clear();
+    recoLowPtElectronPFIso_dR4_.clear();
+    recoLowPtElectronPFRelIso_dR4_.clear();
+    recoLowPtElectronPFIso_dR3_.clear();
+    recoLowPtElectronPFRelIso_dR3_.clear();
+    recoLowPtElectronPFIso_dR8_.clear();
+    recoLowPtElectronPFRelIso_dR8_.clear();
     recoLowPtElectronTrkProb_.clear();
     recoLowPtElectronTrkNumTrackerHits_.clear();
     recoLowPtElectronTrkNumPixHits_.clear();
@@ -615,69 +627,35 @@ void NtupleContainer::ClearTreeBranches() {
     rho_ = -9999;
 
     // Electron-positron vertices
-    nEleVertex_RR_ = 0;
-    RRvtx_idx1_.clear();
-    RRvtx_idx2_.clear();
-    RRvtx_recoVtxVxy_.clear();
-    RRvtx_recoVtxVz_.clear();
-    RRvtx_recoVtxSigmaVxy_.clear();
-    RRvtx_recoVtxVx_.clear();
-    RRvtx_recoVtxVy_.clear();
-    RRvtx_recoVtxVz_.clear();
-    RRvtx_recoVtxReducedChi2_.clear();
-    RRvtx_prob_.clear();
-    RRvtx_recoVtxDr_.clear();
-    RRvtx_recoVtxSign_.clear();
-    RRvtx_ll_pt_.clear();
-    RRvtx_ll_eta_.clear();
-    RRvtx_ll_phi_.clear();
-    RRvtx_ll_e_.clear();
-    RRvtx_ll_m_.clear();
-    RRvtx_ll_px_.clear();
-    RRvtx_ll_py_.clear();
-    RRvtx_ll_pz_.clear();
+    nvtx_ = 0;
+    vtx_type_.clear();
+    vtx_recoVtxVxy_.clear();
+    vtx_recoVtxVz_.clear();
+    vtx_recoVtxSigmaVxy_.clear();
+    vtx_recoVtxVx_.clear();
+    vtx_recoVtxVy_.clear();
+    vtx_recoVtxVz_.clear();
+    vtx_recoVtxReducedChi2_.clear();
+    vtx_prob_.clear();
+    vtx_recoVtxDr_.clear();
+    vtx_recoVtxSign_.clear();
+    vtx_ll_pt_.clear();
+    vtx_ll_eta_.clear();
+    vtx_ll_phi_.clear();
+    vtx_ll_e_.clear();
+    vtx_ll_m_.clear();
+    vtx_ll_px_.clear();
+    vtx_ll_py_.clear();
+    vtx_ll_pz_.clear();
+    vtx_ll_PFIso_dR4_.clear();
+    vtx_ll_PFRelIso_dR4_.clear();
+    vtx_ll_PFIso_dR3_.clear();
+    vtx_ll_PFRelIso_dR3_.clear();
+    vtx_ll_PFIso_dR8_.clear();
+    vtx_ll_PFRelIso_dR8_.clear();
 
-    nEleVertex_LL_ = 0;
-    LLvtx_idx1_.clear();
-    LLvtx_idx2_.clear();
-    LLvtx_recoVtxVxy_.clear();
-    LLvtx_recoVtxVz_.clear();
-    LLvtx_recoVtxSigmaVxy_.clear();
-    LLvtx_recoVtxVx_.clear();
-    LLvtx_recoVtxVy_.clear();
-    LLvtx_recoVtxVz_.clear();
-    LLvtx_recoVtxReducedChi2_.clear();
-    LLvtx_prob_.clear();
-    LLvtx_recoVtxDr_.clear();
-    LLvtx_recoVtxSign_.clear();
-    LLvtx_ll_pt_.clear();
-    LLvtx_ll_eta_.clear();
-    LLvtx_ll_phi_.clear();
-    LLvtx_ll_e_.clear();
-    LLvtx_ll_m_.clear();
-    LLvtx_ll_px_.clear();
-    LLvtx_ll_py_.clear();
-    LLvtx_ll_pz_.clear();
-
-    nEleVertex_LR_ = 0;
-    LRvtx_idx1_.clear();
-    LRvtx_idx2_.clear();
-    LRvtx_recoVtxVxy_.clear();
-    LRvtx_recoVtxVz_.clear();
-    LRvtx_recoVtxSigmaVxy_.clear();
-    LRvtx_recoVtxVx_.clear();
-    LRvtx_recoVtxVy_.clear();
-    LRvtx_recoVtxVz_.clear();
-    LRvtx_recoVtxReducedChi2_.clear();
-    LRvtx_prob_.clear();
-    LRvtx_recoVtxDr_.clear();
-    LRvtx_recoVtxSign_.clear();
-    LRvtx_ll_pt_.clear();
-    LRvtx_ll_eta_.clear();
-    LRvtx_ll_phi_.clear();
-    LRvtx_ll_e_.clear();
-    LRvtx_ll_m_.clear();
-    LRvtx_ll_px_.clear();
-    LRvtx_ll_py_.clear();
-    LRvtx_ll_pz_.clear();
+    vtx_e1_type_.clear();
+    vtx_e1_idx_.clear();
+    vtx_e2_type_.clear();
+    vtx_e2_idx_.clear();
 }

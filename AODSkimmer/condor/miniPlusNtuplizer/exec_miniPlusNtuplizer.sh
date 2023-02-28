@@ -21,4 +21,5 @@ cd iDMeAnalysis/AODSkimmer
 cmsRun miniPlusElectronNtuplizer_cfg.py flist=${fname}.txt data=${isData} signal=${isSignal} year=${year} numThreads=${nThreads}
 mv test_output.root ntuples_${fname}.root
 xrdcp -f ntuples_${fname}.root root://cmseos.fnal.gov//store/group/lpcmetx/iDMe//Samples/Ntuples/signal/${year}/${outDirName}/ntuples_${fname}.root
+echo "Copied ntuples_${fname}.root"
 echo "Done"

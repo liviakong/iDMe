@@ -3,7 +3,6 @@ import analysisSubroutines as subroutines
 import coffea
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema, BaseSchema
 from coffea import processor
-import coffea.hist as hist
 from coffea.nanoevents.methods import vector
 import uproot
 import awkward as ak

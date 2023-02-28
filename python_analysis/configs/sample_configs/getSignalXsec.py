@@ -14,9 +14,10 @@ for samp in samples:
     aD = str(samp['alphaD'])
     sel_row = df[(df["Mchi"] == mchi) & (df["dMchi"] == dmchi) & (df["ct"] == ct) & (df["alphaD"] == aD)]
     if sel_row.empty:
+        print(f"No xsec found for {samp['name']}")
         samp["xsec"] = 0.0
     else:
-        samp["xsec"] = float(sel_row["xsec(pb)"].iloc[0])
+        samp["xsec"] = float(sel_row["xsec(pb)"].iloc[0]) * 1000 # convert to fb
 
 with open(inputJson,'w') as f:
     json.dump(samples,f,indent=4)

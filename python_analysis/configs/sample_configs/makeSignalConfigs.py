@@ -3,6 +3,9 @@ import json
 import sys
 import subprocess
 import numpy as np
+import re
+import datetime as dt
+import os
 
 mode = str(sys.argv[1])
 year = str(sys.argv[2])
@@ -64,34 +67,49 @@ else:
         names = fileDirs.copy()
         names = [n.split("/") for n in names]
         reference = names[0].copy()
-        common = []
+        # removing common file path prefix from all paths
         for r in reference:
-            com = True
+            stop = False
             for n in names:
                 if r not in n:
-                    com = False
-            if com:
-                common.append(r)
-        for c in common:
-            for n in names:
-                n.remove(c)
-        names = [n[0] for n in names]
+                    stop = True
+                    break
+            if stop:
+                break
+            names = [n[1:] for n in names]
+        # only need first part of path
+        names = [n[0] for n in names] # head of path, i.e. qcd ht bin, for all unique file-holding dirs
 
-        output = []
+        most_recent = ""
+        now = dt.datetime.now()
+        min_dt = dt.timedelta.max.total_seconds()
+        for fd in fileDirs:
+            d = re.findall("202\d_\d\d_\d\d-",fd)[0]
+            delta = (now - dt.datetime.strptime(d,"%Y_%m_%d-")).total_seconds()
+            if delta < min_dt:
+                min_dt = delta
+                most_recent = d
+        print(most_recent)
+        names = [names[i] for i in range(len(names)) if most_recent in fileDirs[i]]
+        fileDirs = [f for f in fileDirs if most_recent in f]
+        name_loc_map = {n:[] for n in set(names)}
         for i in range(len(names)):
+            name_loc_map[names[i]].append(fileDirs[i])
+        output = []
+        for n in name_loc_map.keys():
             info = {}
-            info["name"] = names[i]
-            info["location"] = fileDirs[i]
+            info["name"] = n
+            info["location"] = name_loc_map[n]
             info["sum_wgt"] = 0.0
             info["type"] = "bkg"
             info["year"] = int(year)
             info["xsec"] = 0.0
-            rootFiles = [rf.name for rf in xrdClient.dirlist(info["location"])[1] if '.root' in rf.name]
-            info["nFiles"] = len(rootFiles)
+            nFiles=0
+            for loc in name_loc_map[n]:
+                nFiles += len([rf.name for rf in xrdClient.dirlist(loc)[1] if '.root' in rf.name])
+            info["nFiles"] = nFiles
             output.append(info)
 
         out_json = "bkg_{}_{}.json".format(year,bkg)
         with open(out_json,"w") as outfile:
             json.dump(output,outfile,indent=4)
-
-

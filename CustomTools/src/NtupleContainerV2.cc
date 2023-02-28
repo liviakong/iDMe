@@ -509,7 +509,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronMinDrToReg_.clear();
 
     // Gen weight and pileup
-    genwgt_ = -9999;
+    genwgt_ = 0;
     genpuobs_ = -9999;
     genputrue_ = -9999;
 

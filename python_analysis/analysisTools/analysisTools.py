@@ -3,7 +3,6 @@ import coffea
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema, BaseSchema
 from mySchema import MySchema
 from coffea import processor
-import coffea.hist as hist
 from coffea.nanoevents.methods import vector
 import uproot
 import awkward as ak
@@ -20,6 +19,7 @@ import re
 NanoAODSchema.warn_missing_crossrefs = False
 import analysisSubroutines as routines
 import sys
+from collections import defaultdict
 
 match_names = {"Default":"match0","lowpt":"match1"}
 vxy_range = {1:[0,20],10:[0,50],100:[0,50],1000:[0,50]}
@@ -82,12 +82,18 @@ class Analyzer:
                 # if the location is just a single file, load it in
                 self.sample_locs[name] = [sample['location']]
             elif 'fileset' in sample.keys():
-                self.sample_locs[name] = sample['fileset']
+                self.sample_locs[name] = [f for f in sample['fileset'] if f.split("/")[-1] not in sample['blacklist']]
             else:
                 # if the location is a directory, use the xrootd client to get a list of files
                 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
-                status, flist = xrdClient.dirlist(loc)
-                fullList = ["root://cmsxrootd.fnal.gov/"+loc+"/"+item.name for item in flist if '.root' in item.name]
+                if type(loc) != list:
+                    status, flist = xrdClient.dirlist(loc)
+                    fullList = ["root://cmsxrootd.fnal.gov/"+loc+"/"+item.name for item in flist if (('.root' in item.name) and (item.name not in sample['blacklist']))]
+                else:
+                    fullList = []
+                    for l in loc:
+                        status, flist = xrdClient.dirlist(l)
+                        fullList.extend(["root://cmsxrootd.fnal.gov/"+l+"/"+item.name for item in flist if (('.root' in item.name) and (item.name not in sample['blacklist']))])
                 if self.max_files_per_samp > 0:
                     fullList = fullList[:self.max_files_per_samp] if len(fullList) > self.max_files_per_samp else fullList
                 self.sample_locs[name] = fullList
@@ -96,24 +102,20 @@ class Analyzer:
             self.sample_names.append(name)
             loaded += 1
 
-    def process(self,treename='ntuples/outT',execr="iterative"):
+    def process(self,treename='ntuples/outT',execr="iterative",workers=4):
         fileset = self.sample_locs
         proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
         if execr == "iterative":
-            executor = processor.iterative_executor
-            executor_args = {"schema":MySchema}
+            executor = processor.IterativeExecutor()
         elif execr == "futures":
-            executor = processor.futures_executor
-            executor_args = {"workers": 4,
-                        "savemetrics": True,
-                        "schema": MySchema,
-                        "align_clusters": True
-                        }
-        accumulator = processor.run_uproot_job(fileset,
-                              treename=treename,
-                              processor_instance=proc,
-                              executor=executor,
-                              executor_args=executor_args)
+            executor = processor.FuturesExecutor(workers=workers)
+        else:
+            print("Invalid executor type specification!")
+            exit
+        runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
+        accumulator = runner(fileset,
+                            treename=treename,
+                            processor_instance=proc)
         return accumulator
 
 class iDMeProcessor(processor.ProcessorABC):
@@ -124,18 +126,9 @@ class iDMeProcessor(processor.ProcessorABC):
         self.mode = mode
         
         # load in histogram config
-        histoMod = importlib.import_module(histoFile)
-        histos = histoMod.histograms
-        self.histoFill = histoMod.fillHistos
-        self.subroutines = histoMod.subroutines
-
-        # make a cutflow dictionary for the output
-        cutflows = processor.dict_accumulator({samp : processor.defaultdict_accumulator(int) for samp in samples})
-        histos['cutflows'] = cutflows
-        histos['cutDesc'] = processor.defaultdict_accumulator(str)
-
-        # creating the accumulator
-        self._accumulator = processor.dict_accumulator(histos)
+        self.histoMod = importlib.import_module(histoFile)
+        self.histoFill = self.histoMod.fillHistos
+        self.subroutines = self.histoMod.subroutines
         
         # load in cuts module
         self.cutFile = cutFile
@@ -152,31 +145,39 @@ class iDMeProcessor(processor.ProcessorABC):
             cutList = [c for c in dir(self.cutLib) if "cut" in c]
             cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
             self.cuts = [getattr(self.cutLib,c) for c in cutList]
-
-
-    @property
-    def accumulator(self):
-        return self._accumulator
     
     def process(self,events):
         samp = events.metadata["dataset"]
-        histos = self.accumulator.identity()
+        histos = self.histoMod.make_histograms()
+        histos['cutDesc'] = defaultdict(str)
+        cutflow = defaultdict(float)
+        cutflow_counts = defaultdict(float)
         info = self.sampleInfo[samp]
+        sum_wgt = info["sum_wgt"]
+        lumi, unc = getLumi(info['year'])
+        xsec = info['xsec']
+
+        # register event weight branch
+        events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
 
         # Initial number of events
-        histos['cutflows'][samp]['initial'] += len(events)
+        cutflow['initial'] += np.sum(events.genWgt)/sum_wgt
+        histos['cutDesc']['initial'] = 'No cuts'
 
         # Preselection
         routines.selectGoodElesAndVertices(events)
-
-        events.__setitem__("nGoodVtx",ak.count(events.good_RRvtx.vxy,axis=1) + 
-                                        ak.count(events.good_LRvtx.vxy,axis=1) +
-                                        ak.count(events.good_LLvtx.vxy,axis=1))
+        events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
         events = events[events.nGoodVtx > 0]
-
+        
         # pre-computing quantities for cuts
-        events.__setitem__("JetMETdPhi",deltaPhi(events.PFJet.corrPhi,events.PFMET.correctedPhi))
+        events.__setitem__("JetMETdPhi",np.abs(deltaPhi(events.PFJet.corrPhi,events.PFMET.phi)))
         routines.selectBestVertex(events)
+        events.__setitem__("VtxMETdPhi",np.abs(deltaPhi(events.sel_vtx.phi,events.PFMET.phi)))
+        # computing some signal-only diagnostic quantities
+        if info['type'] == "signal":
+            e1_match = routines.matchedVertexElectron(events,1)
+            e2_match = routines.matchedVertexElectron(events,2)
+            events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
 
         # pre-computing quantities for histograms, as specified in the histo config
         for subroutine in self.subroutines:
@@ -187,14 +188,18 @@ class iDMeProcessor(processor.ProcessorABC):
         ###############################
         for cut in self.cuts:
             events, cutName, cutDesc, savePlots = cut(events,info)
-
-            histos['cutflows'][samp][cutName] += len(events)
+            cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms
             if savePlots:
-                self.histoFill(events,histos,samp,cutName)
+                self.histoFill(events,histos,samp,cutName,info,sum_wgt=sum_wgt)
         
+        for k in cutflow.keys():
+            cutflow_counts[k] = xsec*lumi*cutflow[k]
+        histos['cutflow'] = {samp:cutflow}
+        histos['cutflow_cts'] = {samp:cutflow_counts}
+
         return histos
 
     def postprocess(self, accumulator):
@@ -237,6 +242,21 @@ def deltaPhi(v1,v2):
     fine = ak.values_astype((dPhi <= M_PI) & (dPhi >= -1*M_PI),np.float32)
     output = fine*dPhi + under*(dPhi + 2.0*M_PI) + over*(dPhi - 2.0*M_PI)
     return output
+
+def getLumi(year):
+    # recommendations from https://twiki.cern.ch/twiki/bin/view/CMS/LumiRecommendationsRun2
+    lumi, unc = 0, 0
+    if year == 2016:
+        lumi = 36.31
+        unc = 0.012*lumi # 1.2 percent
+    if year == 2017:
+        lumi = 41.48
+        unc = 0.023*lumi # 2.3 percent
+    if year == 2018:
+        lumi = 59.83
+        unc = 0.025*lumi # 2.5 percent
+    return lumi, unc
+    
 
 def loadSchema(fileLoc):
     loc = uproot.open(fileLoc)
@@ -285,16 +305,6 @@ def adjustAxes(ax,hstyle,binName,ct):
                 ax.set_xlim(left=vxy_range[ct][0],right=vxy_range[ct][1])
             elif style['xrange']:
                 ax.set_xlim(style['xrange'][0],right=style['xrange'][1])
-
-def rebinHist(hstyle,hist,binName,ct):
-    if binName in hstyle.keys():
-        style = hstyle[binName]
-        if "rebin" in style.keys():
-            if ("vxy" == binName) or ("vz" == binName):
-                hist = hist.rebin(binName,vxy_rebin[ct])
-            if style['rebin']:
-                hist = hist.rebin(binName,style['rebin'])
-    return hist
 
 def setLogY(ax,hstyle,binName):
     if binName in hstyle.keys():

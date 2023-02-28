@@ -1,4 +1,4 @@
-import coffea.hist as hist
+import hist
 import coffea.util as util
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -7,46 +7,33 @@ import re
 import os
 import sys
 
-def loadHistoFiles(location):
-    files = [f for f in os.listdir(location) if ".coffea" in f]
-    histos = {}
-    for f in files:
-        htemp = util.load(location+"/"+f)
-        if type(htemp) == tuple:
-            htemp = htemp[0]
-        for hname in list(htemp.keys()):
-            if hname not in histos.keys():
-                histos[hname] = htemp[hname].copy()
-            else:
-                histos[hname] += htemp[hname]
-    return histos
+def makeNMinus1(h1,h2,lessThan=False):
+    assert len(h1.axes)==1 and h1.axes == h2.axes
+    ax = h1.axes[0]
+    hout = hist.Hist(ax)
+    if lessThan:
+        s1 = np.cumsum(h1.counts(flow=True))[:-1]
+        s2 = np.cumsum(h2.counts(flow=True))[:-1]
+    else:
+        s1 = np.cumsum(h1.counts(flow=True)[::-1])[::-1][:-1]
+        s2 = np.cumsum(h2.counts(flow=True)[::-1])[::-1][:-1]
+    x = ax.edges
+    signif = np.where(s2>0,s1/np.sqrt(s2),-1)
+    signif[(signif==-1) & (s1>0)] = np.inf
+    signif[(signif==-1) & (s1==0)] = 0
+    return x, signif
 
-def loadHistoFromFiles(location,hname):
-    files = [f for f in os.listdir(location) if ".coffea" in f]
-    histo = -1
-    for f in files:
-        htemp = util.load(location+"/"+f)
-        if type(htemp) == tuple:
-            htemp = htemp[0]
-        if histo == -1:
-            histo = htemp[hname].copy()
-        else:
-            histo += htemp[hname]
-    return histo
-
-def loadHistosFromFiles(location,hnames):
-    files = [f for f in os.listdir(location) if ".coffea" in f]
-    histos = {}
-    for f in files:
-        htemp = util.load(location+"/"+f)
-        if type(htemp) == tuple:
-            htemp = htemp[0]
-        for hname in hnames:
-            if hname not in histos.keys():
-                histos[hname] = htemp[hname].copy()
-            else:
-                histos[hname] += htemp[hname]
-    return histos
+def makeCutEff(h,lessThan=False):
+    ax = h.axes[0]
+    hout = hist.Hist(ax)
+    if lessThan:
+        s = np.cumsum(h.counts(flow=True))[:-1]
+    else:
+        s = np.cumsum(h.counts(flow=True)[::-1])[::-1][:-1]
+    x = ax.edges
+    eff = s/np.sum(h.counts(flow=True))
+    return x, eff, s
+    
 
 def getSampleInfo(histos,hname="ele_kinematics"):
     samps = [s.name for s in histos[hname].axis("sample").identifiers()]
@@ -85,6 +72,27 @@ def reduceSampleName(name,lifetime=False,mass=False,full=False,verbosity=0):
         if verbosity == 1: output = r"$(m_\chi, \Delta m_\chi) = ({0}, {1})$ GeV".format(m,dm)
         if verbosity == 2: output = r"$m_\chi = {0}$ GeV, $\Delta m_\chi = {1}$ GeV".format(m,dm)
     return output
+
+def signalPoint(name):
+    a = re.search('Mchi-(\d+p\d)_dMchi-(\d+p\d)_ctau-(\d+)',name)
+    mchi = float(a.group(1).replace("p","."))
+    dmchi = float(a.group(2).replace("p","."))
+    ctau = float(a.group(3).replace("p","."))
+    m1 = mchi - dmchi/2
+    m2 = mchi + dmchi/2
+    delta = dmchi/m1
+    return {"mchi":mchi, "dmchi":dmchi, "ctau":ctau, "m1":m1, "m2":m2, "delta":delta, "name":name}
+
+def getCut(label,n=2):
+    name = ""
+    while label[0:n]!=label[n:2*n] and n<len(label):
+        name=label[0:n+1]
+        n+=1
+    return name
+
+def getHTlow(sampName):
+    ht = int(re.search("HT(\d+)to",sampName).group(1))
+    return ht
 
 def setDefaultStyle(fontsize=14):
     mpl.rcParams["font.size"] = fontsize

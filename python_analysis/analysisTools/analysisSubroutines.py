@@ -2,11 +2,11 @@ from __future__ import with_statement
 import coffea
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema, BaseSchema
 from coffea import processor
-import coffea.hist as hist
 from coffea.nanoevents.methods import vector
 import uproot
 import awkward as ak
 ak.behavior.update(vector.behavior)
+import numba as nb
 import numpy as np
 import matplotlib.pyplot as plt
 import json
@@ -22,57 +22,38 @@ NanoAODSchema.warn_missing_crossrefs = False
 def selectGoodElesAndVertices(events):
     # Selecting electrons that pass basic pT and eta cuts
     eles = events.Electron
-    ele_idx = ak.local_index(eles)
     lpt_eles = events.LptElectron
-    lpt_ele_idx = ak.local_index(lpt_eles)
+    vtx = events.vtx
 
-    good_ele_msk = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
-    good_lpt_ele_msk = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4)
+    events["Electron","passCut"] = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
+    events["LptElectron","passCut"] = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4)
 
-    good_eles = eles[good_ele_msk]
-    good_ele_idx = ele_idx[good_ele_msk]
-    good_eles.__setitem__("idx",good_ele_idx)
-
-    good_lpt_eles = lpt_eles[good_lpt_ele_msk]
-    good_lpt_ele_idx = lpt_ele_idx[good_lpt_ele_msk]
-    good_lpt_eles.__setitem__("idx",good_lpt_ele_idx)
-
-    events.__setitem__("good_ele",good_eles)
-    events.__setitem__("good_lpt_ele",good_lpt_eles)
-
-    # Selecting vertices corresponding to good electrons
-    RRvtx = events.RRvtx
-    LRvtx = events.LRvtx
-    LLvtx = events.LLvtx
+    all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
+    n_reg = ak.count(eles.pt,axis=1)
+    isLow1 = ak.values_astype(vtx.e1_typ=="L","int")
+    isLow2 = ak.values_astype(vtx.e2_typ=="L","int")
     
-    goodRR_msk = ak.any(RRvtx.idx1 == good_eles.idx[:,np.newaxis,:],axis=-1) & ak.any(RRvtx.idx2 == good_eles.idx[:,np.newaxis,:],axis=-1)
-    goodLR_msk = ak.any(LRvtx.idx1 == good_lpt_eles.idx[:,np.newaxis,:],axis=-1) & ak.any(LRvtx.idx2 == good_eles.idx[:,np.newaxis,:],axis=-1)
-    goodLL_msk = ak.any(LLvtx.idx1 == good_lpt_eles.idx[:,np.newaxis,:],axis=-1) & ak.any(LLvtx.idx2 == good_lpt_eles.idx[:,np.newaxis,:],axis=-1)
+    vtx_e1_flatIdx = vtx.e1_idx + isLow1*n_reg
+    vtx_e2_flatIdx = vtx.e2_idx + isLow2*n_reg
 
-    events.__setitem__("good_RRvtx",RRvtx[goodRR_msk])
-    events.__setitem__("good_LRvtx",LRvtx[goodLR_msk])
-    events.__setitem__("good_LLvtx",LLvtx[goodLL_msk])
+    events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
+    events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
+
+    events.__setitem__("good_vtx",events.vtx[events.vtx.e1.passCut & events.vtx.e2.passCut])
 
 def selectBestVertex(events):
-    RR = events.good_RRvtx[ak.argmin(events.good_RRvtx.reduced_chi2,axis=1,keepdims=True)]
-    LR = events.good_LRvtx[ak.argmin(events.good_LRvtx.reduced_chi2,axis=1,keepdims=True)]
-    LL = events.good_LLvtx[ak.argmin(events.good_LLvtx.reduced_chi2,axis=1,keepdims=True)]
+    sel_vtx = ak.flatten(events.good_vtx[ak.argmin(events.good_vtx.reduced_chi2,axis=1,keepdims=True)])
+    events.__setitem__("sel_vtx",sel_vtx)
 
-    allVtx = ak.concatenate((RR,LR,LL),axis=1)
-    vtxType = ak.concatenate([ak.ones_like(RR.idx1),2*ak.ones_like(LR.idx1),3*ak.ones_like(LL.idx1)],axis=1)
-    best = ak.argmin(allVtx.reduced_chi2,axis=1,keepdims=True)
-    bestVertices = allVtx[best]
-    bestVertices.__setitem__("vtxType",vtxType[best])
-
-    sel_e1 = ak.where(bestVertices.vtxType[:,0]==1, events.Electron, events.LptElectron)
-    sel_e2 = ak.where(bestVertices.vtxType[:,0]==3, events.LptElectron, events.Electron)
-
-    sel_e1 = sel_e1[bestVertices.idx1]
-    sel_e2 = sel_e2[bestVertices.idx2]
-
-    events.__setitem__("sel_vtx",bestVertices[:,0])
-    events.__setitem__("sel_e1",sel_e1[:,0])
-    events.__setitem__("sel_e2",sel_e2[:,0])
+def matchedVertexElectron(events,i):
+    vtx = events.sel_vtx
+    e = events.GenEleClosest
+    p = events.GenPosClosest
+    ematch = (((e.typ==1)&(vtx[f"e{i}_typ"]=='R'))|((e.typ==2)&(vtx[f"e{i}_typ"]=='L')))&(e.ind==vtx[f"e{i}_idx"])&(e.dr<0.1)
+    pmatch = (((p.typ==1)&(vtx[f"e{i}_typ"]=='R'))|((p.typ==2)&(vtx[f"e{i}_typ"]=='L')))&(p.ind==vtx[f"e{i}_idx"])&(p.dr<0.1)
+    matched = ak.where(ematch,-1,0)
+    matched = ak.where(pmatch,1,matched) # e & p can't be matched to same object, ensured in ntuplizer code
+    return matched
 
 # Specialized routines to create variables for particular histograms
 # Must specify which ones you want to run in the histogram config (will need to run the ones that make the vars for your histograms)
@@ -355,7 +336,8 @@ def conversions(events,histos,samp,cut):
                                 c1_matchType=uniqMatch_conv1[anyMatch],
                                 c2_matchType=uniqMatch_conv2[anyMatch])
 
-# Helper functions for other routines
+##### Helper functions for other routines #####
+
 def findNearestReco(gen,reco,types,thresh=0.1):
     # construct eta-phi vectors
     gen_r = ak.zip({"x":gen.eta,"y":gen.phi},with_name="TwoVector")

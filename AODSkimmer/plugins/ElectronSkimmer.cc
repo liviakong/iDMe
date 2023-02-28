@@ -119,6 +119,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       bool isSignal;
       int year;
       const std::string triggerProcessName_;
+      const std::string metFilterName_;
       std::vector<std::string> metFilters_;
       std::vector<std::string> trigPaths16_;
       std::vector<std::string> trigPaths17_;
@@ -144,6 +145,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       const edm::EDGetTokenT<vector<pat::MET> > METToken_;
       const edm::EDGetTokenT<vector<pat::MET> > puppiMETToken_;
       const edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
+      const edm::EDGetTokenT<edm::TriggerResults> metFilterResultsToken_;
 
       // Handles
       edm::Handle<vector<pat::Electron> > recoElectronHandle_;
@@ -164,6 +166,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       edm::Handle<vector<pat::MET> > METHandle_;
       edm::Handle<vector<pat::MET> > puppiMETHandle_;
       edm::Handle<edm::TriggerResults> trigResultsHandle_;
+      edm::Handle<edm::TriggerResults> metFilterResultsHandle_;
 
       // Trigger variables
       std::vector<std::string> trigPaths16WithVersion_;
@@ -175,6 +178,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       std::vector<bool> trigExist18_;
       std::vector<bool> trigExist_;
       HLTConfigProvider hltConfig_;
+      HLTConfigProvider metFilterConfig_;
 };
 //
 // constants, enums and typedefs
@@ -193,6 +197,7 @@ ElectronSkimmer::ElectronSkimmer(const edm::ParameterSet& ps)
    isSignal(ps.getParameter<bool>("isSignal")),
    year(ps.getParameter<int>("year")),
    triggerProcessName_(ps.getParameter<std::string>("triggerProcessName")),
+   metFilterName_(ps.getParameter<std::string>("metFilterName")),
    metFilters_(ps.getParameter<std::vector<std::string> >("metFilters")),
    trigPaths16_(ps.getParameter<std::vector<std::string> >("triggerPaths16")),
    trigPaths17_(ps.getParameter<std::vector<std::string> >("triggerPaths17")),
@@ -215,7 +220,8 @@ ElectronSkimmer::ElectronSkimmer(const edm::ParameterSet& ps)
    ootPhotonsToken_(consumes<vector<pat::Photon> >(ps.getParameter<edm::InputTag>("ootPhotons"))),
    METToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("MET"))),
    puppiMETToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("puppiMET"))),
-   trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResults")))
+   trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResults"))),
+   metFilterResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("metFilterResults")))
 {
    usesResource("TFileService");
    m_random_generator = std::mt19937(37428479);
@@ -233,9 +239,9 @@ ElectronSkimmer::~ElectronSkimmer() = default;
 void
 ElectronSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
 {
-   // Set up HLT config
    using namespace edm;
 
+   // Set up HLT config
    bool changed = true;
    if (hltConfig_.init(iRun, iSetup, triggerProcessName_, changed)) {
       if (changed) {
@@ -247,6 +253,19 @@ ElectronSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
    } 
    else {
       LogError("HLTConfig") << "iDMAnalyzer::beginRun: config extraction failure with triggerProcessName -> " << triggerProcessName_;
+      return;
+   }
+
+   if (metFilterConfig_.init(iRun,iSetup,metFilterName_,changed)) {
+      if (changed) {
+         LogInfo("HLTConfig") << "iDMAnalyzer::beginRun: " << "metFilterConfig init for Run" << iRun.run();
+         metFilterConfig_.dump("ProcessName");
+         metFilterConfig_.dump("GlobalTag");
+         metFilterConfig_.dump("TableName");
+      }
+   }
+   else {
+      LogError("HLTConfig") << "iDMAnalyzer::beginRun: config extraction failure with metFilterName -> " << metFilterName_;
       return;
    }
 
@@ -360,7 +379,8 @@ ElectronSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
    desc.add<bool>("isData", 0);
    desc.add<bool>("isSignal",0);
    desc.add<int>("year",2018);
-   desc.add<std::string>("triggerProcessName", "PAT");
+   desc.add<std::string>("triggerProcessName", "HLT");
+   desc.add<std::string>("metFilterName","PAT");
    desc.add<std::vector<std::string> >("metFilters",{});
    desc.add<std::vector<std::string> >("triggerPaths16",{});
    desc.add<std::vector<std::string> >("triggerPaths17",{});
@@ -383,7 +403,8 @@ ElectronSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
    desc.add<edm::InputTag>("ootPhotons",edm::InputTag("slimmedOOTPhotons"));
    desc.add<edm::InputTag>("MET",edm::InputTag("slimmedMETs"));
    desc.add<edm::InputTag>("puppiMET",edm::InputTag("slimmedMETsPuppi"));
-   desc.add<edm::InputTag>("trigResults",edm::InputTag("TriggerResults","","PAT"));
+   desc.add<edm::InputTag>("trigResults",edm::InputTag("TriggerResults","","HLT"));
+   desc.add<edm::InputTag>("metFilterResults",edm::InputTag("TriggerResults","","PAT"));
    descriptions.add("ElectronSkimmer", desc);
 }
 
@@ -408,6 +429,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    iEvent.getByToken(METToken_,METHandle_);
    iEvent.getByToken(puppiMETToken_,puppiMETHandle_);
    iEvent.getByToken(trigResultsToken_,trigResultsHandle_);
+   iEvent.getByToken(metFilterResultsToken_,metFilterResultsHandle_);
 
    if (!isData) { 
       iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
@@ -440,7 +462,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    // MET Filters (as recommended here https://twiki.cern.ch/twiki/bin/view/CMS/MissingETOptionalFiltersRun2#UL_data)
    for (size_t i = 0; i < metFilters_.size(); i++) {
       //std::cout << "MET filter " << metFilters_[i] << " is at index " << hltConfig_.triggerIndex(metFilters_[i]) << std::endl;
-      nt.METFiltersFailBits_ |= ((!(trigResultsHandle_->accept(hltConfig_.triggerIndex(metFilters_[i])))) << i);
+      nt.METFiltersFailBits_ |= ((!(metFilterResultsHandle_->accept(metFilterConfig_.triggerIndex(metFilters_[i])))) << i);
    }
 
    // All triggers
@@ -497,10 +519,12 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    nt.nElectronDefault_ = recoElectronHandle_->size();
    vector<reco::GsfTrackRef> reg_eleTracks{};
    vector<math::XYZTLorentzVector> reg_ele_p4s;
+   vector<const pat::Electron*> reg_good_eles;
    for (const auto & ele : *recoElectronHandle_) {
       reco::GsfTrackRef track = ele.gsfTrack();
       reg_eleTracks.push_back(track);
       reg_ele_p4s.push_back(ele.p4());
+      reg_good_eles.push_back(&ele);
       // Filling basic info
       nt.recoElectronPt_.push_back(ele.pt());
       nt.recoElectronEta_.push_back(ele.eta());
@@ -546,6 +570,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    /////////////////////////////////
    std::vector<reco::GsfTrackRef> lowpt_eleTracks{};
    vector<math::XYZTLorentzVector> lowpt_ele_p4s;
+   vector<const pat::Electron*> lowpt_good_eles;
    for (auto & ele : *lowPtElectronHandle_) {
       // Cross-cleaning with regular electrons
       float mindR = 999;
@@ -553,12 +578,13 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          float dR = reco::deltaR(reg_ele,ele);
          if (dR < mindR) mindR = dR;
       }
-      if (mindR < 0.01) continue; // cross clean with 0.01 threshold
-      if (ele.pt() < 1 || ele.electronID("ID") < -0.25) continue; // PAT selection
+      if (mindR < 0.01) continue;
+      if (ele.pt() < 1 || ele.electronID("ID") < -0.25) continue;
       nt.recoLowPtElectronMinDrToReg_.push_back(mindR);
       reco::GsfTrackRef track = ele.gsfTrack();
       lowpt_eleTracks.push_back(track);
       lowpt_ele_p4s.push_back(ele.p4());
+      lowpt_good_eles.push_back(&ele);
       nt.nElectronLowPt_++;
       // Filling basic info, if electron passes cross cleaning
       nt.recoLowPtElectronPt_.push_back(ele.pt());
@@ -608,18 +634,18 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    }
 
    // Define vertex reco function 
-   auto computeVertices = [&](vector<pat::Electron> coll_1, vector<pat::Electron> coll_2, std::string type1, std::string type2) {
+   auto computeVertices = [&](vector<const pat::Electron*> coll_1, vector<const pat::Electron*> coll_2, std::string type1, std::string type2) {
       for (size_t i = 0; i < coll_1.size(); i++) {
          for (size_t j = 0; j < coll_2.size(); j++) {
             if ( (type1==type2) && (j <= i) ) continue; // don't vertex ele with itself or ones prior (if vertexing with same type)
-            pat::Electron ei = coll_1[i];
-            pat::Electron ej = coll_2[j];
+            pat::Electron ei = *coll_1[i];
+            pat::Electron ej = *coll_2[j];
             math::XYZTLorentzVector ll = ei.p4() + ej.p4();
             reco::GsfTrackRef ele_i = ei.gsfTrack();
             reco::GsfTrackRef ele_j = ej.gsfTrack();
             if (ele_i == ele_j) continue; // skip if same ele is in reg and low-pT collections
             if (!ele_i.isNonnull() || !ele_j.isNonnull()) continue; // skip if there's a bad track
-            if (reco::deltaR(*ele_i,*ele_j) < 0.01) continue; // skip if they're likely to be the same electron un-cross-cleaned
+            if (reco::deltaR(ei,ej) < 0.01) continue; // skip if they're likely to be the same electron un-cross-cleaned
 
             TransientVertex tv;
             vector<reco::TransientTrack> transient_tracks{};
@@ -670,11 +696,11 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
 
    // Reconstructing electron vertices
    // regular-regular
-   computeVertices(*recoElectronHandle_, *recoElectronHandle_, "R", "R");
+   computeVertices(reg_good_eles, reg_good_eles, "R", "R");
    // lowpT-lowpT
-   computeVertices(*lowPtElectronHandle_, *lowPtElectronHandle_, "L", "L");
+   computeVertices(lowpt_good_eles, lowpt_good_eles, "L", "L");
    // lowpT-regular
-   computeVertices(*lowPtElectronHandle_, *recoElectronHandle_, "L", "R");
+   computeVertices(lowpt_good_eles, reg_good_eles, "L", "R");
    // count vertices
    nt.nvtx_ = nt.vtx_recoVtxVxy_.size();
 

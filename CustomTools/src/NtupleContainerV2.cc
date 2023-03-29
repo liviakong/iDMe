@@ -42,9 +42,6 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_IDmvaLoose",&recoElectronID_mvaLoose_);
     outT->Branch("Electron_angRes",&recoElectronAngularRes_);
     outT->Branch("Electron_e",&recoElectronE_);
-    outT->Branch("Electron_px",&recoElectronPx_);
-    outT->Branch("Electron_py",&recoElectronPy_);
-    outT->Branch("Electron_pz",&recoElectronPz_);
     outT->Branch("Electron_vxy",&recoElectronVxy_);
     outT->Branch("Electron_vz",&recoElectronVz_);
     outT->Branch("Electron_dxy",&recoElectronDxy_);
@@ -62,6 +59,8 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_PFRelIso3",&recoElectronPFRelIso_dR3_);
     outT->Branch("Electron_PFIso8",&recoElectronPFIso_dR8_);
     outT->Branch("Electron_PFRelIso8",&recoElectronPFRelIso_dR8_);
+    outT->Branch("Electron_PFIso",&recoElectronPFIso_);
+    outT->Branch("Electron_PFRelIso",&recoElectronPFRelIso_);
     outT->Branch("Electron_trkProb",&recoElectronTrkProb_);
     outT->Branch("Electron_numTrackerHits",&recoElectronTrkNumTrackerHits_);
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
@@ -78,9 +77,6 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_ID",&recoLowPtElectronID_);
     outT->Branch("LptElectron_angRes",&recoLowPtElectronAngularRes_);
     outT->Branch("LptElectron_e",&recoLowPtElectronE_);
-    outT->Branch("LptElectron_px",&recoLowPtElectronPx_);
-    outT->Branch("LptElectron_py",&recoLowPtElectronPy_);
-    outT->Branch("LptElectron_pz",&recoLowPtElectronPz_);
     outT->Branch("LptElectron_vxy",&recoLowPtElectronVxy_);
     outT->Branch("LptElectron_vz",&recoLowPtElectronVz_);
     outT->Branch("LptElectron_dxy",&recoLowPtElectronDxy_);
@@ -97,6 +93,8 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_PFIso3",&recoLowPtElectronPFIso_dR3_);
     outT->Branch("LptElectron_PFRelIso3",&recoLowPtElectronPFRelIso_dR3_);
     outT->Branch("LptElectron_PFIso8",&recoLowPtElectronPFIso_dR8_);
+    outT->Branch("LptElectron_PFIso",&recoLowPtElectronPFIso_);
+    outT->Branch("LptElectron_PFRelIso",&recoLowPtElectronPFRelIso_);
     outT->Branch("LptElectron_PFRelIso8",&recoLowPtElectronPFRelIso_dR8_);
     outT->Branch("LptElectron_trkProb",&recoLowPtElectronTrkProb_);
     outT->Branch("LptElectron_numTrackerHits",&recoLowPtElectronTrkNumTrackerHits_);
@@ -145,16 +143,13 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Conversion_trk2_outerPhi",&conversion_Trk2_outerPhi_);
 
     // Jets
-    outT->Branch("nPFJetAll",&PFNJet_);
-    outT->Branch("nPFJetPassID",&PFNPassIDJet_);
-    outT->Branch("nPFJet",&PFNHighPtJet_);
+    outT->Branch("nPFJetAll",&PFNJetAll_);
+    outT->Branch("nPFJet",&PFNJet_);
     outT->Branch("PFJet_pt",&PFJetPt_);
     outT->Branch("PFJet_eta",&PFJetEta_);
     outT->Branch("PFJet_phi",&PFJetPhi_);
-    outT->Branch("PFJet_corrPt",&PFJetCorrectedPt_);
-    outT->Branch("PFJet_corrEta",&PFJetCorrectedEta_);
-    outT->Branch("PFJet_corrPhi",&PFJetCorrectedPhi_);
-    outT->Branch("PFJet_bTag",&PFJetCorrectedBTag_);
+    outT->Branch("PFJet_bTag",&PFJetBTag_);
+    outT->Branch("PFJet_METdPhi",&PFJetMETdPhi_);
     outT->Branch("PFJet_CHEF",&PFJetCorrectedCHEF_);
     outT->Branch("PFJet_NHEF",&PFJetCorrectedNHEF_);
     outT->Branch("PFJet_CEEF",&PFJetCorrectedCEEF_);
@@ -177,16 +172,8 @@ void NtupleContainerV2::CreateTreeBranches() {
 
     // MET
     outT->Branch("PFMET_ET",&PFMET_ET_);
-    outT->Branch("PFMET_px",&PFMET_Px_);
-    outT->Branch("PFMET_py",&PFMET_Py_);
     outT->Branch("PFMET_pt",&PFMET_Pt_);
     outT->Branch("PFMET_phi",&PFMET_Phi_);
-    outT->Branch("PFMET_smearingPt",&PFMETSmearingOnlyPt_);
-    outT->Branch("PFMET_smearingPhi",&PFMETSmearingOnlyPhi_);
-    outT->Branch("PFMET_correctedPt",&PFMETCorrectedPt_);
-    outT->Branch("PFMET_correctedPhi",&PFMETCorrectedPhi_);
-    outT->Branch("PFMET_deltaPx",&PFMETEEDeltaPx_);
-    outT->Branch("PFMET_deltaPy",&PFMETEEDeltaPy_);
     outT->Branch("PFMET_JESUpPt",&PFMETJESUpPt_);
     outT->Branch("PFMET_JESUpPhi",&PFMETJESUpPhi_);
     outT->Branch("PFMET_JESDownPt",&PFMETJESDownPt_);
@@ -195,26 +182,15 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("PFMET_JERUpPhi",&PFMETJERUpPhi_);
     outT->Branch("PFMET_JERDownPt",&PFMETJERDownPt_);
     outT->Branch("PFMET_JERDownPhi",&PFMETJERDownPhi_);
-    outT->Branch("PFMET_muonEtFrac",&PFMETMuonEtFraction_);
+    outT->Branch("PFMET_JetResUpSmearPt",&PFMETJetResUpSmearPt_);
+    outT->Branch("PFMET_JetResUpSmearPhi",&PFMETJetResUpSmearPhi_);
+    outT->Branch("PFMET_JetResDownSmearPt",&PFMETJetResDownSmearPt_);
+    outT->Branch("PFMET_JetResDownSmearPhi",&PFMETJetResDownSmearPhi_);
 
     outT->Branch("CaloMET_ET",&CaloMET_ET_);
-    outT->Branch("CaloMET_px",&CaloMET_Px_);
-    outT->Branch("CaloMET_py",&CaloMET_Py_);
     outT->Branch("CaloMET_pt",&CaloMET_Pt_);
     outT->Branch("CaloMET_phi",&CaloMET_Phi_);
     
-    outT->Branch("PuppiMETPF_ET",&PuppiPFMET_ET_);
-    outT->Branch("PuppiMETPF_px",&PuppiPFMET_Px_);
-    outT->Branch("PuppiMETPF_py",&PuppiPFMET_Py_);
-    outT->Branch("PuppiMETPF_pt",&PuppiPFMET_Pt_);
-    outT->Branch("PuppiMETPF_phi",&PuppiPFMET_Phi_);
-    
-    outT->Branch("PuppiMETCalo_ET",&PuppiCaloMET_ET_);
-    outT->Branch("PuppiMETCalo_px",&PuppiCaloMET_Px_);
-    outT->Branch("PuppiMETCalo_py",&PuppiCaloMET_Py_);
-    outT->Branch("PuppiMETCalo_pt",&PuppiCaloMET_Pt_);
-    outT->Branch("PuppiMETCalo_phi",&PuppiCaloMET_Phi_);
-
     // Pileup density
     outT->Branch("rho",&rho_);
 
@@ -230,6 +206,8 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("vtx_prob", &vtx_prob_);
     outT->Branch("vtx_dR",  &vtx_recoVtxDr_);
     outT->Branch("vtx_sign",&vtx_recoVtxSign_);
+    outT->Branch("vtx_minDxy",&vtx_minDxy_);
+    outT->Branch("vtx_METdPhi",&vtx_METdPhi_);
     outT->Branch("vtx_pt",&vtx_ll_pt_);
     outT->Branch("vtx_eta",&vtx_ll_eta_);
     outT->Branch("vtx_phi",&vtx_ll_phi_);
@@ -259,6 +237,7 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenJet_pt", &genJetPt_);
         outT->Branch("GenJet_eta", &genJetEta_);
         outT->Branch("GenJet_phi", &genJetPhi_);
+        outT->Branch("GenJet_METdPhi",&genJetMETdPhi_);
         outT->Branch("GenMET_pt", &genLeadMETPt_);
         outT->Branch("GenMET_phi", &genLeadMETPhi_);
         outT->Branch("GenMET_px",&genLeadMETPx_);
@@ -292,6 +271,7 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenEle_py",&genElePy_);
         outT->Branch("GenEle_pz",&genElePz_);
         outT->Branch("GenEle_vxy",&genEleVxy_);
+        outT->Branch("GenEle_vxyz",&genEleVxyz_);
         outT->Branch("GenEle_vx",&genEleVz_);
         outT->Branch("GenEle_vy",&genEleVx_);
         outT->Branch("GenEle_vz",&genEleVy_);
@@ -313,6 +293,7 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenPos_py",&genPosPy_);
         outT->Branch("GenPos_pz",&genPosPz_);
         outT->Branch("GenPos_vxy",&genPosVxy_);
+        outT->Branch("GenPos_vxyz",&genPosVxyz_);
         outT->Branch("GenPos_vx",&genPosVz_);
         outT->Branch("GenPos_vy",&genPosVx_);
         outT->Branch("GenPos_vz",&genPosVy_);
@@ -331,6 +312,7 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("genEE_energy",&genEEEn_);
         outT->Branch("genEE_mass",&genEEMass_);
         outT->Branch("genEE_dr",&genEEdR_);
+        outT->Branch("genEE_METdPhi",&genEEMETdPhi_);
     }
 
 }
@@ -373,6 +355,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     genElePy_ = -999;
     genElePz_ = -999;
     genEleVxy_ = -999;
+    genEleVxyz_ = -999;
     genEleVz_ = -999;
     genEleVx_ = -999;
     genEleVy_ = -999;
@@ -394,6 +377,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     genPosPy_ = -999;
     genPosPz_ = -999;
     genPosVxy_ = -999;
+    genPosVxyz_ = -999;
     genPosVz_ = -999;
     genPosVx_ = -999;
     genPosVy_ = -999;
@@ -412,12 +396,14 @@ void NtupleContainerV2::ClearTreeBranches() {
     genEEEn_ = -999;
     genEEMass_ = -999;
     genEEdR_ = -999;
+    genEEMETdPhi_ = -999;
     
     // Gen jet
     nGenJet_ = 0;
     genJetPt_.clear();
     genJetEta_.clear();
     genJetPhi_.clear();
+    genJetMETdPhi_.clear();
 
     //Gen MET
     genLeadMETPt_ = -9999;
@@ -445,9 +431,6 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronID_mvaLoose_.clear();
     recoElectronAngularRes_.clear();
     recoElectronE_.clear();
-    recoElectronPx_.clear();
-    recoElectronPy_.clear();
-    recoElectronPz_.clear();
     recoElectronVxy_.clear();
     recoElectronVz_.clear();
     recoElectronDxy_.clear();
@@ -465,6 +448,8 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronPFRelIso_dR3_.clear();
     recoElectronPFIso_dR8_.clear();
     recoElectronPFRelIso_dR8_.clear();
+    recoElectronPFIso_.clear();
+    recoElectronPFRelIso_.clear();
     recoElectronTrkProb_.clear();
     recoElectronTrkNumTrackerHits_.clear();
     recoElectronTrkNumPixHits_.clear();
@@ -481,9 +466,6 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronID_.clear();
     recoLowPtElectronAngularRes_.clear();
     recoLowPtElectronE_.clear();
-    recoLowPtElectronPx_.clear();
-    recoLowPtElectronPy_.clear();
-    recoLowPtElectronPz_.clear();
     recoLowPtElectronVxy_.clear();
     recoLowPtElectronVz_.clear();
     recoLowPtElectronDxy_.clear();
@@ -501,6 +483,8 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronPFRelIso_dR3_.clear();
     recoLowPtElectronPFIso_dR8_.clear();
     recoLowPtElectronPFRelIso_dR8_.clear();
+    recoLowPtElectronPFIso_.clear();
+    recoLowPtElectronPFRelIso_.clear();
     recoLowPtElectronTrkProb_.clear();
     recoLowPtElectronTrkNumTrackerHits_.clear();
     recoLowPtElectronTrkNumPixHits_.clear();
@@ -554,15 +538,12 @@ void NtupleContainerV2::ClearTreeBranches() {
 
     // Jets
     PFNJet_ = 0;
-    PFNPassIDJet_ = 0;
-    PFNHighPtJet_ = 0;
+    PFNJetAll_ = 0;
     PFJetPt_.clear();
     PFJetEta_.clear();
     PFJetPhi_.clear();
-    PFJetCorrectedPt_.clear();
-    PFJetCorrectedEta_.clear();
-    PFJetCorrectedPhi_.clear();
-    PFJetCorrectedBTag_.clear();
+    PFJetBTag_.clear();
+    PFJetMETdPhi_.clear();
     PFJetCorrectedCHEF_.clear();
     PFJetCorrectedNHEF_.clear();
     PFJetCorrectedCEEF_.clear();
@@ -585,16 +566,8 @@ void NtupleContainerV2::ClearTreeBranches() {
 
     // MET 
     PFMET_ET_ = -999;
-    PFMET_Px_ = -999;
-    PFMET_Py_ = -999;
     PFMET_Pt_ = -999;
     PFMET_Phi_ = -999;
-    PFMETSmearingOnlyPt_ = -9999;
-    PFMETSmearingOnlyPhi_ = -9999;
-    PFMETCorrectedPt_ = -9999;
-    PFMETCorrectedPhi_ = -9999;
-    PFMETEEDeltaPx_ = 0.0;
-    PFMETEEDeltaPy_ = 0.0;
     PFMETJESUpPt_ = -9999;
     PFMETJESUpPhi_ = -9999;
     PFMETJESDownPt_ = -9999;
@@ -603,25 +576,14 @@ void NtupleContainerV2::ClearTreeBranches() {
     PFMETJERUpPhi_ = -9999;
     PFMETJERDownPt_ = -9999;
     PFMETJERDownPhi_ = -9999;
-    PFMETMuonEtFraction_ = -9999;
+    PFMETJetResUpSmearPt_ = -9999;
+    PFMETJetResUpSmearPhi_ = -9999;
+    PFMETJetResDownSmearPt_ = -9999;
+    PFMETJetResDownSmearPhi_ = -9999;
     
     CaloMET_ET_ = -999;
-    CaloMET_Px_ = -999;
-    CaloMET_Py_ = -999;
     CaloMET_Pt_ = -999;
     CaloMET_Phi_ = -999;
-
-    PuppiPFMET_ET_ = -999;
-    PuppiPFMET_Px_ = -999;
-    PuppiPFMET_Py_ = -999;
-    PuppiPFMET_Pt_ = -999;
-    PuppiPFMET_Phi_ = -999;
-    
-    PuppiCaloMET_ET_ = -999;
-    PuppiCaloMET_Px_ = -999;
-    PuppiCaloMET_Py_ = -999;
-    PuppiCaloMET_Pt_ = -999;
-    PuppiCaloMET_Phi_ = -999;
 
     // Pileup density
     rho_ = -9999;
@@ -639,6 +601,8 @@ void NtupleContainerV2::ClearTreeBranches() {
     vtx_prob_.clear();
     vtx_recoVtxDr_.clear();
     vtx_recoVtxSign_.clear();
+    vtx_minDxy_.clear();
+    vtx_METdPhi_.clear();
     vtx_ll_pt_.clear();
     vtx_ll_eta_.clear();
     vtx_ll_phi_.clear();

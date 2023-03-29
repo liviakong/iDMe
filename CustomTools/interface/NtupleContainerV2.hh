@@ -66,6 +66,7 @@ public:
     float genElePy_;
     float genElePz_;
     float genEleVxy_;
+    float genEleVxyz_;
     float genEleVz_;
     float genEleVx_;
     float genEleVy_;
@@ -87,6 +88,7 @@ public:
     float genPosPy_;
     float genPosPz_;
     float genPosVxy_;
+    float genPosVxyz_;
     float genPosVz_;
     float genPosVx_;
     float genPosVy_;
@@ -105,12 +107,14 @@ public:
     float genEEEn_;
     float genEEMass_;
     float genEEdR_;
+    float genEEMETdPhi_;
     
    // Gen jet
     int nGenJet_;
     vector<float> genJetPt_;
     vector<float> genJetEta_;
     vector<float> genJetPhi_;
+    vector<float> genJetMETdPhi_;
     
     // Gen MET
     float genLeadMETPt_;
@@ -140,9 +144,6 @@ public:
     vector<float> recoElectronID_mvaLoose_;
     vector<float> recoElectronAngularRes_;
     vector<float> recoElectronE_;
-    vector<float> recoElectronPx_;
-    vector<float> recoElectronPy_;
-    vector<float> recoElectronPz_;
     vector<float> recoElectronVxy_;
     vector<float> recoElectronVz_;
     vector<float> recoElectronDxy_;
@@ -160,6 +161,8 @@ public:
     vector<float> recoElectronPFRelIso_dR3_;
     vector<float> recoElectronPFIso_dR8_;
     vector<float> recoElectronPFRelIso_dR8_;
+    vector<float> recoElectronPFIso_;
+    vector<float> recoElectronPFRelIso_;
     vector<float> recoElectronTrkProb_;
     vector<int> recoElectronTrkNumTrackerHits_;
     vector<int> recoElectronTrkNumPixHits_;
@@ -176,9 +179,6 @@ public:
     vector<float> recoLowPtElectronID_;
     vector<float> recoLowPtElectronAngularRes_;
     vector<float> recoLowPtElectronE_;
-    vector<float> recoLowPtElectronPx_;
-    vector<float> recoLowPtElectronPy_;
-    vector<float> recoLowPtElectronPz_;
     vector<float> recoLowPtElectronVxy_;
     vector<float> recoLowPtElectronVz_;
     vector<float> recoLowPtElectronDxy_;
@@ -197,6 +197,8 @@ public:
     vector<float> recoLowPtElectronPFIso_dR8_;
     vector<float> recoLowPtElectronPFRelIso_dR8_;
     vector<float> recoLowPtElectronTrkProb_;
+    vector<float> recoLowPtElectronPFIso_;
+    vector<float> recoLowPtElectronPFRelIso_;
     vector<int> recoLowPtElectronTrkNumTrackerHits_;
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;
@@ -244,15 +246,12 @@ public:
 
     // Jets
     int PFNJet_;
-    int PFNPassIDJet_;
-    int PFNHighPtJet_;
+    int PFNJetAll_;
     vector<float> PFJetPt_;
     vector<float> PFJetEta_;
     vector<float> PFJetPhi_;
-    vector<float> PFJetCorrectedPt_;
-    vector<float> PFJetCorrectedEta_;
-    vector<float> PFJetCorrectedPhi_;
-    vector<float> PFJetCorrectedBTag_;
+    vector<float> PFJetBTag_;
+    vector<float> PFJetMETdPhi_;
     vector<float> PFJetCorrectedCHEF_;
     vector<float> PFJetCorrectedNHEF_;
     vector<float> PFJetCorrectedCEEF_;
@@ -275,16 +274,8 @@ public:
 
     // MET
     float PFMET_ET_;
-    float PFMET_Px_;
-    float PFMET_Py_;
     float PFMET_Pt_;
     float PFMET_Phi_;
-    float PFMETSmearingOnlyPt_;
-    float PFMETSmearingOnlyPhi_;
-    float PFMETCorrectedPt_;
-    float PFMETCorrectedPhi_;
-    float PFMETEEDeltaPx_;
-    float PFMETEEDeltaPy_;
     float PFMETJESUpPt_;
     float PFMETJESUpPhi_;
     float PFMETJESDownPt_;
@@ -293,25 +284,14 @@ public:
     float PFMETJERUpPhi_;
     float PFMETJERDownPt_;
     float PFMETJERDownPhi_;
-    float PFMETMuonEtFraction_;
+    float PFMETJetResUpSmearPt_;
+    float PFMETJetResUpSmearPhi_;
+    float PFMETJetResDownSmearPt_;
+    float PFMETJetResDownSmearPhi_;
     
     float CaloMET_ET_;
-    float CaloMET_Px_;
-    float CaloMET_Py_;
     float CaloMET_Pt_;
     float CaloMET_Phi_;
-
-    float PuppiPFMET_ET_;
-    float PuppiPFMET_Px_;
-    float PuppiPFMET_Py_;
-    float PuppiPFMET_Pt_;
-    float PuppiPFMET_Phi_;
-    
-    float PuppiCaloMET_ET_;
-    float PuppiCaloMET_Px_;
-    float PuppiCaloMET_Py_;
-    float PuppiCaloMET_Pt_;
-    float PuppiCaloMET_Phi_;
 
     // Pileup density
     float rho_;
@@ -328,6 +308,8 @@ public:
     vector<float> vtx_prob_;
     vector<float> vtx_recoVtxDr_;
     vector<int> vtx_recoVtxSign_;
+    vector<float> vtx_minDxy_;
+    vector<float> vtx_METdPhi_;
     vector<float> vtx_ll_pt_;
     vector<float> vtx_ll_eta_;
     vector<float> vtx_ll_phi_;

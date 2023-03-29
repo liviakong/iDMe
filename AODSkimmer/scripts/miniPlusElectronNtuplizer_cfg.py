@@ -407,6 +407,9 @@ triggerPaths18 = [
     "HLT_PFMETTypeOne140_PFMHT140_IDTight"
 ]
 
+# Electron effective area input file for PU-corrected PF isolation calculations
+effAreaInputPath = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
+
 ##############################
 ###### Main iDM analyzer #####
 ##############################
@@ -422,7 +425,8 @@ ntupleProcess.ntuples = ElectronSkimmer.clone(
     triggerPaths16 = cms.vstring(triggerPaths16),
     triggerPaths17 = cms.vstring(triggerPaths17),
     triggerPaths18 = cms.vstring(triggerPaths18),
-    allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18)))
+    allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18))),
+    effAreasConfigFile = cms.FileInPath(effAreaInputPath)
 )
 ntupleProcess.totalPath = cms.Path(cms.Sequence(ntupleProcess.ntuples))
 ntupleProcess.schedule = cms.Schedule(ntupleProcess.totalPath)

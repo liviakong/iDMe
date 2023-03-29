@@ -5,13 +5,12 @@
         "dMchi": 36.0,
         "ctau": 1,
         "name": "sig_Mchi-108.0_dMchi-36.0_ct-1",
-        "sum_wgt": 0.0005321335265762173,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.41405544,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-10/",
@@ -19,13 +18,12 @@
         "dMchi": 36.0,
         "ctau": 10,
         "name": "sig_Mchi-108.0_dMchi-36.0_ct-10",
-        "sum_wgt": 0.0005321335265762173,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.04141795,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-100/",
@@ -33,13 +31,12 @@
         "dMchi": 36.0,
         "ctau": 100,
         "name": "sig_Mchi-108.0_dMchi-36.0_ct-100",
-        "sum_wgt": 0.0005321335265762173,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0041341008,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-1000/",
@@ -47,13 +44,12 @@
         "dMchi": 36.0,
         "ctau": 1000,
         "name": "sig_Mchi-108.0_dMchi-36.0_ct-1000",
-        "sum_wgt": 0.0005308973995852284,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.00041342524,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-1/",
@@ -61,13 +57,12 @@
         "dMchi": 1.0,
         "ctau": 1,
         "name": "sig_Mchi-10.5_dMchi-1.0_ct-1",
-        "sum_wgt": 1.5963014377007312e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 41339.815,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-10/",
@@ -75,13 +70,12 @@
         "dMchi": 1.0,
         "ctau": 10,
         "name": "sig_Mchi-10.5_dMchi-1.0_ct-10",
-        "sum_wgt": 1.5963014377007312e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 4828.2734,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-100/",
@@ -89,13 +83,12 @@
         "dMchi": 1.0,
         "ctau": 100,
         "name": "sig_Mchi-10.5_dMchi-1.0_ct-100",
-        "sum_wgt": 1.5963014377007312e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 496.26306999999997,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-1000/",
@@ -103,13 +96,12 @@
         "dMchi": 1.0,
         "ctau": 1000,
         "name": "sig_Mchi-10.5_dMchi-1.0_ct-1000",
-        "sum_wgt": 1.5963014377007312e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 51.061501,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-1/",
@@ -117,13 +109,12 @@
         "dMchi": 2.0,
         "ctau": 1,
         "name": "sig_Mchi-11.0_dMchi-2.0_ct-1",
-        "sum_wgt": 3.966191741255898e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1582.1976490000004,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-10/",
@@ -131,13 +122,12 @@
         "dMchi": 2.0,
         "ctau": 10,
         "name": "sig_Mchi-11.0_dMchi-2.0_ct-10",
-        "sum_wgt": 3.966191741255898e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 157.24653,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-100/",
@@ -145,13 +135,12 @@
         "dMchi": 2.0,
         "ctau": 100,
         "name": "sig_Mchi-11.0_dMchi-2.0_ct-100",
-        "sum_wgt": 3.966191741255898e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 15.921892,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-1000/",
@@ -159,13 +148,12 @@
         "dMchi": 2.0,
         "ctau": 1000,
         "name": "sig_Mchi-11.0_dMchi-2.0_ct-1000",
-        "sum_wgt": 3.966191741255898e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1.5929181000000001,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1/",
@@ -173,13 +161,12 @@
         "dMchi": 40.0,
         "ctau": 1,
         "name": "sig_Mchi-120.0_dMchi-40.0_ct-1",
-        "sum_wgt": 0.0005069646940683015,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.28801560000000004,
-        "nFiles": 6,
-        "blacklist": []
+        "nFiles": 6
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-10/",
@@ -187,13 +174,12 @@
         "dMchi": 40.0,
         "ctau": 10,
         "name": "sig_Mchi-120.0_dMchi-40.0_ct-10",
-        "sum_wgt": 0.0005069646940683015,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.028718848000000005,
-        "nFiles": 6,
-        "blacklist": []
+        "nFiles": 6
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-100/",
@@ -201,15 +187,12 @@
         "dMchi": 40.0,
         "ctau": 100,
         "name": "sig_Mchi-120.0_dMchi-40.0_ct-100",
-        "sum_wgt": 0.0004069460483151488,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0028788045,
-        "nFiles": 5,
-        "blacklist": [
-            "ntuples_Mchi-120p0_dMchi-40p0_ctau-100_04.root"
-        ]
+        "nFiles": 6
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1000/",
@@ -217,13 +200,12 @@
         "dMchi": 40.0,
         "ctau": 1000,
         "name": "sig_Mchi-120.0_dMchi-40.0_ct-1000",
-        "sum_wgt": 0.0005069646940683015,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.00028689574000000003,
-        "nFiles": 6,
-        "blacklist": []
+        "nFiles": 6
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-1/",
@@ -231,15 +213,12 @@
         "dMchi": 2.0,
         "ctau": 1,
         "name": "sig_Mchi-21.0_dMchi-2.0_ct-1",
-        "sum_wgt": 6.221240340664735e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 26801.362999999998,
-        "nFiles": 4,
-        "blacklist": [
-            "ntuples_Mchi-21p0_dMchi-2p0_ctau-1_02.root"
-        ]
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-10/",
@@ -247,13 +226,12 @@
         "dMchi": 2.0,
         "ctau": 10,
         "name": "sig_Mchi-21.0_dMchi-2.0_ct-10",
-        "sum_wgt": 7.774866332965757e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 3123.6904000000004,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-100/",
@@ -261,13 +239,12 @@
         "dMchi": 2.0,
         "ctau": 100,
         "name": "sig_Mchi-21.0_dMchi-2.0_ct-100",
-        "sum_wgt": 7.829903125866622e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 315.24414,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-1000/",
@@ -275,13 +252,12 @@
         "dMchi": 2.0,
         "ctau": 1000,
         "name": "sig_Mchi-21.0_dMchi-2.0_ct-1000",
-        "sum_wgt": 7.829903125866622e-07,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 31.600512,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-1/",
@@ -289,13 +265,12 @@
         "dMchi": 4.0,
         "ctau": 1,
         "name": "sig_Mchi-22.0_dMchi-4.0_ct-1",
-        "sum_wgt": 1.9579968920879764e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 983.3191,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-10/",
@@ -303,13 +278,12 @@
         "dMchi": 4.0,
         "ctau": 10,
         "name": "sig_Mchi-22.0_dMchi-4.0_ct-10",
-        "sum_wgt": 1.9579968920879764e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 99.19946999999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-100/",
@@ -317,13 +291,12 @@
         "dMchi": 4.0,
         "ctau": 100,
         "name": "sig_Mchi-22.0_dMchi-4.0_ct-100",
-        "sum_wgt": 1.9579968920879764e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 9.93328,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-1000/",
@@ -331,13 +304,12 @@
         "dMchi": 4.0,
         "ctau": 1000,
         "name": "sig_Mchi-22.0_dMchi-4.0_ct-1000",
-        "sum_wgt": 1.9579968920879764e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.9923834,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-1/",
@@ -345,13 +317,12 @@
         "dMchi": 3.0,
         "ctau": 1,
         "name": "sig_Mchi-31.5_dMchi-3.0_ct-1",
-        "sum_wgt": 0.0005568713022512384,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 24331.758,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-10/",
@@ -359,13 +330,12 @@
         "dMchi": 3.0,
         "ctau": 10,
         "name": "sig_Mchi-31.5_dMchi-3.0_ct-10",
-        "sum_wgt": 0.0005568713022512384,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 22639.068000000003,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-100/",
@@ -373,13 +343,12 @@
         "dMchi": 3.0,
         "ctau": 100,
         "name": "sig_Mchi-31.5_dMchi-3.0_ct-100",
-        "sum_wgt": 0.0005568713022512384,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 30508.066,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-1000/",
@@ -387,13 +356,12 @@
         "dMchi": 3.0,
         "ctau": 1000,
         "name": "sig_Mchi-31.5_dMchi-3.0_ct-1000",
-        "sum_wgt": 0.0005568713022512384,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 4887.0056,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-1/",
@@ -401,13 +369,12 @@
         "dMchi": 6.0,
         "ctau": 1,
         "name": "sig_Mchi-33.0_dMchi-6.0_ct-1",
-        "sum_wgt": 0.014155845390632749,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 39806.015,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-10/",
@@ -415,13 +382,12 @@
         "dMchi": 6.0,
         "ctau": 10,
         "name": "sig_Mchi-33.0_dMchi-6.0_ct-10",
-        "sum_wgt": 0.014155845390632749,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 13464.889,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-100/",
@@ -429,13 +395,12 @@
         "dMchi": 6.0,
         "ctau": 100,
         "name": "sig_Mchi-33.0_dMchi-6.0_ct-100",
-        "sum_wgt": 0.014155845390632749,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1602.8441000000003,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-1000/",
@@ -443,13 +408,12 @@
         "dMchi": 6.0,
         "ctau": 1000,
         "name": "sig_Mchi-33.0_dMchi-6.0_ct-1000",
-        "sum_wgt": 0.014155845390632749,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 162.79704,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1/",
@@ -457,13 +421,12 @@
         "dMchi": 4.0,
         "ctau": 1,
         "name": "sig_Mchi-42.0_dMchi-4.0_ct-1",
-        "sum_wgt": 2.0990200937376358e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 8857.769,
-        "nFiles": 1,
-        "blacklist": []
+        "nFiles": 1
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-10/",
@@ -471,13 +434,12 @@
         "dMchi": 4.0,
         "ctau": 10,
         "name": "sig_Mchi-42.0_dMchi-4.0_ct-10",
-        "sum_wgt": 2.0990200084725075e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1013.5915,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-100/",
@@ -485,13 +447,12 @@
         "dMchi": 4.0,
         "ctau": 100,
         "name": "sig_Mchi-42.0_dMchi-4.0_ct-100",
-        "sum_wgt": 2.0898871753161075e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 102.97048000000001,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1000/",
@@ -499,13 +460,12 @@
         "dMchi": 4.0,
         "ctau": 1000,
         "name": "sig_Mchi-42.0_dMchi-4.0_ct-1000",
-        "sum_wgt": 2.0990200084725075e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 10.290163999999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-1/",
@@ -513,13 +473,12 @@
         "dMchi": 8.0,
         "ctau": 1,
         "name": "sig_Mchi-44.0_dMchi-8.0_ct-1",
-        "sum_wgt": 5.381249047786696e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 318.66040000000004,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-10/",
@@ -527,13 +486,12 @@
         "dMchi": 8.0,
         "ctau": 10,
         "name": "sig_Mchi-44.0_dMchi-8.0_ct-10",
-        "sum_wgt": 5.381249047786696e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 32.008111,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-100/",
@@ -541,15 +499,12 @@
         "dMchi": 8.0,
         "ctau": 100,
         "name": "sig_Mchi-44.0_dMchi-8.0_ct-100",
-        "sum_wgt": 4.31621683674166e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 3.1877535,
-        "nFiles": 4,
-        "blacklist": [
-            "ntuples_Mchi-44p0_dMchi-8p0_ctau-100_03.root"
-        ]
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-1000/",
@@ -557,13 +512,12 @@
         "dMchi": 8.0,
         "ctau": 1000,
         "name": "sig_Mchi-44.0_dMchi-8.0_ct-1000",
-        "sum_wgt": 5.381249047786696e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.32014475,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1/",
@@ -571,13 +525,12 @@
         "dMchi": 16.0,
         "ctau": 1,
         "name": "sig_Mchi-48.0_dMchi-16.0_ct-1",
-        "sum_wgt": 0.0011240160092711449,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 9.838083120999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-10/",
@@ -585,13 +538,12 @@
         "dMchi": 16.0,
         "ctau": 10,
         "name": "sig_Mchi-48.0_dMchi-16.0_ct-10",
-        "sum_wgt": 0.0011170066427439451,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.9867113892999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-100/",
@@ -599,13 +551,12 @@
         "dMchi": 16.0,
         "ctau": 100,
         "name": "sig_Mchi-48.0_dMchi-16.0_ct-100",
-        "sum_wgt": 0.0011240160092711449,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.09862702603000001,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1000/",
@@ -613,13 +564,12 @@
         "dMchi": 16.0,
         "ctau": 1000,
         "name": "sig_Mchi-48.0_dMchi-16.0_ct-1000",
-        "sum_wgt": 0.0011240160092711449,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.009820188301,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-1/",
@@ -627,13 +577,12 @@
         "dMchi": 5.0,
         "ctau": 1,
         "name": "sig_Mchi-52.5_dMchi-5.0_ct-1",
-        "sum_wgt": 1.290200202674896e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 3020.0491,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-10/",
@@ -641,13 +590,12 @@
         "dMchi": 5.0,
         "ctau": 10,
         "name": "sig_Mchi-52.5_dMchi-5.0_ct-10",
-        "sum_wgt": 1.290200202674896e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 322.45422,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-100/",
@@ -655,13 +603,12 @@
         "dMchi": 5.0,
         "ctau": 100,
         "name": "sig_Mchi-52.5_dMchi-5.0_ct-100",
-        "sum_wgt": 1.281352638216049e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 32.4727489999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-1000/",
@@ -669,13 +616,12 @@
         "dMchi": 5.0,
         "ctau": 1000,
         "name": "sig_Mchi-52.5_dMchi-5.0_ct-1000",
-        "sum_wgt": 1.290200202674896e-06,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 3.2642533,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-1/",
@@ -683,13 +629,12 @@
         "dMchi": 10.0,
         "ctau": 1,
         "name": "sig_Mchi-55.0_dMchi-10.0_ct-1",
-        "sum_wgt": 3.3297109894192545e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 101.38717999999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-10/",
@@ -697,13 +642,12 @@
         "dMchi": 10.0,
         "ctau": 10,
         "name": "sig_Mchi-55.0_dMchi-10.0_ct-10",
-        "sum_wgt": 3.3297109894192545e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 10.183912,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-100/",
@@ -711,13 +655,12 @@
         "dMchi": 10.0,
         "ctau": 100,
         "name": "sig_Mchi-55.0_dMchi-10.0_ct-100",
-        "sum_wgt": 3.3297109894192545e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1.0185793,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-1000/",
@@ -725,13 +668,12 @@
         "dMchi": 10.0,
         "ctau": 1000,
         "name": "sig_Mchi-55.0_dMchi-10.0_ct-1000",
-        "sum_wgt": 3.3297109894192545e-05,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.1019667199999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1/",
@@ -739,13 +681,12 @@
         "dMchi": 20.0,
         "ctau": 1,
         "name": "sig_Mchi-60.0_dMchi-20.0_ct-1",
-        "sum_wgt": 0.0007047611579764634,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 3.1751762999999,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-10/",
@@ -753,13 +694,12 @@
         "dMchi": 20.0,
         "ctau": 10,
         "name": "sig_Mchi-60.0_dMchi-20.0_ct-10",
-        "sum_wgt": 0.0007047611579764634,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.31831869,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-100/",
@@ -767,13 +707,12 @@
         "dMchi": 20.0,
         "ctau": 100,
         "name": "sig_Mchi-60.0_dMchi-20.0_ct-100",
-        "sum_wgt": 0.0007047611579764634,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.031758249,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1000/",
@@ -781,13 +720,12 @@
         "dMchi": 20.0,
         "ctau": 1000,
         "name": "sig_Mchi-60.0_dMchi-20.0_ct-1000",
-        "sum_wgt": 0.0007047611579764634,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0031731877,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1/",
@@ -795,13 +733,12 @@
         "dMchi": 24.0,
         "ctau": 1,
         "name": "sig_Mchi-72.0_dMchi-24.0_ct-1",
-        "sum_wgt": 0.0006281596870394424,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 1.6348764999999998,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-10/",
@@ -809,13 +746,12 @@
         "dMchi": 24.0,
         "ctau": 10,
         "name": "sig_Mchi-72.0_dMchi-24.0_ct-10",
-        "sum_wgt": 0.0006281596870394424,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.16337808,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-100/",
@@ -823,13 +759,12 @@
         "dMchi": 24.0,
         "ctau": 100,
         "name": "sig_Mchi-72.0_dMchi-24.0_ct-100",
-        "sum_wgt": 0.0006281596870394424,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.016269323,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1000/",
@@ -837,13 +772,12 @@
         "dMchi": 24.0,
         "ctau": 1000,
         "name": "sig_Mchi-72.0_dMchi-24.0_ct-1000",
-        "sum_wgt": 0.0006281596870394424,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0016364637000000001,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1/",
@@ -851,13 +785,12 @@
         "dMchi": 28.0,
         "ctau": 1,
         "name": "sig_Mchi-84.0_dMchi-28.0_ct-1",
-        "sum_wgt": 0.0005898291274206713,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.9689577,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-10/",
@@ -865,13 +798,12 @@
         "dMchi": 28.0,
         "ctau": 10,
         "name": "sig_Mchi-84.0_dMchi-28.0_ct-10",
-        "sum_wgt": 0.0005898291274206713,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.096834237,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-100/",
@@ -879,13 +811,12 @@
         "dMchi": 28.0,
         "ctau": 100,
         "name": "sig_Mchi-84.0_dMchi-28.0_ct-100",
-        "sum_wgt": 0.0005898291274206713,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.009730915,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1000/",
@@ -893,13 +824,12 @@
         "dMchi": 28.0,
         "ctau": 1000,
         "name": "sig_Mchi-84.0_dMchi-28.0_ct-1000",
-        "sum_wgt": 0.0005844593542860821,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0009687369300000001,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1/",
@@ -907,13 +837,12 @@
         "dMchi": 32.0,
         "ctau": 1,
         "name": "sig_Mchi-96.0_dMchi-32.0_ct-1",
-        "sum_wgt": 0.0005595928741968237,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.62135983,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-10/",
@@ -921,13 +850,12 @@
         "dMchi": 32.0,
         "ctau": 10,
         "name": "sig_Mchi-96.0_dMchi-32.0_ct-10",
-        "sum_wgt": 0.0005595928741968237,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.061738811,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-100/",
@@ -935,13 +863,12 @@
         "dMchi": 32.0,
         "ctau": 100,
         "name": "sig_Mchi-96.0_dMchi-32.0_ct-100",
-        "sum_wgt": 0.0005595928741968237,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.0061902326,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1000/",
@@ -949,12 +876,11 @@
         "dMchi": 32.0,
         "ctau": 1000,
         "name": "sig_Mchi-96.0_dMchi-32.0_ct-1000",
-        "sum_wgt": 0.0005595928741968237,
+        "sum_wgt": 0.0,
         "type": "signal",
         "year": 2018,
         "alphaD": "aEM",
         "xsec": 0.00061898353,
-        "nFiles": 5,
-        "blacklist": []
+        "nFiles": 5
     }
 ]

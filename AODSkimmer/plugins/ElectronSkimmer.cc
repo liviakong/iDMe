@@ -83,6 +83,8 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
+#include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+
 #include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
 #include "iDMeAnalysis/CustomTools/interface/JetCorrections.hh"
 #include "iDMeAnalysis/CustomTools/interface/NtupleContainerV2.hh"
@@ -125,6 +127,8 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       std::vector<std::string> trigPaths17_;
       std::vector<std::string> trigPaths18_;
       std::vector<std::string> allTrigPaths_;
+      // Electron isolation effective areas
+      EffectiveAreas effectiveAreas_;
 
       // Tokens 
       const edm::EDGetTokenT<vector<pat::Electron> > recoElectronToken_;
@@ -203,6 +207,7 @@ ElectronSkimmer::ElectronSkimmer(const edm::ParameterSet& ps)
    trigPaths17_(ps.getParameter<std::vector<std::string> >("triggerPaths17")),
    trigPaths18_(ps.getParameter<std::vector<std::string> >("triggerPaths18")),
    allTrigPaths_(ps.getParameter<std::vector<std::string> >("allTriggerPaths")),
+   effectiveAreas_((ps.getParameter<edm::FileInPath>("effAreasConfigFile")).fullPath()),
    recoElectronToken_(consumes<vector<pat::Electron> >(ps.getParameter<edm::InputTag>("recoElectron"))),
    lowPtElectronToken_(consumes<vector<pat::Electron> >(ps.getParameter<edm::InputTag>("lowPtElectron"))),
    packedPFCandToken_(consumes<vector<pat::PackedCandidate> >(ps.getParameter<edm::InputTag>("pfCands"))),
@@ -386,13 +391,14 @@ ElectronSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
    desc.add<std::vector<std::string> >("triggerPaths17",{});
    desc.add<std::vector<std::string> >("triggerPaths18",{});
    desc.add<std::vector<std::string> >("allTriggerPaths",{});
+   desc.add<edm::FileInPath>("effAreasConfigFile");
    desc.add<edm::InputTag>("recoElectron",edm::InputTag("slimmedElectrons"));
    desc.add<edm::InputTag>("lowPtElectron",edm::InputTag("slimmedLowPtElectrons"));
    desc.add<edm::InputTag>("pfCands",edm::InputTag("packedPFCandidates"));
    desc.add<edm::InputTag>("jets",edm::InputTag("slimmedJets"));
    desc.add<edm::InputTag>("genEvt", edm::InputTag("generator"));
    desc.add<edm::InputTag>("pileups", edm::InputTag("slimmedAddPileupInfo"));
-   desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoAll"));
+   desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoFastJetAll"));
    desc.add<edm::InputTag>("genParticle",edm::InputTag("prunedGenParticles"));
    desc.add<edm::InputTag>("genJet",edm::InputTag("slimmedGenJets"));
    desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
@@ -512,6 +518,48 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          nt.fired18_ |= (0 <<i);
       }
    }
+
+   // Handling MET //
+   if (METHandle_->size() > 0) {
+      auto met = (*METHandle_).at(0);
+      // Current recommendation from JetMET is Type 1 : https://twiki.cern.ch/twiki/bin/view/CMS/MissingET#Recommendations_and_important_li
+      auto metType = pat::MET::Type1;
+      // PF MET
+      nt.PFMET_Pt_ = met.corPt(metType);
+      nt.PFMET_Phi_ = met.corPhi(metType);
+      nt.PFMET_ET_ = met.corSumEt(metType);
+      nt.PFMETJESUpPt_ = met.shiftedPt(pat::MET::JetEnUp,metType);
+      nt.PFMETJESUpPhi_ = met.shiftedPhi(pat::MET::JetEnUp,metType);
+      nt.PFMETJESDownPt_ = met.shiftedPt(pat::MET::JetEnDown,metType);
+      nt.PFMETJESDownPhi_ = met.shiftedPhi(pat::MET::JetEnDown,metType);
+      nt.PFMETJERUpPt_ = met.shiftedPt(pat::MET::JetResUp,metType);
+      nt.PFMETJERUpPhi_ = met.shiftedPhi(pat::MET::JetResUp,metType);
+      nt.PFMETJERDownPt_ = met.shiftedPt(pat::MET::JetResDown,metType);
+      nt.PFMETJERDownPhi_ = met.shiftedPhi(pat::MET::JetResDown,metType);
+      // Calo MET
+      nt.CaloMET_Pt_ = met.caloMETPt();
+      nt.CaloMET_Phi_ = met.caloMETPhi();
+      nt.CaloMET_ET_ = met.caloMETSumEt();
+   }
+
+   // Handling Jets
+   for (auto & jet : *recoJetHandle_) {
+      nt.PFNJetAll_++;
+      if (helper.JetID(jet,year) && jet.pt() > 30) {
+         nt.PFNJet_++;
+         nt.PFJetPt_.push_back(jet.pt());
+         nt.PFJetEta_.push_back(jet.eta());
+         nt.PFJetPhi_.push_back(jet.phi());
+         auto bTag = jet.bDiscriminator("pfDeepFlavourJetTags:probb") + 
+                     jet.bDiscriminator("pfDeepFlavourJetTags:probbb") + 
+                     jet.bDiscriminator("pfDeepFlavourJetTags:problepb");
+         nt.PFJetBTag_.push_back(bTag);
+         nt.PFJetMETdPhi_.push_back(reco::deltaPhi(jet.phi(),nt.PFMET_Phi_));
+         if ((jet.pt() > 30) && (jet.eta() > -3.0) && (jet.eta() < -1.4) && (jet.phi() > -1.57) && (jet.phi() < -0.87)) {
+            nt.PFHEMFlag_ = true;
+         }
+      }
+   }
    
    ////////////////////////////////
    // Handling default electrons // 
@@ -543,9 +591,6 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoElectronID_mvaLoose_.push_back(ele.electronID("mvaEleID-Fall17-noIso-V2-wpLoose"));
       nt.recoElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
       nt.recoElectronE_.push_back(ele.energy());
-      nt.recoElectronPx_.push_back(ele.px());
-      nt.recoElectronPy_.push_back(ele.py());
-      nt.recoElectronPz_.push_back(ele.pz());
       nt.recoElectronVxy_.push_back(ele.trackPositionAtVtx().rho());
       nt.recoElectronVz_.push_back(ele.trackPositionAtVtx().z());
       nt.recoElectronTrkIso_.push_back(ele.trackIso());
@@ -553,6 +598,13 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoElectronCaloIso_.push_back(ele.caloIso());
       nt.recoElectronCaloRelIso_.push_back(ele.caloIso()/ele.pt());
       nt.recoElectronCharge_.push_back(ele.charge());
+      // Calculating "official" dR03 PF Isolation based on https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleRelPFIsoScaledCut.cc#L62
+      auto pfIso = ele.pfIsolationVariables();
+      const float rho = rhoHandle_.isValid() ? (float)(*rhoHandle_) : 0.0;
+      const float eA = effectiveAreas_.getEffectiveArea(std::abs(ele.superCluster()->eta()));
+      float iso = pfIso.sumChargedHadronPt + std::max(0.0f,pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt  - rho*eA);
+      nt.recoElectronPFIso_.push_back(iso);
+      nt.recoElectronPFRelIso_.push_back(iso/ele.pt());
       // Filling track info
       nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoElectronDxyError_.push_back(track->dxyError());
@@ -595,9 +647,6 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoLowPtElectronID_.push_back(ele.electronID("ID"));
       nt.recoLowPtElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
       nt.recoLowPtElectronE_.push_back(ele.energy());
-      nt.recoLowPtElectronPx_.push_back(ele.px());
-      nt.recoLowPtElectronPy_.push_back(ele.py());
-      nt.recoLowPtElectronPz_.push_back(ele.pz());
       nt.recoLowPtElectronVxy_.push_back(ele.trackPositionAtVtx().rho());
       nt.recoLowPtElectronVz_.push_back(ele.trackPositionAtVtx().z());
       nt.recoLowPtElectronTrkIso_.push_back(ele.trackIso());
@@ -605,6 +654,13 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoLowPtElectronCaloIso_.push_back(ele.caloIso());
       nt.recoLowPtElectronCaloRelIso_.push_back(ele.caloIso()/ele.pt());
       nt.recoLowPtElectronCharge_.push_back(ele.charge());
+      // Calculating "official" dR03 PF Isolation based on https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/RecoEgamma/ElectronIdentification/plugins/cuts/GsfEleRelPFIsoScaledCut.cc#L62
+      auto pfIso = ele.pfIsolationVariables();
+      const float rho = rhoHandle_.isValid() ? (float)(*rhoHandle_) : 0.0;
+      const float eA = effectiveAreas_.getEffectiveArea(std::abs(ele.superCluster()->eta()));
+      float iso = pfIso.sumChargedHadronPt + std::max(0.0f,pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt  - rho*eA);
+      nt.recoLowPtElectronPFIso_.push_back(iso);
+      nt.recoLowPtElectronPFRelIso_.push_back(iso/ele.pt());
       // Filling tracks
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
@@ -666,6 +722,9 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             float vtx_prob = TMath::Prob(vertex.chi2(),(int)vertex.ndof());
             float dr = reco::deltaR(ei,ej);
             std::string vtxType = type1+type2;
+            float dxy1 = (type1 == "R") ? nt.recoElectronDxy_[i] : nt.recoLowPtElectronDxy_[i];
+            float dxy2 = (type2 == "R") ? nt.recoElectronDxy_[j] : nt.recoLowPtElectronDxy_[j];
+            float mindxy = std::min(dxy1,dxy2);
 
             nt.vtx_type_.push_back(vtxType);
             nt.vtx_recoVtxReducedChi2_.push_back(vtx_chi2);
@@ -677,6 +736,8 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             nt.vtx_recoVtxVz_.push_back(vz);
             nt.vtx_recoVtxDr_.push_back(dr);
             nt.vtx_recoVtxSign_.push_back(ei.charge()*ej.charge());
+            nt.vtx_minDxy_.push_back(mindxy);
+            nt.vtx_METdPhi_.push_back(reco::deltaPhi(ll.phi(),nt.PFMET_Phi_));
             nt.vtx_ll_pt_.push_back(ll.pt());
             nt.vtx_ll_eta_.push_back(ll.eta());
             nt.vtx_ll_phi_.push_back(ll.phi());
@@ -685,7 +746,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             nt.vtx_ll_px_.push_back(ll.px());
             nt.vtx_ll_py_.push_back(ll.py());
             nt.vtx_ll_pz_.push_back(ll.pz());
-
+            
             nt.vtx_e1_type_.push_back(type1);
             nt.vtx_e1_idx_.push_back(i);
             nt.vtx_e2_type_.push_back(type2);
@@ -708,38 +769,6 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    IsolationCalculator isoCalc(recoElectronHandle_,lowPtElectronHandle_,packedPFCandHandle_,nt);
    isoCalc.calcIso();
 
-   // Handling Jets
-   for (auto & jet : *recoJetHandle_) {
-      if (helper.JetID(jet,year) && jet.pt() > 30) {
-         nt.PFNHighPtJet_++;
-         nt.PFJetPt_.push_back(jet.pt());
-         nt.PFJetEta_.push_back(jet.eta());
-         nt.PFJetPhi_.push_back(jet.phi());
-         nt.PFJetCorrectedPt_.push_back(jet.pt());
-         nt.PFJetCorrectedEta_.push_back(jet.eta());
-         nt.PFJetCorrectedPhi_.push_back(jet.phi());
-         auto bTag = jet.bDiscriminator("pfDeepFlavourJetTags:probb") + 
-                     jet.bDiscriminator("pfDeepFlavourJetTags:probbb") + 
-                     jet.bDiscriminator("pfDeepFlavourJetTags:problepb");
-         nt.PFJetCorrectedBTag_.push_back(bTag);
-         if ((jet.pt() > 30) && (jet.eta() > -3.0) && (jet.eta() < -1.4) && (jet.phi() > -1.57) && (jet.phi() < -0.87)) {
-            nt.PFHEMFlag_ = true;
-         }
-      }
-   }
-
-   // Handling MET //
-   if (METHandle_->size() > 0) {
-      auto pfmet = (*METHandle_).at(0);
-      // Current recommendation from JetMET is Type 1 : https://twiki.cern.ch/twiki/bin/view/CMS/MissingET#Recommendations_and_important_li
-      auto metType = pat::MET::Type1;
-      nt.PFMET_ET_ = pfmet.corSumEt(metType);
-      nt.PFMET_Px_ = pfmet.corPx(metType);
-      nt.PFMET_Py_ = pfmet.corPy(metType);
-      nt.PFMET_Pt_ = pfmet.corPt(metType);
-      nt.PFMET_Phi_ = pfmet.corPhi(metType);
-   }
-
    // extra info from MC
    if (!isData) {
       // Gen weight
@@ -754,14 +783,6 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          }
       }
 
-      // Gen Jets
-      nt.nGenJet_ = (int)genJetHandle_->size();
-      for (const auto & jet : *genJetHandle_) {
-         nt.genJetPt_.push_back(jet.pt());
-         nt.genJetEta_.push_back(jet.eta());
-         nt.genJetPhi_.push_back(jet.phi());
-      }
-
       // Lead gen MET
       if (genMETHandle_->size() > 0) {
          auto met = (*genMETHandle_).at(0);
@@ -770,6 +791,15 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          nt.genLeadMETET_ = met.sumEt();
          nt.genLeadMETPx_ = met.px();
          nt.genLeadMETPy_ = met.py();
+      }
+
+      // Gen Jets
+      nt.nGenJet_ = (int)genJetHandle_->size();
+      for (const auto & jet : *genJetHandle_) {
+         nt.genJetPt_.push_back(jet.pt());
+         nt.genJetEta_.push_back(jet.eta());
+         nt.genJetPhi_.push_back(jet.phi());
+         nt.genJetMETdPhi_.push_back(reco::deltaPhi(jet.phi(),nt.genLeadMETPhi_));
       }
    }
 
@@ -811,6 +841,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
                nt.genEleVy_ = genParticle.vy();
                nt.genEleVz_ = genParticle.vz();
                nt.genEleVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
+               nt.genEleVxyz_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy() + genParticle.vz()*genParticle.vz());
             }
             else {
                gen_pos_p4 = genParticle.p4();
@@ -827,6 +858,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
                nt.genPosVy_ = genParticle.vy();
                nt.genPosVz_ = genParticle.vz();
                nt.genPosVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
+               nt.genPosVxyz_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy() + genParticle.vz()*genParticle.vz());
             }
          }
       }
@@ -939,6 +971,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.genEEEn_ = gen_ll.energy();
       nt.genEEMass_ = gen_ll.mass();
       nt.genEEdR_ = reco::deltaR(gen_ele_p4,gen_pos_p4);
+      nt.genEEMETdPhi_ = reco::deltaPhi(gen_ll.phi(),nt.genLeadMETPhi_);
    }
 
    outT->Fill();

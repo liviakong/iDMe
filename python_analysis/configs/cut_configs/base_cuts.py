@@ -18,8 +18,11 @@ def cut2(events,info):
     name = "cut2"
     desc = "HEM Veto"
     plots = False
-    cut = (info['year'] == 2018) & (~events.HEM.flag)
-    return events[cut], name, desc, plots
+    if info["year"] == 2018:
+        cut = ~events.HEM.flag
+        return events[cut], name, desc, plots
+    else:
+        return events, name, desc, plots
 
 def cut3(events,info):
     name = "cut3"
@@ -44,7 +47,7 @@ def cut5(events,info):
     name = "cut5"
     desc = "0 < nJets < 3 (pT > 30 GeV)"
     plots = True
-    nJets = ak.count(events.PFJet.corrPt,axis=1)
+    nJets = ak.count(events.PFJet.pt,axis=1)
     cut = (nJets > 0) & (nJets < 3)
     return events[cut], name, desc, plots
 
@@ -85,28 +88,28 @@ def cut7(events,info):
     name = "cut7"
     desc = "Leading jet |eta| < 2.4"
     plots = True
-    cut = np.abs(events.PFJet.corrEta[:,0]) < 2.4
+    cut = np.abs(events.PFJet.eta[:,0]) < 2.4
     return events[cut], name, desc, plots
 
 def cut8(events,info):
     name = "cut8"
     desc = "Leading jet pT > 80 GeV"
     plots = True
-    cut = events.PFJet.corrPt[:,0] > 80
+    cut = events.PFJet.pt[:,0] > 80
     return events[cut], name, desc, plots
 
 def cut9(events,info):
     name = "cut9"
     desc = "dPhi(MET,leading jet) > 1.5"
     plots = True
-    cut = events.JetMETdPhi[:,0] > 1.5
+    cut = events.PFJet.METdPhi[:,0] > 1.5
     return events[cut], name, desc, plots
 
 def cut10(events,info):
     name = "cut10"
     desc = "dPhi(MET,all jets) > 0.75"
     plots = True
-    cut = ak.all(events.JetMETdPhi > 0.75,axis=1)
+    cut = ak.all(events.PFJet.METdPhi > 0.75,axis=1)
     return events[cut], name, desc, plots
     
 def cut11(events,info):

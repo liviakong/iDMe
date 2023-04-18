@@ -1,0 +1,66 @@
+[
+    {
+        "name": "0002",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002/"
+        ],
+        "sum_wgt": 1063708.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 1007,
+        "blacklist": []
+    },
+    {
+        "name": "0000",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000/"
+        ],
+        "sum_wgt": 13358760.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 2695,
+        "blacklist": []
+    },
+    {
+        "name": "0004",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0004/"
+        ],
+        "sum_wgt": 189052.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 795,
+        "blacklist": [
+            "DYJetsToLL_1-4130.root",
+            "DYJetsToLL_1-4129.root",
+            "DYJetsToLL_1-4120.root"
+        ]
+    },
+    {
+        "name": "0001",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001/"
+        ],
+        "sum_wgt": 2242547.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 1879,
+        "blacklist": []
+    },
+    {
+        "name": "0003",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0003/"
+        ],
+        "sum_wgt": 326742.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 1000,
+        "blacklist": []
+    }
+]

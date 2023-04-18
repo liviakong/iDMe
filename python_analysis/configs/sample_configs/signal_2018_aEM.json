@@ -11,7 +11,8 @@
         "alphaD": "aEM",
         "xsec": 0.41405544,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25681
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-10/",
@@ -25,7 +26,8 @@
         "alphaD": "aEM",
         "xsec": 0.04141795,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25681
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-100/",
@@ -39,7 +41,8 @@
         "alphaD": "aEM",
         "xsec": 0.0041341008,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25681
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-108p0_dMchi-36p0/ctau-1000/",
@@ -53,7 +56,8 @@
         "alphaD": "aEM",
         "xsec": 0.00041342524,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25621
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-1/",
@@ -67,7 +71,8 @@
         "alphaD": "aEM",
         "xsec": 41339.815,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32992
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-10/",
@@ -81,7 +86,8 @@
         "alphaD": "aEM",
         "xsec": 4828.2734,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32992
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-100/",
@@ -95,7 +101,8 @@
         "alphaD": "aEM",
         "xsec": 496.26306999999997,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32992
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-10p5_dMchi-1p0/ctau-1000/",
@@ -109,7 +116,8 @@
         "alphaD": "aEM",
         "xsec": 51.061501,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32992
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-1/",
@@ -123,7 +131,8 @@
         "alphaD": "aEM",
         "xsec": 1582.1976490000004,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 29795
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-10/",
@@ -137,7 +146,8 @@
         "alphaD": "aEM",
         "xsec": 157.24653,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 29795
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-100/",
@@ -151,7 +161,8 @@
         "alphaD": "aEM",
         "xsec": 15.921892,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 29795
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-11p0_dMchi-2p0/ctau-1000/",
@@ -165,7 +176,8 @@
         "alphaD": "aEM",
         "xsec": 1.5929181000000001,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 29795
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1/",
@@ -179,7 +191,8 @@
         "alphaD": "aEM",
         "xsec": 0.28801560000000004,
         "nFiles": 6,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25469
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-10/",
@@ -193,7 +206,8 @@
         "alphaD": "aEM",
         "xsec": 0.028718848000000005,
         "nFiles": 6,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25469
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-100/",
@@ -207,7 +221,8 @@
         "alphaD": "aEM",
         "xsec": 0.0028788045,
         "nFiles": 6,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25469
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-120p0_dMchi-40p0/ctau-1000/",
@@ -221,7 +236,8 @@
         "alphaD": "aEM",
         "xsec": 0.00028689574000000003,
         "nFiles": 6,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25469
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-1/",
@@ -235,7 +251,8 @@
         "alphaD": "aEM",
         "xsec": 26801.362999999998,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32994
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-10/",
@@ -249,7 +266,8 @@
         "alphaD": "aEM",
         "xsec": 3123.6904000000004,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32945
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-100/",
@@ -263,7 +281,8 @@
         "alphaD": "aEM",
         "xsec": 315.24414,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33180
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-21p0_dMchi-2p0/ctau-1000/",
@@ -277,7 +296,8 @@
         "alphaD": "aEM",
         "xsec": 31.600512,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33180
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-1/",
@@ -291,7 +311,8 @@
         "alphaD": "aEM",
         "xsec": 983.3191,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30186
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-10/",
@@ -305,7 +326,8 @@
         "alphaD": "aEM",
         "xsec": 99.19946999999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30186
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-100/",
@@ -319,7 +341,8 @@
         "alphaD": "aEM",
         "xsec": 9.93328,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30186
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-22p0_dMchi-4p0/ctau-1000/",
@@ -333,7 +356,8 @@
         "alphaD": "aEM",
         "xsec": 0.9923834,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30186
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-1/",
@@ -347,7 +371,8 @@
         "alphaD": "aEM",
         "xsec": 24331.758,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33290
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-10/",
@@ -361,7 +386,8 @@
         "alphaD": "aEM",
         "xsec": 22639.068000000003,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33290
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-100/",
@@ -375,7 +401,8 @@
         "alphaD": "aEM",
         "xsec": 30508.066,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33290
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-31p5_dMchi-3p0/ctau-1000/",
@@ -389,7 +416,8 @@
         "alphaD": "aEM",
         "xsec": 4887.0056,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 33290
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-1/",
@@ -403,7 +431,8 @@
         "alphaD": "aEM",
         "xsec": 39806.015,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30782
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-10/",
@@ -417,7 +446,8 @@
         "alphaD": "aEM",
         "xsec": 13464.889,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30782
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-100/",
@@ -431,7 +461,8 @@
         "alphaD": "aEM",
         "xsec": 1602.8441000000003,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30782
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-33p0_dMchi-6p0/ctau-1000/",
@@ -445,7 +476,8 @@
         "alphaD": "aEM",
         "xsec": 162.79704,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30782
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1/",
@@ -459,7 +491,8 @@
         "alphaD": "aEM",
         "xsec": 8857.769,
         "nFiles": 1,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32884
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-10/",
@@ -473,7 +506,8 @@
         "alphaD": "aEM",
         "xsec": 1013.5915,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32884
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-100/",
@@ -487,7 +521,8 @@
         "alphaD": "aEM",
         "xsec": 102.97048000000001,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32740
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-42p0_dMchi-4p0/ctau-1000/",
@@ -501,7 +536,8 @@
         "alphaD": "aEM",
         "xsec": 10.290163999999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32884
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-1/",
@@ -515,7 +551,8 @@
         "alphaD": "aEM",
         "xsec": 318.66040000000004,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30702
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-10/",
@@ -529,7 +566,8 @@
         "alphaD": "aEM",
         "xsec": 32.008111,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30702
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-100/",
@@ -543,7 +581,8 @@
         "alphaD": "aEM",
         "xsec": 3.1877535,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30702
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-44p0_dMchi-8p0/ctau-1000/",
@@ -557,7 +596,8 @@
         "alphaD": "aEM",
         "xsec": 0.32014475,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30702
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1/",
@@ -571,7 +611,8 @@
         "alphaD": "aEM",
         "xsec": 9.838083120999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26749
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-10/",
@@ -585,7 +626,8 @@
         "alphaD": "aEM",
         "xsec": 0.9867113892999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26582
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-100/",
@@ -599,7 +641,8 @@
         "alphaD": "aEM",
         "xsec": 0.09862702603000001,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26749
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-48p0_dMchi-16p0/ctau-1000/",
@@ -613,7 +656,8 @@
         "alphaD": "aEM",
         "xsec": 0.009820188301,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26749
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-1/",
@@ -627,7 +671,8 @@
         "alphaD": "aEM",
         "xsec": 3020.0491,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32015
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-10/",
@@ -641,7 +686,8 @@
         "alphaD": "aEM",
         "xsec": 322.45422,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32015
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-100/",
@@ -655,7 +701,8 @@
         "alphaD": "aEM",
         "xsec": 32.4727489999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 31800
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-52p5_dMchi-5p0/ctau-1000/",
@@ -669,7 +716,8 @@
         "alphaD": "aEM",
         "xsec": 3.2642533,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 32015
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-1/",
@@ -683,7 +731,8 @@
         "alphaD": "aEM",
         "xsec": 101.38717999999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30032
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-10/",
@@ -699,7 +748,8 @@
         "nFiles": 4,
         "blacklist": [
             "ntuples_Mchi-55p0_dMchi-10p0_ctau-10_04.root"
-        ]
+        ],
+        "num_events": 24068
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-100/",
@@ -713,7 +763,8 @@
         "alphaD": "aEM",
         "xsec": 1.0185793,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30032
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-55p0_dMchi-10p0/ctau-1000/",
@@ -727,7 +778,8 @@
         "alphaD": "aEM",
         "xsec": 0.1019667199999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 30032
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1/",
@@ -741,7 +793,8 @@
         "alphaD": "aEM",
         "xsec": 3.1751762999999,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26571
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-10/",
@@ -755,7 +808,8 @@
         "alphaD": "aEM",
         "xsec": 0.31831869,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26571
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-100/",
@@ -769,7 +823,8 @@
         "alphaD": "aEM",
         "xsec": 0.031758249,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26571
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-60p0_dMchi-20p0/ctau-1000/",
@@ -783,7 +838,8 @@
         "alphaD": "aEM",
         "xsec": 0.0031731877,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26571
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1/",
@@ -797,7 +853,8 @@
         "alphaD": "aEM",
         "xsec": 1.6348764999999998,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26449
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-10/",
@@ -811,7 +868,8 @@
         "alphaD": "aEM",
         "xsec": 0.16337808,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26449
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-100/",
@@ -825,7 +883,8 @@
         "alphaD": "aEM",
         "xsec": 0.016269323,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26449
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-72p0_dMchi-24p0/ctau-1000/",
@@ -841,7 +900,8 @@
         "nFiles": 4,
         "blacklist": [
             "ntuples_Mchi-72p0_dMchi-24p0_ctau-1000_01.root"
-        ]
+        ],
+        "num_events": 21197
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1/",
@@ -855,7 +915,8 @@
         "alphaD": "aEM",
         "xsec": 0.9689577,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26205
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-10/",
@@ -869,7 +930,8 @@
         "alphaD": "aEM",
         "xsec": 0.096834237,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26205
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-100/",
@@ -883,7 +945,8 @@
         "alphaD": "aEM",
         "xsec": 0.009730915,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 26205
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-84p0_dMchi-28p0/ctau-1000/",
@@ -897,7 +960,8 @@
         "alphaD": "aEM",
         "xsec": 0.0009687369300000001,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25967
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1/",
@@ -911,7 +975,8 @@
         "alphaD": "aEM",
         "xsec": 0.62135983,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25917
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-10/",
@@ -927,7 +992,8 @@
         "nFiles": 4,
         "blacklist": [
             "ntuples_Mchi-96p0_dMchi-32p0_ctau-10_04.root"
-        ]
+        ],
+        "num_events": 20761
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-100/",
@@ -941,7 +1007,8 @@
         "alphaD": "aEM",
         "xsec": 0.0061902326,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25917
     },
     {
         "location": "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/2018/Mchi-96p0_dMchi-32p0/ctau-1000/",
@@ -955,6 +1022,7 @@
         "alphaD": "aEM",
         "xsec": 0.00061898353,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25917
     }
 ]

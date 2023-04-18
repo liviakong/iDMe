@@ -11,6 +11,7 @@
         "alphaD": "aEM",
         "xsec": 0.41405544,
         "nFiles": 5,
-        "blacklist": []
+        "blacklist": [],
+        "num_events": 25681
     }
 ]

@@ -110,6 +110,5 @@ else:
             submit_cmd = f"condor_submit condor_analysis.jdl -append \"Arguments = {jobname_base} {jobname} {mode} {n_cores}\" -append \"transfer_input_files = {tgz}\" -append \"Output = submissions/{jobname_base}/{jobname}/Logs/stdout.out\" -append \"Error = submissions/{jobname_base}/{jobname}/Logs/stderr.err\" -append \"Log = submissions/{jobname_base}/{jobname}/Logs/log.log\" -append \"request_cpus = {n_cores}\""
             
             subprocess.run(submit_cmd,shell=True)
-            #print(submit_cmd)
             
             job_idx += 1

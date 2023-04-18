@@ -1,0 +1,113 @@
+[
+    {
+        "name": "TTJets",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/TTJets/TTJets_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_TTJets_2023_03_29-11_48/230329_164917/0000/"
+        ],
+        "sum_wgt": 10117074.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 471700.0,
+        "nFiles": 837,
+        "blacklist": [
+            "TTJets_39.root",
+            "TTJets_310.root",
+            "TTJets_65.root",
+            "TTJets_309.root",
+            "TTJets_31.root",
+            "TTJets_7.root",
+            "TTJets_316.root",
+            "TTJets_311.root",
+            "TTJets_4.root"
+        ]
+    },
+    {
+        "name": "ST_tw_antitop",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_tw_antitop/ST_tW_antitop_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_tw_antitop_2023_03_29-11_48/230329_164848/0000/"
+        ],
+        "sum_wgt": 250471822.875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 32510.0,
+        "nFiles": 481,
+        "blacklist": [
+            "ST_tw_antitop_288.root",
+            "ST_tw_antitop_283.root",
+            "ST_tw_antitop_3-23.root"
+        ]
+    },
+    {
+        "name": "ST_tW_top",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_tW_top/ST_tW_top_5f_inclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_tW_top_2023_03_29-11_49/230329_165000/0000/"
+        ],
+        "sum_wgt": 257975164.75,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 32450.0,
+        "nFiles": 465,
+        "blacklist": [
+            "ST_tW_top_1-10.root",
+            "ST_tW_top_1-1.root",
+            "ST_tW_top_1-11.root",
+            "ST_tW_top_1-12.root"
+        ]
+    },
+    {
+        "name": "ST_t-channel_top",
+        "location": [
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0000/",
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0001/",
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0002/",
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0003/",
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0004/",
+            "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/2018/Top/ST_t-channel_top/ST_t-channel_top_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_top_2023_03_29-11_46/230329_164652/0005/"
+        ],
+        "sum_wgt": 23245076685.367188,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 119700.0,
+        "nFiles": 11519,
+        "blacklist": []
+    },
+    {
+        "name": "ST_t-channel_antitop",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_t-channel_antitop/ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_antitop_2023_03_29-11_47/230329_164805/0000/",
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_t-channel_antitop/ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_antitop_2023_03_29-11_47/230329_164805/0003/",
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_t-channel_antitop/ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_antitop_2023_03_29-11_47/230329_164805/0001/",
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_t-channel_antitop/ST_t-channel_antitop_5f_InclusiveDecays_TuneCP5_13TeV-powheg-pythia8/crab_iDMe_ST_t-channel_antitop_2023_03_29-11_47/230329_164805/0002/"
+        ],
+        "sum_wgt": 7139226270.65625,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 71750.0,
+        "nFiles": 4623,
+        "blacklist": [
+            "ST_t-channel_antitop_995.root",
+            "ST_t-channel_antitop_993.root",
+            "ST_t-channel_antitop_2594.root",
+            "ST_t-channel_antitop_994.root",
+            "ST_t-channel_antitop_996.root"
+        ]
+    },
+    {
+        "name": "ST_s-channel",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/ST_s-channel/ST_s-channel_4f_leptonDecays_TuneCP5_13TeV-amcatnlo-pythia8/crab_iDMe_ST_s-channel_2023_03_29-11_45/230329_164623/0000/"
+        ],
+        "sum_wgt": 71108799.48828125,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 3549.0,
+        "nFiles": 725,
+        "blacklist": [
+            "ST_s-channel_274.root",
+            "ST_s-channel_210.root",
+            "ST_s-channel_364.root",
+            "ST_s-channel_63.root",
+            "ST_s-channel_376.root"
+        ]
+    }
+]

@@ -4,7 +4,7 @@ import sys
 if __name__ == "__main__":
     if len(sys.argv) < 6:
         print("ERROR! Need 5 arguments")
-        print("Usage: python3 submitCondor.py path_to_gridpack lifetime year nEvents nThreads")
+        print("Usage: python3 submitCondor.py path_to_gridpack lifetime year nEvents nThreads [nev_per_job]")
         sys.exit()
     
     gridpack = sys.argv[1]
@@ -37,7 +37,11 @@ if __name__ == "__main__":
         os.system("rm -rf {0}".format(logDir))
     os.mkdir(logDir)
 
-    nev_per_job = 1000
+    if len(sys.argv) == 7:
+        nev_per_job = int(sys.argv[6])
+    else:
+        nev_per_job = 1000
+    print(f"{nev_per_job} events per job")
     nJobs = nevents // nev_per_job
     if nevents < nev_per_job:
         nJobs = 1

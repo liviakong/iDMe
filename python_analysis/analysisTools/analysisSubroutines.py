@@ -30,16 +30,41 @@ def selectGoodElesAndVertices(events):
 
     all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
     n_reg = ak.count(eles.pt,axis=1)
-    isLow1 = ak.values_astype(vtx.e1_typ=="L","int")
-    isLow2 = ak.values_astype(vtx.e2_typ=="L","int")
+    # shitty fix for weird bug when there's just 1 event with 1 vertex (happens with slimmed QCD files)
+    if len(events) == 1 and len(vtx.pt) == 1:
+        events["vtx","e1"] = events.LptElectron[vtx.e1_idx] if vtx.e1_typ[0][0]=="L" else events.Electron[vtx.e1_idx]
+        events["vtx","e2"] = events.LptElectron[vtx.e2_idx] if vtx.e2_typ[0][0]=="L" else events.Electron[vtx.e2_idx]
+    else:
+        isLow1 = ak.values_astype(vtx.e1_typ=="L","int")
+        isLow2 = ak.values_astype(vtx.e2_typ=="L","int")
     
-    vtx_e1_flatIdx = vtx.e1_idx + isLow1*n_reg
-    vtx_e2_flatIdx = vtx.e2_idx + isLow2*n_reg
+        vtx_e1_flatIdx = vtx.e1_idx + isLow1*n_reg
+        vtx_e2_flatIdx = vtx.e2_idx + isLow2*n_reg
 
-    events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
-    events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
+        events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
+        events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
 
     events.__setitem__("good_vtx",events.vtx[events.vtx.e1.passCut & events.vtx.e2.passCut])
+
+def selectExistingGoodVtx(events):
+    all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
+    n_reg = ak.count(events.Electron.pt,axis=1)
+    vtx = events.vtx
+    # shitty fix for weird bug when there's just 1 event with 1 vertex
+    if len(events) == 1 and len(vtx.pt) == 1:
+        events["vtx","e1"] = events.LptElectron[vtx.e1_idx] if vtx.e1_typ[0][0]=="L" else events.Electron[vtx.e1_idx]
+        events["vtx","e2"] = events.LptElectron[vtx.e2_idx] if vtx.e2_typ[0][0]=="L" else events.Electron[vtx.e2_idx]
+    else:
+        isLow1 = ak.values_astype(vtx.e1_typ=="L","int")
+        isLow2 = ak.values_astype(vtx.e2_typ=="L","int")
+    
+        vtx_e1_flatIdx = events.vtx.e1_idx + isLow1*n_reg
+        vtx_e2_flatIdx = events.vtx.e2_idx + isLow2*n_reg
+
+        events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
+        events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
+
+    events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
 
 def selectBestVertex(events):
     sel_vtx = ak.flatten(events.good_vtx[ak.argmin(events.good_vtx.reduced_chi2,axis=1,keepdims=True)])

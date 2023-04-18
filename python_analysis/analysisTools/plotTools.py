@@ -10,14 +10,15 @@ import sys
 def makeNMinus1(h1,h2,lessThan=False):
     assert len(h1.axes)==1 and h1.axes == h2.axes
     ax = h1.axes[0]
-    hout = hist.Hist(ax)
     if lessThan:
-        s1 = np.cumsum(h1.counts(flow=True))[:-1]
-        s2 = np.cumsum(h2.counts(flow=True))[:-1]
+        s1 = np.cumsum(h1.counts(flow=True))
+        s2 = np.cumsum(h2.counts(flow=True))
     else:
-        s1 = np.cumsum(h1.counts(flow=True)[::-1])[::-1][:-1]
-        s2 = np.cumsum(h2.counts(flow=True)[::-1])[::-1][:-1]
+        s1 = np.cumsum(h1.counts(flow=True)[::-1])[::-1]
+        s2 = np.cumsum(h2.counts(flow=True)[::-1])[::-1]
     x = ax.edges
+    dx = x[1]-x[0]
+    x = np.append(x,[x[-1]+dx])
     signif = np.where(s2>0,s1/np.sqrt(s2),-1)
     signif[(signif==-1) & (s1>0)] = np.inf
     signif[(signif==-1) & (s1==0)] = 0
@@ -25,12 +26,13 @@ def makeNMinus1(h1,h2,lessThan=False):
 
 def makeCutEff(h,lessThan=False):
     ax = h.axes[0]
-    hout = hist.Hist(ax)
     if lessThan:
-        s = np.cumsum(h.counts(flow=True))[:-1]
+        s = np.cumsum(h.counts(flow=True))
     else:
-        s = np.cumsum(h.counts(flow=True)[::-1])[::-1][:-1]
+        s = np.cumsum(h.counts(flow=True)[::-1])[::-1]
     x = ax.edges
+    dx = x[1]-x[0]
+    x = np.append(x,[x[-1]+dx])
     eff = s/np.sum(h.counts(flow=True))
     return x, eff, s
     

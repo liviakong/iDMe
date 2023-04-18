@@ -1,0 +1,96 @@
+[
+    {
+        "name": "ZJetsNuNu_HT400to600",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT400to600/ZJetsToNuNu_HT-400To600_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT400to600_2023_03_29-10_32/230329_153325/0000/"
+        ],
+        "sum_wgt": 20755648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 9961.0,
+        "nFiles": 868,
+        "blacklist": [
+            "ZJetsNuNu_HT400to600_293.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT800to1200",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT800to1200/ZJetsToNuNu_HT-800To1200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT800to1200_2023_03_29-10_29/230329_152959/0000/"
+        ],
+        "sum_wgt": 2144959.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1076.0,
+        "nFiles": 113,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT2500toInf",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT2500toInf/ZJetsToNuNu_HT-2500ToInf_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT2500toInf_2023_03_29-10_30/230329_153107/0000/"
+        ],
+        "sum_wgt": 268224.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5.609,
+        "nFiles": 14,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT200to400",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT200to400/ZJetsToNuNu_HT-200To400_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT200to400_2023_03_29-10_32/230329_153244/0000/"
+        ],
+        "sum_wgt": 23543145.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 72690.0,
+        "nFiles": 1195,
+        "blacklist": [
+            "ZJetsNuNu_HT200to400_766.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT100to200",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT100to200/ZJetsToNuNu_HT-100To200_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT100to200_2023_03_29-10_31/230329_153135/0000/"
+        ],
+        "sum_wgt": 29066202.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 271300.0,
+        "nFiles": 1122,
+        "blacklist": [
+            "ZJetsNuNu_HT100to200_391.root",
+            "ZJetsNuNu_HT100to200_310.root",
+            "ZJetsNuNu_HT100to200_617.root",
+            "ZJetsNuNu_HT100to200_399.root",
+            "ZJetsNuNu_HT100to200_679.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT600to800",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT600to800/ZJetsToNuNu_HT-600To800_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT600to800_2023_03_29-10_31/230329_153216/0000/"
+        ],
+        "sum_wgt": 5964799.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 2425.0,
+        "nFiles": 196,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT1200to2500",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/ZJets/ZJetsNuNu_HT1200to2500/ZJetsToNuNu_HT-1200To2500_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_ZJetsNuNu_HT1200to2500_2023_03_29-10_29/230329_153027/0000/"
+        ],
+        "sum_wgt": 381695.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 247.4,
+        "nFiles": 15,
+        "blacklist": []
+    }
+]

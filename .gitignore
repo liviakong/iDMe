@@ -1,10 +1,12 @@
 *.root
 **/.ipynb_checkpoints/
 *.coffea
-__pycache__/
+**/__pycache__/
 .vscode/
-*.log
-*.out
-*.err
-*.pdf
+**/*.log
+**/*.out
+**/*.err
+**/*.png
+**/*.pdf
+**/*.tar.gz
 MCSampleProduction/

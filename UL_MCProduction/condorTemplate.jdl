@@ -5,6 +5,6 @@ when_to_transfer_output = ON_EXIT
 transfer_output_files = ""
 input = /dev/null
 rank = Mips
-request_memory = 6000
+request_memory = 8000
 +AcctGroup = "analysis"
 +ProjectName = "DarkMatterSimulation"

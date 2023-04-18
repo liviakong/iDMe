@@ -1,0 +1,38 @@
+[
+    {
+        "name": "WW",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Diboson/WW/WW_TuneCP5_13TeV-pythia8/crab_iDMe_WW_2023_03_29-10_36/230329_153717/0000/"
+        ],
+        "sum_wgt": 15673122.73046875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 76250.0,
+        "nFiles": 649,
+        "blacklist": []
+    },
+    {
+        "name": "ZZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Diboson/ZZ/ZZ_TuneCP5_13TeV-pythia8/crab_iDMe_ZZ_2023_03_29-10_37/230329_153830/0000/"
+        ],
+        "sum_wgt": 3694000.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 12230.0,
+        "nFiles": 186,
+        "blacklist": []
+    },
+    {
+        "name": "WZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Diboson/WZ/WZ_TuneCP5_13TeV-pythia8/crab_iDMe_WZ_2023_03_29-10_37/230329_153746/0000/"
+        ],
+        "sum_wgt": 7619000.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 27550.0,
+        "nFiles": 436,
+        "blacklist": []
+    }
+]

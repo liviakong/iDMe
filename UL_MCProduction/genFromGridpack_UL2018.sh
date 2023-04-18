@@ -186,21 +186,21 @@ cmsDriver.py step1 \
 cmsRun -p ${genfragment}
 
 # Doing MINIAOD Step
-echo "########################################################################################"
-echo "########################################################################################"
-echo "6.) MINIAOD Step"
-genfragment=${namebase}_MINIAOD_cfg_ctau-${ctau}.py
-cmsDriver.py step1 \
-    --filein file:${namebase}_AOD_ctau-${ctau}.root \
-    --fileout file:${namebase}_MINIAOD_ctau-${ctau}.root \
-    --mc --eventcontent MINIAODSIM --datatier MINIAODSIM \
-    --step PAT --geometry DB:Extended \
-    --conditions 106X_upgrade2018_realistic_v16_L1v1 \
-    --era Run2_2018 --nThreads $nthreads \
-    --procModifiers run2_miniAOD_UL \
-    --python_filename ${genfragment} --no_exec --runUnscheduled -n ${nevent} || exit $?;
+#echo "########################################################################################"
+#echo "########################################################################################"
+#echo "6.) MINIAOD Step"
+#genfragment=${namebase}_MINIAOD_cfg_ctau-${ctau}.py
+#cmsDriver.py step1 \
+#    --filein file:${namebase}_AOD_ctau-${ctau}.root \
+#    --fileout file:${namebase}_MINIAOD_ctau-${ctau}.root \
+#    --mc --eventcontent MINIAODSIM --datatier MINIAODSIM \
+#    --step PAT --geometry DB:Extended \
+#    --conditions 106X_upgrade2018_realistic_v16_L1v1 \
+#    --era Run2_2018 --nThreads $nthreads \
+#    --procModifiers run2_miniAOD_UL \
+#    --python_filename ${genfragment} --no_exec --runUnscheduled -n ${nevent} || exit $?;
 
-cmsRun -p ${genfragment}
+#cmsRun -p ${genfragment}
 
 # Doing MINIAOD Step with run2_miniAOD_devel modifier to (maybe) get the energy-regressed low-pT electrons
 #echo "########################################################################################"
@@ -225,7 +225,7 @@ echo $cmd && eval $cmd
 remoteDIR="/store/group/lpcmetx/iDMe//Samples/signal/2018"
 xrdcp -vf ${namebase}_HLT_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/DIGIRAWHLT/${namebase}_HLT_ctau-${ctau}.root
 xrdcp -vf ${namebase}_AOD_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/AOD/${namebase}_AOD_ctau-${ctau}.root
-xrdcp -vf ${namebase}_MINIAOD_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD/${namebase}_MINIAOD_ctau-${ctau}.root
+#xrdcp -vf ${namebase}_MINIAOD_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD/${namebase}_MINIAOD_ctau-${ctau}.root
 #xrdcp -vf ${namebase}_MINIAOD_devel_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD_devel/${namebase}_MINIAOD_devel_ctau-${ctau}.root
 
 echo "DONE."

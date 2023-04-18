@@ -1,0 +1,50 @@
+[
+    {
+        "name": "WWW",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Triboson/WWW/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/crab_iDMe_WWW_2023_03_29-10_34/230329_153457/0000/"
+        ],
+        "sum_wgt": 51638.25830078125,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 215.8,
+        "nFiles": 10,
+        "blacklist": []
+    },
+    {
+        "name": "ZZZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Triboson/ZZZ/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/crab_iDMe_ZZZ_2023_03_29-10_35/230329_153606/0000/"
+        ],
+        "sum_wgt": 3452.6484146118164,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 14.76,
+        "nFiles": 21,
+        "blacklist": []
+    },
+    {
+        "name": "WWZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Triboson/WWZ/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/crab_iDMe_WWZ_2023_03_29-10_36/230329_153634/0000/"
+        ],
+        "sum_wgt": 42310.52294921875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 170.7,
+        "nFiles": 7,
+        "blacklist": []
+    },
+    {
+        "name": "WZZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Triboson/WZZ/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/crab_iDMe_WZZ_2023_03_29-10_34/230329_153525/0000/"
+        ],
+        "sum_wgt": 17121.263244628906,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 57.09,
+        "nFiles": 14,
+        "blacklist": []
+    }
+]

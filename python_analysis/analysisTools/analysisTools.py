@@ -102,9 +102,12 @@ class Analyzer:
             self.sample_names.append(name)
             loaded += 1
 
-    def process(self,treename='ntuples/outT',execr="iterative",workers=4):
+    def process(self,treename='ntuples/outT',execr="iterative",workers=4,lite=False):
         fileset = self.sample_locs
-        proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
+        if lite:
+            proc = iDMeProcessorLite(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
+        else:
+            proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
         if execr == "iterative":
             executor = processor.IterativeExecutor()
         elif execr == "futures":
@@ -152,6 +155,7 @@ class iDMeProcessor(processor.ProcessorABC):
         histos['cutDesc'] = defaultdict(str)
         cutflow = defaultdict(float)
         cutflow_counts = defaultdict(float)
+        cutflow_nevts = defaultdict(int)
         info = self.sampleInfo[samp]
         sum_wgt = info["sum_wgt"]
         lumi, unc = getLumi(info['year'])
@@ -162,6 +166,7 @@ class iDMeProcessor(processor.ProcessorABC):
 
         # Initial number of events
         cutflow['initial'] += np.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['initial'] += len(events)
         histos['cutDesc']['initial'] = 'No cuts'
 
         # Preselection
@@ -189,6 +194,7 @@ class iDMeProcessor(processor.ProcessorABC):
         for cut in self.cuts:
             events, cutName, cutDesc, savePlots = cut(events,info)
             cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
+            cutflow_nevts[cutName] += len(events)
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms
@@ -199,6 +205,7 @@ class iDMeProcessor(processor.ProcessorABC):
             cutflow_counts[k] = xsec*lumi*cutflow[k]
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}
+        histos['cutflow_nevts'] = {samp:cutflow_nevts}
 
         return histos
 
@@ -208,29 +215,159 @@ class iDMeProcessor(processor.ProcessorABC):
             accumulator['cutDesc'][cutName] = accumulator['cutDesc'][cutName].split("@")[0]
         return accumulator
 
-class fileAnalyzer(Analyzer):
-    def __init__(self,fileList,sample,histoList,routines=[]):
-        # load in configs
-        if ".root" in fileList:
-            self.fileList = [fileList]
-        elif type(fileList) == list:
-            self.fileList = fileList
-        elif ".txt" in fileList:
-            with open(fileList) as f:
-                self.fileList = f.read().splitlines()
-        
-        with open(histoList) as f:
-            self.histoList = json.load(f)
-        self.routines = routines
+class iDMeProcessorLite(iDMeProcessor):
+    def process(self,events):
+        samp = events.metadata["dataset"]
+        histos = self.histoMod.make_histograms()
+        histos['cutDesc'] = defaultdict(str)
+        cutflow = defaultdict(float)
+        cutflow_counts = defaultdict(float)
+        cutflow_nevts = defaultdict(int)
+        info = self.sampleInfo[samp]
+        sum_wgt = info["sum_wgt"]
+        lumi, unc = getLumi(info['year'])
+        xsec = info['xsec']
 
-        self.sample_names = [sample] # list of sample names, readable names are generated from data in the fileList json
-        self.sample_locs = {sample : self.fileList} # dictionary mapping sample name to file/directory location
-        self.sample_info = {} # dictionary with sample metadata
-        self.histos = {}
-        self.histoData = {}
-        self.nEvents = {}
-        self.nEventsProcessed = {}
-        self.totalEvents = 0
+        # register event weight branch
+        events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
+
+        # Initial number of events
+        cutflow['initial'] += np.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['initial'] += len(events)
+        histos['cutDesc']['initial'] = 'No cuts'
+
+        # Preselection
+        routines.selectExistingGoodVtx(events)
+        routines.selectBestVertex(events)
+        # computing some signal-only diagnostic quantities
+        if info['type'] == "signal":
+            e1_match = routines.matchedVertexElectron(events,1)
+            e2_match = routines.matchedVertexElectron(events,2)
+            events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
+
+        # pre-computing quantities for histograms, as specified in the histo config
+        for subroutine in self.subroutines:
+            getattr(routines,subroutine)(events)
+        
+        ###############################
+        ######## CUTS & HISTOS ########
+        ###############################
+        for cut in self.cuts:
+            events, cutName, cutDesc, savePlots = cut(events,info)
+            cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
+            cutflow_nevts[cutName] += len(events)
+            histos['cutDesc'][cutName] += cutDesc + "@"
+
+            # Fill histograms
+            if savePlots:
+                self.histoFill(events,histos,samp,cutName,info,sum_wgt=sum_wgt)
+        
+        for k in cutflow.keys():
+            cutflow_counts[k] = xsec*lumi*cutflow[k]
+        histos['cutflow'] = {samp:cutflow}
+        histos['cutflow_cts'] = {samp:cutflow_counts}
+        histos['cutflow_nevts'] = {samp:cutflow_nevts}
+
+        return histos
+
+class fileSkimmer:
+    def __init__(self,sampFile,sampleInfo,cutFile,mode='signal'):
+        self.sampleInfo = sampleInfo
+        self.sampFile = sampFile
+        fname = sampFile.split("/")[-1]
+        self.outFileName = fname.replace(".root","_skimmed.root")
+        self.mode = mode
+        
+        # load in cuts module
+        self.cutFile = cutFile
+        if "/" in self.cutFile: # if cut file is in a different directory
+            sys.path.append("/".join(self.cutFile.split("/")[:-1]))
+            cutFileName = self.cutFile.split("/")[-1].split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
+        else: # cut file is in the same directory (e.g. running on condor)
+            cutFileName = self.cutFile.split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
+    
+    def skim(self):
+        with uproot.open(self.sampFile) as input_file:
+            events = NanoEventsFactory.from_root(input_file,treepath="ntuples/outT",schemaclass=MySchema).events()
+            info = self.sampleInfo
+            sum_wgt = info["sum_wgt"]
+            lumi, unc = getLumi(info['year'])
+            xsec = self.sampleInfo['xsec']
+
+            # register event weight branch
+            events.__setitem__("eventWgt",xsec*lumi*events.genWgt/sum_wgt)
+            # Preselection
+            routines.selectGoodElesAndVertices(events)
+            events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
+            events = events[events.nGoodVtx > 0]
+            
+            # pre-computing quantities for cuts
+            routines.selectBestVertex(events)
+            # computing some signal-only diagnostic quantities
+            if info['type'] == "signal":
+                e1_match = routines.matchedVertexElectron(events,1)
+                e2_match = routines.matchedVertexElectron(events,2)
+                events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
+            else:
+                events["sel_vtx","match"] = ak.zeros_like(events.sel_vtx.pt,dtype=np.int32)
+
+            ###############################
+            ######## CUTS & HISTOS ########
+            ###############################
+            for cut in self.cuts:
+                events, cutName, cutDesc, savePlots = cut(events,info)
+            
+            if len(events.genWgt) == 0:
+                pass
+            else:
+                output_tree = {}
+                vtx_vars = [f for f in events.sel_vtx.fields if f!="e1" and f!="e2"]
+                for v in vtx_vars:
+                    if v == "e1_typ" or v == "e2_typ":
+                        output_tree[f"sel_vtx_{v}"] = ak.Array(ak.where(events.sel_vtx[v]=="R",1,2).to_list())
+                    elif v == "typ":
+                        output_tree[f"sel_vtx_{v}"] = ak.Array(ak.where(events.sel_vtx[v]=="RR",1,ak.where(events.sel_vtx[v]=="LR",2,3)).to_list())
+                    else:
+                        output_tree[f"sel_vtx_{v}"] = ak.Array(events.sel_vtx[v].to_list())
+                ele_fields = events.sel_vtx.e1.fields
+                for ef in ele_fields:
+                    output_tree[f"sel_e1_{ef}"] = ak.Array(events.sel_vtx.e1[ef].to_list())
+                    output_tree[f"sel_e2_{ef}"] = ak.Array(events.sel_vtx.e2[ef].to_list())
+                output_tree['genWgt'] = ak.Array(events.genWgt.to_list())
+                output_tree['eventWgt'] = ak.Array(events.eventWgt.to_list())
+                additional_fields = {
+                                        'CaloMET':['ET','pt','phi'],
+                                        'Photon':['et','eta','phi'],
+                                        'PFMET':['ET','pt','phi'],
+                                        'PFJet':['pt','eta','phi','bTag','METdPhi'],
+                                        'Electron':["*"],
+                                        'LptElectron':["*"],
+                                        'vtx':["*"]
+                                    }
+                for af in additional_fields.keys():
+                    subfields = additional_fields[af]
+                    if subfields == ["*"]:
+                        subfields = events[af].fields
+                    allvars = {}
+                    for subf in subfields:
+                        if af == "vtx" and ("e1" in subf or "e2" in subf):
+                            continue
+                        if af == "vtx" and subf=="typ":
+                            allvars[subf] = ak.Array(ak.where(events[af][subf]=="RR",1,ak.where(events[af][subf]=="LR",2,3)).to_list())
+                        else:
+                            allvars[subf] = ak.Array(events[af][subf].to_list())
+                    output_tree[af] = ak.zip(allvars)
+                with uproot.recreate(self.outFileName) as outfile:
+                    outfile['outT'] = output_tree
+
         
 def deltaPhi(v1,v2):
     # copy of the ROOT RVec DeltaPhi function

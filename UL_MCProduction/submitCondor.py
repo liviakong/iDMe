@@ -13,6 +13,9 @@ if __name__ == "__main__":
     nevents = int(sys.argv[4])
     nThreads = int(sys.argv[5])
 
+    hbar_c = 0.1973269804e-12 # in GeV * mm
+    lifetime_width = hbar_c/lifetime
+
     procName = gridpack.split("/")[-1].split(".")[0]
     gridpackFileName = gridpack.split("/")[-1]
     baseDir = "submissions/"+procName
@@ -48,7 +51,7 @@ if __name__ == "__main__":
         nev_per_job = nevents
     
     condor_cmd = "condor_submit condorTemplate.jdl" 
-    condor_cmd += " -append \"Arguments = {0} {1} {2} {3} {4}\"".format(gridpackFileName,lifetime,year,nev_per_job,nThreads)
+    condor_cmd += " -append \"Arguments = {0} {1:.9e} {2} {3} {4}\"".format(gridpackFileName,lifetime_width,year,nev_per_job,nThreads)
     condor_cmd += " -append \"transfer_input_files = {0}/submit.tar.gz\"".format(baseDir)
     condor_cmd += " -append \"request_cpus = {0}\"".format(nThreads)
     condor_cmd += " -append \"output = {0}/\$(Cluster)_\$(Process).out\"".format(logDir)
@@ -57,5 +60,5 @@ if __name__ == "__main__":
     condor_cmd += " -append \"Queue {0}\"".format(nJobs)
 
     print(condor_cmd)
-    os.system(condor_cmd)
+    #os.system(condor_cmd)
 

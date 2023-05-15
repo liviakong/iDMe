@@ -51,7 +51,7 @@ if __name__ == "__main__":
         nev_per_job = nevents
     
     condor_cmd = "condor_submit condorTemplate.jdl" 
-    condor_cmd += " -append \"Arguments = {0} {1:.9e} {2} {3} {4}\"".format(gridpackFileName,lifetime_width,year,nev_per_job,nThreads)
+    condor_cmd += " -append \"Arguments = {0} {1:.9e} {2} {3} {4} {5}\"".format(gridpackFileName,lifetime_width,lifetime,year,nev_per_job,nThreads)
     condor_cmd += " -append \"transfer_input_files = {0}/submit.tar.gz\"".format(baseDir)
     condor_cmd += " -append \"request_cpus = {0}\"".format(nThreads)
     condor_cmd += " -append \"output = {0}/\$(Cluster)_\$(Process).out\"".format(logDir)

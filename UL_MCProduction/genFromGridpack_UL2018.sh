@@ -12,6 +12,7 @@ GP_f=$1
 nevent=$2
 ctau=$3
 nthreads=$4
+year=2018
 
 if [ "$#" -ne 4 ]; then
     echo "Wrong number of arguments!"
@@ -78,7 +79,7 @@ echo "1.) GEN Step"
 genfragment=${namebase}_GEN_cfg_ctau-${ctau}.py
 cmsDriver.py Configuration/GenProduction/python/${HADRONIZER} \
     --filein file:${LHEDIR}/${namebase}.lhe \
-    --fileout file:${namebase}_GEN_ctau-${ctau}.root \
+    --fileout file:${namebase}_GEN_ctau-${ctau}_year-${year}.root \
     --mc --eventcontent RAWSIM --datatier GEN \
     --step GEN --geometry DB:Extended \
     --conditions 106X_upgrade2018_realistic_v4 --beamspot Realistic25ns13TeVEarly2018Collision \
@@ -107,8 +108,8 @@ echo "##########################################################################
 echo "2.) SIM Step"
 genfragment=${namebase}_SIM_cfg_ctau-${ctau}.py
 cmsDriver.py step1 \
-    --filein file:${namebase}_GEN_ctau-${ctau}.root \
-    --fileout file:${namebase}_SIM_ctau-${ctau}.root \
+    --filein file:${namebase}_GEN_ctau-${ctau}_year-${year}.root \
+    --fileout file:${namebase}_SIM_ctau-${ctau}_year-${year}.root \
     --mc --eventcontent RAWSIM --datatier GEN-SIM \
     --step SIM --geometry DB:Extended \
     --conditions 106X_upgrade2018_realistic_v11_L1v1 --beamspot Realistic25ns13TeVEarly2018Collision \
@@ -124,14 +125,14 @@ echo "##########################################################################
 echo "3.) DIGIPremix Step"
 genfragment=${namebase}_DIGIPremix_cfg_ctau-${ctau}.py
 cp $BASEDIR/template_DIGIPremix_cfg_UL2018.py ./${genfragment}
-sed -i -e "s/PLACEHOLDER_IN.root/${namebase}_SIM_ctau-${ctau}.root/g" ${genfragment}
-sed -i -e "s/PLACEHOLDER_OUT.root/${namebase}_DIGIPremix_ctau-${ctau}.root/g" ${genfragment}
+sed -i -e "s/PLACEHOLDER_IN.root/${namebase}_SIM_ctau-${ctau}_year-${year}.root/g" ${genfragment}
+sed -i -e "s/PLACEHOLDER_OUT.root/${namebase}_DIGIPremix_ctau-${ctau}_year-${year}.root/g" ${genfragment}
 sed -i -e "s/NEVT/${nevent}/g" ${genfragment}
 sed -i -e "s/NTHREAD/${nthreads}/g" ${genfragment}
 
 #cmsDriver.py step1 \
-#    --filein file:${namebase}_SIM_ctau-${ctau}.root \
-#    --fileout file:${namebase}_DIGIPremix_ctau-${ctau}.root \
+#    --filein file:${namebase}_SIM_ctau-${ctau}_year-${year}.root \
+#    --fileout file:${namebase}_DIGIPremix_ctau-${ctau}_year-${year}.root \
 #    --mc --eventcontent PREMIXRAW --datatier GEN-SIM-DIGI \
 #    --step DIGI,DATAMIX,L1,DIGI2RAW --procModifiers premix_stage2 --datamix PreMix \
 #    --geometry DB:Extended \
@@ -152,8 +153,8 @@ echo "##########################################################################
 echo "4.) HLT Step"
 genfragment=${namebase}_HLT_cfg_ctau-${ctau}.py
 cmsDriver.py step1 \
-    --filein file:${BASEDIR}/CMSSW_10_6_28/src/${namebase}_DIGIPremix_ctau-${ctau}.root \
-    --fileout file:${namebase}_HLT_ctau-${ctau}.root \
+    --filein file:${BASEDIR}/CMSSW_10_6_28/src/${namebase}_DIGIPremix_ctau-${ctau}_year-${year}.root \
+    --fileout file:${namebase}_HLT_ctau-${ctau}_year-${year}.root \
     --mc --eventcontent RAWSIM --datatier GEN-SIM-RAW \
     --step HLT:2018v32 --geometry DB:Extended \
     --conditions 102X_upgrade2018_realistic_v15 \
@@ -163,7 +164,7 @@ cmsDriver.py step1 \
     --python_filename ${genfragment} --no_exec -n ${nevent} || exit $?;
 
 cmsRun -p ${genfragment}
-cp ${namebase}_HLT_ctau-${ctau}.root ${BASEDIR}/CMSSW_10_6_28/src
+cp ${namebase}_HLT_ctau-${ctau}_year-${year}.root ${BASEDIR}/CMSSW_10_6_28/src
 
 # Doing RECO/AOD step
 cd ${BASEDIR}/CMSSW_10_6_28/src
@@ -174,8 +175,8 @@ echo "##########################################################################
 echo "5.) RECO/AOD Step"
 genfragment=${namebase}_AOD_cfg_ctau-${ctau}.py
 cmsDriver.py step1 \
-    --filein file:${namebase}_HLT_ctau-${ctau}.root \
-    --fileout file:${namebase}_AOD_ctau-${ctau}.root \
+    --filein file:${namebase}_HLT_ctau-${ctau}_year-${year}.root \
+    --fileout file:${namebase}_AOD_ctau-${ctau}_year-${year}.root \
     --mc --eventcontent AODSIM --datatier AODSIM \
     --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --geometry DB:Extended \
     --conditions 106X_upgrade2018_realistic_v11_L1v1 \
@@ -191,8 +192,8 @@ cmsRun -p ${genfragment}
 #echo "6.) MINIAOD Step"
 #genfragment=${namebase}_MINIAOD_cfg_ctau-${ctau}.py
 #cmsDriver.py step1 \
-#    --filein file:${namebase}_AOD_ctau-${ctau}.root \
-#    --fileout file:${namebase}_MINIAOD_ctau-${ctau}.root \
+#    --filein file:${namebase}_AOD_ctau-${ctau}_year-${year}.root \
+#    --fileout file:${namebase}_MINIAOD_ctau-${ctau}_year-${year}.root \
 #    --mc --eventcontent MINIAODSIM --datatier MINIAODSIM \
 #    --step PAT --geometry DB:Extended \
 #    --conditions 106X_upgrade2018_realistic_v16_L1v1 \
@@ -208,8 +209,8 @@ cmsRun -p ${genfragment}
 #echo "7.) MINIAOD Step with run2_miniAOD_devel modifier"
 #genfragment=${namebase}_MINIAOD_devel_cfg_ctau-${ctau}.py
 #cmsDriver.py step1 \
-#    --filein file:${namebase}_AOD_ctau-${ctau}.root \
-#    --fileout file:${namebase}_MINIAOD_devel_ctau-${ctau}.root \
+#    --filein file:${namebase}_AOD_ctau-${ctau}_year-${year}.root \
+#    --fileout file:${namebase}_MINIAOD_devel_ctau-${ctau}_year-${year}.root \
 #    --mc --eventcontent MINIAODSIM --datatier MINIAODSIM \
 #    --step PAT --geometry DB:Extended \
 #    --conditions 106X_upgrade2018_realistic_v16_L1v1 \
@@ -223,9 +224,9 @@ cmd="ls -arlth *.root"
 echo $cmd && eval $cmd
 
 remoteDIR="/store/group/lpcmetx/iDMe//Samples/signal/2018"
-xrdcp -vf ${namebase}_HLT_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/DIGIRAWHLT/${namebase}_HLT_ctau-${ctau}.root
-xrdcp -vf ${namebase}_AOD_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/AOD/${namebase}_AOD_ctau-${ctau}.root
-#xrdcp -vf ${namebase}_MINIAOD_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD/${namebase}_MINIAOD_ctau-${ctau}.root
-#xrdcp -vf ${namebase}_MINIAOD_devel_ctau-${ctau}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD_devel/${namebase}_MINIAOD_devel_ctau-${ctau}.root
+xrdcp -vf ${namebase}_HLT_ctau-${ctau}_year-${year}.root root://cmseos.fnal.gov/$remoteDIR/DIGIRAWHLT/${namebase}_HLT_ctau-${ctau}_year-${year}.root
+xrdcp -vf ${namebase}_AOD_ctau-${ctau}_year-${year}.root root://cmseos.fnal.gov/$remoteDIR/AOD/${namebase}_AOD_ctau-${ctau}_year-${year}.root
+#xrdcp -vf ${namebase}_MINIAOD_ctau-${ctau}_year-${year}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD/${namebase}_MINIAOD_ctau-${ctau}_year-${year}.root
+#xrdcp -vf ${namebase}_MINIAOD_devel_ctau-${ctau}_year-${year}.root root://cmseos.fnal.gov/$remoteDIR/MINIAOD_devel/${namebase}_MINIAOD_devel_ctau-${ctau}_year-${year}.root
 
 echo "DONE."

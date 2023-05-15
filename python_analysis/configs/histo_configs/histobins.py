@@ -12,6 +12,8 @@ ele_type = StrCategory(["L","R"],name="ele_type",label="Electron Type")
 vtx_sign = IntCategory([-1,1],name="sign",label="Vertex sign (q1*q2)")
 vtx_type = StrCategory(["LL","LR","RR"],name="type",label="Vertex Type")
 vtx_matchType = IntCategory([0,1,2],name="mtype",label="Vertex Gen Match Type")
+# Misc
+angleDot = Regular(100,-1,1,name='dot',label=r"$\hat{n}_1 \cdot \hat{n}_2$")
 
 ############################
 ###### Numerical Axes ######
@@ -43,7 +45,6 @@ vxy_zoomzoom = Regular(500,0,5,name="vxy",label="$v_{xy}$ [cm]")
 vz = Regular(2000,0,50,name="vz",label="$v_{z}$ [cm]")
 mass = Regular(100,0,50,name="mass",label="$m_{e^+e^-}$ [GeV]")
 energy = Regular(200,0,100,name="energy",label="Dielectron Energy [GeV]")
-dR = Regular(80,0,4,name="dR",label="$\\Delta R_{e^+e^-}$")
 dR_over_pT = Regular(100,0,10,name="dR_over_pT",label="$\\Delta R/p_T$")
 dR_over_m = Regular(100,0,5,name="dR_over_m",label="$\\Delta R/m$")
 dR_over_pTm = Regular(100,0,20,name="dR_over_pTm",label="$\\Delta R/(p_T/m)$")
@@ -65,8 +66,15 @@ nEmatch = Regular(5,0,5,name="nEmatch",label="Number of Gen Electron Matches")
 nPmatch = Regular(5,0,5,name="nPmatch",label="Number of Gen Positron Matches")
 matchClass = Regular(4,0,4,name="matchClass",label="Match Class")
 
-# Jet / MET
-dphi = Regular(32,0,3.2,name="dphi",label="$\\Delta \phi(\\mathrm{Jet},E_T^\mathrm{miss})$")
+# Generic quantities
+dphi = Regular(64,0,3.2,name="dphi",label="$\Delta \phi$")
+dphiJ = Regular(64,0,3.2,name="dphiJ",label="$\Delta \phi$")
+dR = Regular(100,0,6,name='dr',label="$\Delta R$")
+dRj = Regular(100,0,6,name='drj',label="$\Delta R$")
+dphi = Regular(64,0,3.2,name="dphi",label="$\Delta \phi$")
+dxy = Regular(100,0,5,name='dxy',label="$d_{xy}$ [cm]")
+pfiso = Regular(100,0,5,name='pfiso',label="$I_{\mathrm{PF}}^{\mathrm{rel}}$")
+dphi_generic = Regular(32,0,3.2,name="dphi",label=r"$\Delta \phi$")
 met_pt = Regular(300,0,300,name="met_pt",label="$p_T^{miss}$")
 njets = Integer(0,8,name="njets",label="$N_{jets}$")
 btag = Regular(100,0,1,name="btag",label="DeepJet B-Tag Score")

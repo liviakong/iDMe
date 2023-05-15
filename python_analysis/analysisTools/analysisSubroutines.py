@@ -17,6 +17,18 @@ import pandas as pd
 from XRootD import client
 NanoAODSchema.warn_missing_crossrefs = False
 
+# Helper functions
+def deltaPhi(v1,v2):
+    # copy of the ROOT RVec DeltaPhi function
+    # see here https://root.cern/doc/master/RVec_8hxx_source.html#l02742
+    M_PI = 3.14159265358979323846264338328
+    dPhi = np.fmod(v1-v2,2*M_PI)
+    under = ak.values_astype(dPhi < -1*M_PI,np.float32)
+    over = ak.values_astype(dPhi > M_PI,np.float32)
+    fine = ak.values_astype((dPhi <= M_PI) & (dPhi >= -1*M_PI),np.float32)
+    output = fine*dPhi + under*(dPhi + 2.0*M_PI) + over*(dPhi - 2.0*M_PI)
+    return output
+
 # Routines to produce additional variables (e.g. best vertex, good electrons, etc) for cuts
 # These are produced every time the analyzer is run
 def selectGoodElesAndVertices(events):
@@ -24,7 +36,7 @@ def selectGoodElesAndVertices(events):
     eles = events.Electron
     lpt_eles = events.LptElectron
     vtx = events.vtx
-
+    
     events["Electron","passCut"] = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
     events["LptElectron","passCut"] = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4)
 
@@ -47,9 +59,33 @@ def selectGoodElesAndVertices(events):
     events.__setitem__("good_vtx",events.vtx[events.vtx.e1.passCut & events.vtx.e2.passCut])
 
 def selectExistingGoodVtx(events):
+    # compute deltaR between electrons and jets for rejection
+    j0_eta = events.PFJet.eta[:,0]
+    j0_phi = events.PFJet.phi[:,0]
+    j1_eta = ak.fill_none(ak.pad_none(events.PFJet.eta,2),-999)[:,1]
+    j1_phi = ak.fill_none(ak.pad_none(events.PFJet.phi,2),-999)[:,1]
+
+    # Defining some extra branches for electron/low-pT electrons
+    events["Electron","dRj0"] = np.sqrt(deltaPhi(events.Electron.phi,j0_phi)**2 + (events.Electron.eta-j0_eta)**2)
+    events["Electron","dPhij0"] = np.abs(deltaPhi(events.Electron.phi,j0_phi))
+    events["Electron","dRj1"] = np.sqrt(deltaPhi(events.Electron.phi,j1_phi)**2 + (events.Electron.eta-j1_eta)**2)
+    events["Electron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.Electron.phi,j1_phi)),999)
+    events["Electron","mindRj"] = np.minimum(events.Electron.dRj0,events.Electron.dRj1)
+    events["Electron","mindPhiJ"] = np.minimum(events.Electron.dPhij0,events.Electron.dPhij1)
+    events["Electron","cutID"] = events.Electron.IDcutLoose
+    
+    events["LptElectron","dRj0"] = np.sqrt(deltaPhi(events.LptElectron.phi,j0_phi)**2 + (events.LptElectron.eta-j0_eta)**2)
+    events["LptElectron","dPhij0"] = np.abs(deltaPhi(events.LptElectron.phi,j0_phi))
+    events["LptElectron","dRj1"] = np.sqrt(deltaPhi(events.LptElectron.phi,j1_phi)**2 + (events.LptElectron.eta-j1_eta)**2)
+    events["LptElectron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.LptElectron.phi,j1_phi)),999)
+    events["LptElectron","mindRj"] = np.minimum(events.LptElectron.dRj0,events.LptElectron.dRj1)
+    events["LptElectron","mindPhiJ"] = np.minimum(events.LptElectron.dPhij0,events.LptElectron.dPhij1)
+    events["LptElectron","cutID"] = ak.ones_like(events.LptElectron.pt)
+
     all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
     n_reg = ak.count(events.Electron.pt,axis=1)
     vtx = events.vtx
+
     # shitty fix for weird bug when there's just 1 event with 1 vertex
     if len(events) == 1 and len(vtx.pt) == 1:
         events["vtx","e1"] = events.LptElectron[vtx.e1_idx] if vtx.e1_typ[0][0]=="L" else events.Electron[vtx.e1_idx]
@@ -63,8 +99,10 @@ def selectExistingGoodVtx(events):
 
         events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
         events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
-
-    events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
+    
+    #events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
+    #events.__setitem__("good_vtx",events.vtx[(events.vtx.isGood) & (events.vtx.e1.mindRj > 0.4) & (events.vtx.e2.mindRj > 0.4)])
+    events.__setitem__("good_vtx",events.vtx[(events.vtx.isGood) & (events.vtx.e1.mindRj > 0.4) & (events.vtx.e2.mindRj > 0.4) & (events.vtx.e1.cutID == 1) & (events.vtx.e2.cutID == 1)])
 
 def selectBestVertex(events):
     sel_vtx = ak.flatten(events.good_vtx[ak.argmin(events.good_vtx.reduced_chi2,axis=1,keepdims=True)])

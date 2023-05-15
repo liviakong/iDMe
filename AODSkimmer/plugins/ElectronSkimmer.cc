@@ -53,6 +53,9 @@
 #include "DataFormats/PatCandidates/interface/Photon.h"
 #include "DataFormats/PatCandidates/interface/Conversion.h"
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
+#include "DataFormats/PatCandidates/interface/PackedGenParticle.h"
+#include "DataFormats/PatCandidates/interface/IsolatedTrack.h"
+#include "DataFormats/PatCandidates/interface/PFIsolation.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h"
 #include "DataFormats/EgammaCandidates/interface/Photon.h"
 #include "DataFormats/EgammaCandidates/interface/Conversion.h"
@@ -150,6 +153,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       const edm::EDGetTokenT<vector<pat::MET> > puppiMETToken_;
       const edm::EDGetTokenT<edm::TriggerResults> trigResultsToken_;
       const edm::EDGetTokenT<edm::TriggerResults> metFilterResultsToken_;
+      const edm::EDGetTokenT<vector<pat::IsolatedTrack> > isoTrackToken_;
 
       // Handles
       edm::Handle<vector<pat::Electron> > recoElectronHandle_;
@@ -171,6 +175,7 @@ class ElectronSkimmer : public edm::one::EDAnalyzer<edm::one::WatchRuns, edm::on
       edm::Handle<vector<pat::MET> > puppiMETHandle_;
       edm::Handle<edm::TriggerResults> trigResultsHandle_;
       edm::Handle<edm::TriggerResults> metFilterResultsHandle_;
+      edm::Handle<vector<pat::IsolatedTrack> > isoTrackHandle_;
 
       // Trigger variables
       std::vector<std::string> trigPaths16WithVersion_;
@@ -226,7 +231,8 @@ ElectronSkimmer::ElectronSkimmer(const edm::ParameterSet& ps)
    METToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("MET"))),
    puppiMETToken_(consumes<vector<pat::MET> >(ps.getParameter<edm::InputTag>("puppiMET"))),
    trigResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("trigResults"))),
-   metFilterResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("metFilterResults")))
+   metFilterResultsToken_(consumes<edm::TriggerResults>(ps.getParameter<edm::InputTag>("metFilterResults"))),
+   isoTrackToken_(consumes<vector<pat::IsolatedTrack> >(ps.getParameter<edm::InputTag>("isoTracks")))
 {
    usesResource("TFileService");
    m_random_generator = std::mt19937(37428479);
@@ -399,7 +405,7 @@ ElectronSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
    desc.add<edm::InputTag>("genEvt", edm::InputTag("generator"));
    desc.add<edm::InputTag>("pileups", edm::InputTag("slimmedAddPileupInfo"));
    desc.add<edm::InputTag>("rho", edm::InputTag("fixedGridRhoFastJetAll"));
-   desc.add<edm::InputTag>("genParticle",edm::InputTag("prunedGenParticles"));
+   desc.add<edm::InputTag>("genParticle",edm::InputTag("genParticles"));
    desc.add<edm::InputTag>("genJet",edm::InputTag("slimmedGenJets"));
    desc.add<edm::InputTag>("genMET",edm::InputTag("genMetTrue"));
    desc.add<edm::InputTag>("primaryVertex",edm::InputTag("offlineSlimmedPrimaryVertices"));
@@ -411,6 +417,7 @@ ElectronSkimmer::fillDescriptions(edm::ConfigurationDescriptions& descriptions) 
    desc.add<edm::InputTag>("puppiMET",edm::InputTag("slimmedMETsPuppi"));
    desc.add<edm::InputTag>("trigResults",edm::InputTag("TriggerResults","","HLT"));
    desc.add<edm::InputTag>("metFilterResults",edm::InputTag("TriggerResults","","PAT"));
+   desc.add<edm::InputTag>("isoTracks",edm::InputTag("isolatedTracks","","PAT"));
    descriptions.add("ElectronSkimmer", desc);
 }
 
@@ -436,6 +443,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    iEvent.getByToken(puppiMETToken_,puppiMETHandle_);
    iEvent.getByToken(trigResultsToken_,trigResultsHandle_);
    iEvent.getByToken(metFilterResultsToken_,metFilterResultsHandle_);
+   iEvent.getByToken(isoTrackToken_,isoTrackHandle_);
 
    if (!isData) { 
       iEvent.getByToken(genEvtInfoToken_,genEvtInfoHandle_);
@@ -624,7 +632,6 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    vector<math::XYZTLorentzVector> lowpt_ele_p4s;
    vector<const pat::Electron*> lowpt_good_eles;
    for (auto & ele : *lowPtElectronHandle_) {
-      // Cross-cleaning with regular electrons
       float mindR = 999;
       for (auto & reg_ele : *recoElectronHandle_) {
          float dR = reco::deltaR(reg_ele,ele);
@@ -806,8 +813,14 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    //Handling gen particles (only for signal)
    if (!isData && isSignal) {
       math::XYZTLorentzVector gen_ele_p4, gen_pos_p4;
+      int ele_idx = -1;
+      int pos_idx = -1;
+      int genpart_idx = 0;
       for (const auto & genParticle : *genParticleHandle_) {
-         if (!genParticle.isHardProcess()) continue;
+         if (!genParticle.isHardProcess()) {
+            genpart_idx++;
+            continue;
+         }
          nt.nGen_++;
          nt.genID_.push_back(genParticle.pdgId());
          nt.genCharge_.push_back(genParticle.charge());
@@ -827,6 +840,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          if (abs(genParticle.pdgId()) == 11) {
             // Recording basic info
             if (genParticle.pdgId() == 11) {
+               ele_idx = genpart_idx;
                gen_ele_p4 = genParticle.p4();
                nt.genEleCharge_ = genParticle.charge();
                nt.genEleMotherID_ = genParticle.mother(0)->pdgId();
@@ -837,13 +851,11 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
                nt.genElePx_ = genParticle.px();
                nt.genElePy_ = genParticle.py();
                nt.genElePz_ = genParticle.pz();
-               nt.genEleVx_ = genParticle.vx();
-               nt.genEleVy_ = genParticle.vy();
-               nt.genEleVz_ = genParticle.vz();
-               nt.genEleVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
-               nt.genEleVxyz_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy() + genParticle.vz()*genParticle.vz());
+               nt.genEleVxy_ = genParticle.vertex().rho();
+               nt.genEleVz_ = genParticle.vertex().z();
             }
             else {
+               pos_idx = genpart_idx;
                gen_pos_p4 = genParticle.p4();
                nt.genPosCharge_ = genParticle.charge();
                nt.genPosMotherID_ = genParticle.mother(0)->pdgId();
@@ -854,13 +866,80 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
                nt.genPosPx_ = genParticle.px();
                nt.genPosPy_ = genParticle.py();
                nt.genPosPz_ = genParticle.pz();
-               nt.genPosVx_ = genParticle.vx();
-               nt.genPosVy_ = genParticle.vy();
-               nt.genPosVz_ = genParticle.vz();
-               nt.genPosVxy_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy());
-               nt.genPosVxyz_ = sqrt(genParticle.vx()*genParticle.vx() + genParticle.vy()*genParticle.vy() + genParticle.vz()*genParticle.vz());
+               nt.genPosVxy_ = genParticle.vertex().rho();
+               nt.genPosVz_ = genParticle.vertex().z();
             }
          }
+         genpart_idx++;
+      }
+
+      // Matching gen particles to isolatedTracks to get some sense of efficiency ceiling
+      auto gen_ele = (*genParticleHandle_)[ele_idx];
+      auto gen_pos = (*genParticleHandle_)[pos_idx];
+      float genEle_matchdR = 999.0;
+      float genPos_matchdR = 999.0;
+      int tk_idx = 0;
+      for (auto & tk : *isoTrackHandle_) {
+         // compute dRs
+         float dr_ele = reco::deltaR(tk.p4(),gen_ele.p4());
+         float dr_pos = reco::deltaR(tk.p4(),gen_pos.p4());
+
+         // compute isolations
+         const pat::PFIsolation &pfiso = tk.pfIsolationDR03();
+         const pat::PFIsolation &minipfiso = tk.miniPFIsolation();
+         float neutralIso = fmax(0.0, pfiso.photonIso() + pfiso.neutralHadronIso() - 0.5*pfiso.puChargedHadronIso());
+         float chargedIso = pfiso.chargedHadronIso();
+         float tk_pfiso= (neutralIso + chargedIso)/tk.pt();
+         float miniNeutralIso = fmax(0.0, minipfiso.photonIso() + minipfiso.neutralHadronIso() - 0.5*minipfiso.puChargedHadronIso());
+         float miniChargedIso = minipfiso.chargedHadronIso();
+         float tk_miniIso = (miniNeutralIso + miniChargedIso)/tk.pt();
+
+         // match to electron
+         if (dr_ele < 0.1) {
+            nt.nGenEleTrkMatches++;
+            if (dr_ele < genEle_matchdR) {
+               genEle_matchdR = dr_ele;
+               nt.genEleNearestTrack_pt = tk.pt();
+               nt.genEleNearestTrack_eta = tk.eta();
+               nt.genEleNearestTrack_phi = tk.phi();
+               nt.genEleNearestTrack_dRGen = dr_ele;
+               nt.genEleNearestTrack_pfIso3 = tk_pfiso;
+               nt.genEleNearestTrack_miniIso = tk_miniIso;
+               nt.genEleNearestTrack_dxy = tk.dxy();
+               nt.genEleNearestTrack_dz = tk.dz();
+               nt.genEleNearestTrack_highPurity = tk.isHighPurityTrack();
+               nt.genEleNearestTrack_Loose = tk.isLooseTrack();
+               nt.genEleNearestTrack_charge = tk.charge();
+               nt.genEleNearestTrack_numPixHits = tk.hitPattern().numberOfValidPixelHits();
+               nt.genEleNearestTrack_numStripHits = tk.hitPattern().numberOfValidStripHits();
+               nt.genEleNearestTrack_fromPV = tk.fromPV();
+               nt.genEleNearestTrack_tkIdx = tk_idx;
+            }
+         }
+
+         // match to positron
+         if (dr_pos < 0.1) {
+            nt.nGenPosTrkMatches++;
+            if (dr_pos < genPos_matchdR) {
+               genPos_matchdR = dr_pos;
+               nt.genPosNearestTrack_pt = tk.pt();
+               nt.genPosNearestTrack_eta = tk.eta();
+               nt.genPosNearestTrack_phi = tk.phi();
+               nt.genPosNearestTrack_dRGen = dr_pos;
+               nt.genPosNearestTrack_pfIso3 = tk_pfiso;
+               nt.genPosNearestTrack_miniIso = tk_miniIso;
+               nt.genPosNearestTrack_dxy = tk.dxy();
+               nt.genPosNearestTrack_dz = tk.dz();
+               nt.genPosNearestTrack_highPurity = tk.isHighPurityTrack();
+               nt.genPosNearestTrack_Loose = tk.isLooseTrack();
+               nt.genPosNearestTrack_charge = tk.charge();
+               nt.genPosNearestTrack_numPixHits = tk.hitPattern().numberOfValidPixelHits();
+               nt.genPosNearestTrack_numStripHits = tk.hitPattern().numberOfValidStripHits();
+               nt.genPosNearestTrack_fromPV = tk.fromPV();
+               nt.genPosNearestTrack_tkIdx = tk_idx;
+            }
+         }
+         tk_idx++;
       }
 
       vector<float> dR_genE;

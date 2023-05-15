@@ -1,0 +1,106 @@
+[
+    {
+        "name": "WJetsLNu_HT400to600",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT400to600/"
+        ],
+        "sum_wgt": 6868732.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 44930.0,
+        "nFiles": 722,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT800to1200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT800to1200/"
+        ],
+        "sum_wgt": 7397330.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 4926.0,
+        "nFiles": 479,
+        "blacklist": [
+            "WJetsLNu_HT800to1200_3-32.root",
+            "WJetsLNu_HT800to1200_3-3.root",
+            "WJetsLNu_HT800to1200_3-29.root",
+            "WJetsLNu_HT800to1200_3-30.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT200to400",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT200to400/"
+        ],
+        "sum_wgt": 58656583.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 337800.0,
+        "nFiles": 4197,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT100to200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT100to200/"
+        ],
+        "sum_wgt": 62610979.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1244000.0,
+        "nFiles": 1780,
+        "blacklist": [
+            "WJetsLNu_HT100to200_767.root",
+            "WJetsLNu_HT100to200_680.root",
+            "WJetsLNu_HT100to200_777.root",
+            "WJetsLNu_HT100to200_952.root",
+            "WJetsLNu_HT100to200_560.root",
+            "WJetsLNu_HT100to200_983.root",
+            "WJetsLNu_HT100to200_678.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT1200to2500",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT1200to2500/"
+        ],
+        "sum_wgt": 6479369.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1152.0,
+        "nFiles": 307,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT600to800",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT600to800/"
+        ],
+        "sum_wgt": 7816225.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 11190.0,
+        "nFiles": 335,
+        "blacklist": [
+            "WJetsLNu_HT600to800_134.root",
+            "WJetsLNu_HT600to800_133.root",
+            "WJetsLNu_HT600to800_82.root",
+            "WJetsLNu_HT600to800_180.root",
+            "WJetsLNu_HT600to800_202.root",
+            "WJetsLNu_HT600to800_109.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT2500toInf",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT2500toInf/"
+        ],
+        "sum_wgt": 2097648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 26.46,
+        "nFiles": 99,
+        "blacklist": []
+    }
+]

@@ -1,51 +1,58 @@
 import numpy as np
 import awkward as ak
 
-def cut7(events,info):
-    name = "cut7"
+def cut0(events,info):
+    name = "cut0"
     desc = "Leading jet |eta| < 2.4"
-    plots = False
+    plots = True
     cut = np.abs(events.PFJet.eta[:,0]) < 2.4
     return events[cut], name, desc, plots
 
-def cut8(events,info):
-    name = "cut8"
+def cut1(events,info):
+    name = "cut1"
     desc = "Leading jet pT > 80 GeV"
-    plots = False
+    plots = True
     cut = events.PFJet.pt[:,0] > 80
     return events[cut], name, desc, plots
 
-def cut9(events,info):
-    name = "cut9"
+def cut2(events,info):
+    name = "cut2"
     desc = "dPhi(MET,leading jet) > 1.5"
-    plots = False
-    cut = events.PFJet.METdPhi[:,0] > 1.5
+    plots = True
+    cut = np.abs(events.PFJet.METdPhi[:,0]) > 1.5
     return events[cut], name, desc, plots
 
-def cut10(events,info):
-    name = "cut10"
+def cut3(events,info):
+    name = "cut3"
     desc = "dPhi(MET,all jets) > 0.75"
-    plots = False
-    cut = ak.all(events.PFJet.METdPhi > 0.75,axis=1)
+    plots = True
+    cut = ak.all(np.abs(events.PFJet.METdPhi) > 0.75,axis=1)
     return events[cut], name, desc, plots
     
-def cut11(events,info):
-    name = "cut11"
+def cut4(events,info):
+    name = "cut4"
     desc = "OSSF"
     plots = True
     cut = events.sel_vtx.sign == -1
     return events[cut], name, desc, plots
 
-def cut12(events,info):
-    name = "cut12"
+def cut5(events,info):
+    name = "cut5"
     desc = "Vertex chi2/df < 5"
     plots = True
     cut = events.sel_vtx.reduced_chi2 < 5
     return events[cut], name, desc, plots
 
-def cut13(events,info):
-    name = "cut13"
+def cut6(events,info):
+    name = "cut6"
     desc = "dPhi(MET,vtx) < 2.5"
     plots = True
-    cut = events.sel_vtx.METdPhi < 2.5
+    cut = np.abs(events.sel_vtx.METdPhi) < 2.5
+    return events[cut], name, desc, plots
+
+def cut7(events,info):
+    name = "cut7"
+    desc = "Vertex chi2/df < 3"
+    plots = True
+    cut = events.sel_vtx.reduced_chi2 < 3
     return events[cut], name, desc, plots

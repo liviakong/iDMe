@@ -66,10 +66,7 @@ public:
     float genElePy_;
     float genElePz_;
     float genEleVxy_;
-    float genEleVxyz_;
     float genEleVz_;
-    float genEleVx_;
-    float genEleVy_;
     int genEleClosestType_;
     int genEleClosestInd_;
     float genEleClosestDr_;
@@ -88,10 +85,7 @@ public:
     float genPosPy_;
     float genPosPz_;
     float genPosVxy_;
-    float genPosVxyz_;
     float genPosVz_;
-    float genPosVx_;
-    float genPosVy_;
     int genPosClosestType_;
     int genPosClosestInd_;
     float genPosClosestDr_;
@@ -99,6 +93,42 @@ public:
     float genPosClosestDr_reg_;
     int genPosClosestInd_lpt_;
     float genPosClosestDr_lpt_;
+
+    // Gen Electron matches to isoTracks
+    int nGenEleTrkMatches;
+    float genEleNearestTrack_pt;
+    float genEleNearestTrack_eta;
+    float genEleNearestTrack_phi;
+    float genEleNearestTrack_dRGen;
+    float genEleNearestTrack_pfIso3;
+    float genEleNearestTrack_miniIso;
+    float genEleNearestTrack_dxy;
+    float genEleNearestTrack_dz;
+    bool genEleNearestTrack_highPurity;
+    bool genEleNearestTrack_Loose;
+    int genEleNearestTrack_charge;
+    int genEleNearestTrack_numPixHits;
+    int genEleNearestTrack_numStripHits;
+    int genEleNearestTrack_fromPV;
+    int genEleNearestTrack_tkIdx;
+
+    // Gen Positron matches to isoTracks
+    int nGenPosTrkMatches;
+    float genPosNearestTrack_pt;
+    float genPosNearestTrack_eta;
+    float genPosNearestTrack_phi;
+    float genPosNearestTrack_dRGen;
+    float genPosNearestTrack_pfIso3;
+    float genPosNearestTrack_miniIso;
+    float genPosNearestTrack_dxy;
+    float genPosNearestTrack_dz;
+    bool genPosNearestTrack_highPurity;
+    bool genPosNearestTrack_Loose;
+    int genPosNearestTrack_charge;
+    int genPosNearestTrack_numPixHits;
+    int genPosNearestTrack_numStripHits;
+    int genPosNearestTrack_fromPV;
+    int genPosNearestTrack_tkIdx;
 
     // Gen Electron + Positron info
     float genEEPt_;

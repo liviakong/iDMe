@@ -24,15 +24,20 @@ if __name__ == "__main__":
     if not os.path.isdir(baseDir):
         os.mkdir(baseDir)
         os.mkdir(baseDir+"/Logs")
-        os.mkdir(baseDir+"/submit")
-        os.system("cp genFragments/iDMe_pythiaGenFragment.py {0}".format(baseDir+"/submit"))
-        os.system("cp genFromGridpack_*.sh {0}".format(baseDir+"/submit"))
-        os.system("cp template_DIGIPremix_cfg_UL*.py {0}".format(baseDir+"/submit"))
-        os.system("cp runGeneration.sh {0}".format(baseDir+"/submit"))
-        os.system("cp {0} {1}".format(gridpack,baseDir+"/submit"))
-        os.chdir(baseDir+"/submit")
-        os.system("tar -czf ../submit.tar.gz *")
-        os.chdir(here)
+    if os.path.isdir(f"{baseDir}/submit"):
+        os.system(f"rm -rf {baseDir}/submit")
+    os.mkdir(f"{baseDir}/submit")
+    os.system("cp genFragments/iDMe_pythiaGenFragment.py {0}".format(baseDir+"/submit"))
+    os.system("cp genFromGridpack_*.sh {0}".format(baseDir+"/submit"))
+    os.system("cp template_DIGIPremix_cfg_UL*.py {0}".format(baseDir+"/submit"))
+    os.system("cp runGeneration.sh {0}".format(baseDir+"/submit"))
+    os.system("cp {0} {1}".format(gridpack,baseDir+"/submit"))
+
+    if os.path.exists(f"{baseDir}/submit.tar.gz"):
+        os.system(f"rm {baseDir}/submit.tar.gz")
+    os.chdir(baseDir+"/submit")
+    os.system("tar -czf ../submit.tar.gz *")
+    os.chdir(here)
 
     # make directory for log files
     logDir = baseDir+"/Logs/ctau-{0}_nev-{1}_year-{2}".format(lifetime,nevents,year)

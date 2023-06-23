@@ -22,7 +22,7 @@ if len(sys.argv) < 3:
 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
 
 if mode == "sig":
-    prefix = "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal/"
+    prefix = "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal_v2/"
 
     status, points = xrdClient.dirlist(prefix+year)
     points = [item.name for item in points]

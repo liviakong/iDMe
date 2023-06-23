@@ -56,3 +56,10 @@ def cut7(events,info):
     plots = True
     cut = events.sel_vtx.reduced_chi2 < 3
     return events[cut], name, desc, plots
+
+def cut8(events,info):
+    name = "cut8"
+    desc = "dPhi(MET,vtx) < 1.0"
+    plots = True
+    cut = np.abs(events.sel_vtx.METdPhi) < 1.0
+    return events[cut], name, desc, plots

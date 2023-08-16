@@ -13,11 +13,11 @@ git cms-init
 ```
 Then, clone this repository by running
 ```bash
-git clonehttps://github.com/SamBT/iDMe.git
+git clone https://github.com/SamBT/iDMe.git
 ```
 
 ## Cloning CMSSW submodules and applying patches
-I've made a few minor adjustments to some of the MINIAOD-producing code in CMSSW, mostly to do with generating the low-$p_T$ electrons. The low-$p_T$ ID included in MINIAOD is "sub-optimal" (see [Rob's twiki](https://twiki.cern.ch/twiki/bin/view/Main/RobBainbridgeSandBox#UltraLegacy_data_sets) for details), so I've replaced it with the "optimal" one ("2020Nov28"). Energy regression is also not applied at MINIAOD level for some unthinkably ridiculous reason, so I've had to add that as well. To get these corrections, you'll need to checkout a few CMSSW submodules and apply the patch file. The patch file also includes a [tracker dimensions extension](https://www.classe.cornell.edu/~skb93/iDMe/git_patches/extendTrackerDimensions.patch) taken from the [original iDM analysis](https://github.com/afrankenthal/iDMAnalysis/tree/master/skimmer) to aid displaced vertexing, but I'm not sure this is necessary any more (can't hurt!). From the `src` directory, run these lines to checkout the modules:
+I've made a few minor adjustments to some of the MINIAOD-producing code in CMSSW, mostly to do with generating the low- $p_T$ electrons. The low- $p_T$ ID included in MINIAOD is "sub-optimal" (see [Rob's twiki](https://twiki.cern.ch/twiki/bin/view/Main/RobBainbridgeSandBox#UltraLegacy_data_sets) for details), so I've replaced it with the "optimal" one ("2020Nov28"). Energy regression is also not applied at MINIAOD level for some unthinkably ridiculous reason, so I've had to add that as well. To get these corrections, you'll need to checkout a few CMSSW submodules and apply the patch file. The patch file also includes a [tracker dimensions extension](https://www.classe.cornell.edu/~skb93/iDMe/git_patches/extendTrackerDimensions.patch) taken from the [original iDM analysis](https://github.com/afrankenthal/iDMAnalysis/tree/master/skimmer) to aid displaced vertexing, but I'm not sure this is necessary any more (can't hurt!). From the `src` directory, run these lines to checkout the modules:
 ```bash
 git cms-addpkg PhysicsTools/PatAlgos
 git cms-addpkg RecoEgamma/EgammaElectronProducers

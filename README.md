@@ -43,3 +43,6 @@ Here's a brief overview of the most important modules in this repo:
 And here's an overview of the less important modules:
 1. `iDMeSkimmer` : Old version of the ntuplizer designed to run on MINIAOD. Not used any more, as we prefer AOD for a number of reasons. Still exists as skeleton code we can work with if we ever return to MINIAOD.
 2. `CustomTools` : Some helper functions/modules for `AODSkimmer`. Some tools are defunct and no longer used, e.g. the stuff I tried out a while back for finding displaced electrons in the `isolatedTracks` collection.
+
+## Contributing code
+If you'd like to contribute code, please fork this repo! If you're doing something wacky/experimental/that will potentially break the project, please do it on a separate branch (let me know and I can make the corresponding branch in my repo). For core analysis development, you can submit pull requests to `main` after pulling or rebasing any upstream changes.

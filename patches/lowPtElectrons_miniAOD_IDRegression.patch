@@ -1,0 +1,130 @@
+diff --git a/PhysicsTools/PatAlgos/python/producersLayer1/lowPtElectronProducer_cff.py b/PhysicsTools/PatAlgos/python/producersLayer1/lowPtElectronProducer_cff.py
+index 239ac2c..5f936cb 100644
+--- a/PhysicsTools/PatAlgos/python/producersLayer1/lowPtElectronProducer_cff.py
++++ b/PhysicsTools/PatAlgos/python/producersLayer1/lowPtElectronProducer_cff.py
+@@ -80,5 +80,7 @@ _makePatLowPtElectronsTask = makePatLowPtElectronsTask.copy()
+ _makePatLowPtElectronsTask.add(rekeyLowPtGsfElectronSeedValueMaps)
+ _makePatLowPtElectronsTask.add(lowPtGsfElectronID)
+ (bParking | run2_miniAOD_UL).toReplaceWith(makePatLowPtElectronsTask,_makePatLowPtElectronsTask)
+-( (bParking & run2_miniAOD_UL) | (~bParking & run2_miniAOD_devel) ).toModify(
++#( (bParking & run2_miniAOD_UL) | (~bParking & run2_miniAOD_devel) ).toModify(
++#    makePatLowPtElectronsTask, func = lambda t: t.add(lowPtGsfElectrons))
++( (run2_miniAOD_UL) | (bParking & run2_miniAOD_UL) | (~bParking & run2_miniAOD_devel) ).toModify(
+     makePatLowPtElectronsTask, func = lambda t: t.add(lowPtGsfElectrons))
+diff --git a/PhysicsTools/PatAlgos/python/selectionLayer1/lowPtElectronSelector_cfi.py b/PhysicsTools/PatAlgos/python/selectionLayer1/lowPtElectronSelector_cfi.py
+index f040fd6..1f6ea55 100644
+--- a/PhysicsTools/PatAlgos/python/selectionLayer1/lowPtElectronSelector_cfi.py
++++ b/PhysicsTools/PatAlgos/python/selectionLayer1/lowPtElectronSelector_cfi.py
+@@ -13,6 +13,10 @@ selectedPatLowPtElectrons = cms.EDFilter("PATElectronSelector",
+ from Configuration.Eras.Modifier_run2_miniAOD_devel_cff import run2_miniAOD_devel
+ run2_miniAOD_devel.toModify(selectedPatLowPtElectrons,cut = "pt>1. && electronID('ID')>-0.25")
+ 
++# Custom modifier for run2_miniAOD_UL to reproduce 12_1_X behavior
++from Configuration.ProcessModifiers.run2_miniAOD_UL_cff import run2_miniAOD_UL
++run2_miniAOD_UL.toModify(selectedPatLowPtElectrons,cut = "pt>1. && electronID('ID')>-0.25")
++
+ # Modifier for bParking (fully open selection)
+ from Configuration.Eras.Modifier_bParking_cff import bParking
+ bParking.toModify(selectedPatLowPtElectrons,cut = "pt>1.")
+diff --git a/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py b/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
+index b078626..a32ded5 100644
+--- a/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
++++ b/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
+@@ -38,8 +38,8 @@ isolatedTracks = cms.EDProducer("PATIsolatedTrackProducer",
+     addPrescaledDeDxTracks = cms.bool(False),
+     usePrecomputedDeDxStrip = cms.bool(True),        # if these are set to True, will get estimated DeDx from DeDxData branches
+     usePrecomputedDeDxPixel = cms.bool(True),        # if set to False, will manually compute using dEdxHitInfo
+-    pT_cut = cms.double(5.0),         # save tracks above this pt
+-    pT_cut_noIso = cms.double(20.0),  # for tracks with at least this pT, don't apply any iso cut
++    pT_cut = cms.double(1.0),         # save tracks above this pt
++    pT_cut_noIso = cms.double(1.0),  # for tracks with at least this pT, don't apply any iso cut
+     pfIsolation_DR = cms.double(0.3),
+     pfIsolation_DZ = cms.double(0.1),
+     miniIsoParams = cms.vdouble(0.05, 0.2, 10.0), # (minDR, maxDR, kT)
+diff --git a/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py b/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py
+index 053294a..729126f 100644
+--- a/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py
++++ b/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py
+@@ -8,16 +8,16 @@ slimmedElectrons = cms.EDProducer("PATElectronSlimmer",
+    dropPreshowerClusters = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
+    dropSeedCluster = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
+    dropRecHits = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropCorrections = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropIsolations = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropShapes = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropSaturation = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropExtrapolations  = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
+-   dropClassifications  = cms.string("pt < 5"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropCorrections = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropIsolations = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropShapes = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropSaturation = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropExtrapolations  = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
++   dropClassifications  = cms.string("0"), # you can put a cut to slim selectively, e.g. pt < 10
+    linkToPackedPFCandidates = cms.bool(True),
+    recoToPFMap = cms.InputTag("reducedEgamma","reducedGsfElectronPfCandMap"),
+    packedPFCandidates = cms.InputTag("packedPFCandidates"), 
+-   saveNonZSClusterShapes = cms.string("pt > 5"), # save additional user floats: (sigmaIetaIeta,sigmaIphiIphi,sigmaIetaIphi,r9,e1x5_over_e5x5)_NoZS 
++   saveNonZSClusterShapes = cms.string("1"), # save additional user floats: (sigmaIetaIeta,sigmaIphiIphi,sigmaIetaIphi,r9,e1x5_over_e5x5)_NoZS 
+    reducedBarrelRecHitCollection = cms.InputTag("reducedEcalRecHitsEB"),
+    reducedEndcapRecHitCollection = cms.InputTag("reducedEcalRecHitsEE"),
+    modifyElectrons = cms.bool(True),
+diff --git a/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronID_cff.py b/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronID_cff.py
+index 91a9aaf..0da0247 100644
+--- a/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronID_cff.py
++++ b/RecoEgamma/EgammaElectronProducers/python/lowPtGsfElectronID_cff.py
+@@ -13,12 +13,20 @@ lowPtGsfElectronID = defaultLowPtGsfElectronID.clone(
+ from Configuration.ProcessModifiers.run2_miniAOD_UL_cff import run2_miniAOD_UL
+ from Configuration.Eras.Modifier_run2_miniAOD_devel_cff import run2_miniAOD_devel
+ from Configuration.Eras.Modifier_bParking_cff import bParking
++#run2_miniAOD_UL.toModify(
++#    lowPtGsfElectronID,
++#    rho = "fixedGridRhoFastjetAll",
++#    ModelWeights = ["RecoEgamma/ElectronIdentification/data/LowPtElectrons/LowPtElectrons_ID_2020Sept15.root"],
++#    ModelThresholds = [-99.],
++#    Version = "V1",
++#)
++# Custom 2020Nov28 ID for run2_miniAOD_UL to align it with 12_1_X version
+ run2_miniAOD_UL.toModify(
+     lowPtGsfElectronID,
+-    rho = "fixedGridRhoFastjetAll",
+-    ModelWeights = ["RecoEgamma/ElectronIdentification/data/LowPtElectrons/LowPtElectrons_ID_2020Sept15.root"],
+-    ModelThresholds = [-99.],
+-    Version = "V1",
++	rho = "fixedGridRhoFastjetAll",
++	ModelWeights = cms.vstring(["RecoEgamma/ElectronIdentification/data/LowPtElectrons/LowPtElectrons_ID_2020Nov28.root",]),
++	ModelThresholds = cms.vdouble([-99.]),
++	Version = "V1",
+ )
+ run2_miniAOD_devel.toModify(
+     lowPtGsfElectronID,
+diff --git a/RecoVertex/KalmanVertexFit/src/SingleTrackVertexConstraint.cc b/RecoVertex/KalmanVertexFit/src/SingleTrackVertexConstraint.cc
+index 48d3a0e..e23849f 100644
+--- a/RecoVertex/KalmanVertexFit/src/SingleTrackVertexConstraint.cc
++++ b/RecoVertex/KalmanVertexFit/src/SingleTrackVertexConstraint.cc
+@@ -11,8 +11,8 @@ namespace {
+   // FIXME
+   // hard-coded tracker bounds
+   // workaround while waiting for Geometry service
+-  const float TrackerBoundsRadius = 112;
+-  const float TrackerBoundsHalfLength = 273.5;
++  const float TrackerBoundsRadius = 740;
++  const float TrackerBoundsHalfLength = 960;
+   bool insideTrackerBounds(const GlobalPoint& point) {
+     return ((point.transverse() < TrackerBoundsRadius)
+         && (abs(point.z()) < TrackerBoundsHalfLength));
+diff --git a/RecoVertex/VertexTools/src/SequentialVertexFitter.cc b/RecoVertex/VertexTools/src/SequentialVertexFitter.cc
+index 75a9fc9..83f1437 100644
+--- a/RecoVertex/VertexTools/src/SequentialVertexFitter.cc
++++ b/RecoVertex/VertexTools/src/SequentialVertexFitter.cc
+@@ -10,8 +10,8 @@ namespace {
+   // FIXME
+   // hard-coded tracker bounds
+   // workaround while waiting for Geometry service
+-  const float TrackerBoundsRadius = 112;
+-  const float TrackerBoundsHalfLength = 273.5;
++  const float TrackerBoundsRadius = 740;
++  const float TrackerBoundsHalfLength = 960;
+   bool insideTrackerBounds(const GlobalPoint& point) {
+     return ((point.transverse() < TrackerBoundsRadius)
+         && (abs(point.z()) < TrackerBoundsHalfLength));

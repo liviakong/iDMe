@@ -1,0 +1,96 @@
+[
+    {
+        "name": "ZJetsNuNu_HT400to600",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600/"
+        ],
+        "sum_wgt": 20755648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 9961.0,
+        "nFiles": 868,
+        "blacklist": [
+            "ZJetsNuNu_HT400to600_293.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT800to1200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT800to1200/"
+        ],
+        "sum_wgt": 2144959.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1076.0,
+        "nFiles": 113,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT2500toInf",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT2500toInf/"
+        ],
+        "sum_wgt": 268224.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5.609,
+        "nFiles": 14,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT200to400",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400/"
+        ],
+        "sum_wgt": 23543145.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 72690.0,
+        "nFiles": 1195,
+        "blacklist": [
+            "ZJetsNuNu_HT200to400_766.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT100to200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200/"
+        ],
+        "sum_wgt": 29066202.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 271300.0,
+        "nFiles": 1122,
+        "blacklist": [
+            "ZJetsNuNu_HT100to200_391.root",
+            "ZJetsNuNu_HT100to200_310.root",
+            "ZJetsNuNu_HT100to200_617.root",
+            "ZJetsNuNu_HT100to200_399.root",
+            "ZJetsNuNu_HT100to200_679.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT600to800",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT600to800/"
+        ],
+        "sum_wgt": 5964799.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 2425.0,
+        "nFiles": 196,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT1200to2500",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT1200to2500/"
+        ],
+        "sum_wgt": 381695.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 247.4,
+        "nFiles": 15,
+        "blacklist": []
+    }
+]

@@ -1,1 +1,0 @@
-root://cmseos.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/AOD/iDMe_Mchi-10p5_dMchi-1p0_mZDinput-30p0_ctau-0_1jet_icckw1_drjj0_xptj80_xqcut20_slc7_amd64_gcc630_CMSSW_9_3_16_tarball_6955613_AOD_ctau-100.0_year-2018.root

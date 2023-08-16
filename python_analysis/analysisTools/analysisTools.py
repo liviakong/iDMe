@@ -290,6 +290,9 @@ class iDMeProcessorLite(iDMeProcessor):
         # pre-computing quantities for histograms, as specified in the histo config
         for subroutine in self.subroutines:
             getattr(routines,subroutine)(events)
+
+        # Fill histograms with initial spectra
+        self.histoFill(events,histos,samp,"nocut",info,sum_wgt=sum_wgt)
         
         ###############################
         ######## CUTS & HISTOS ########
@@ -410,7 +413,6 @@ class fileSkimmer:
                 with uproot.recreate(self.outFileName) as outfile:
                     outfile['outT'] = output_tree
 
-        
 def deltaPhi(v1,v2):
     # copy of the ROOT RVec DeltaPhi function
     # see here https://root.cern/doc/master/RVec_8hxx_source.html#l02742

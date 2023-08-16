@@ -72,21 +72,22 @@ def make_histograms():
         "sel_vtx_vxySignif" : Hist(samp,cut,vtx_vxySignif,storage=hist.storage.Weight()),
         "sel_vtx_mass" : Hist(samp,cut,mass,storage=hist.storage.Weight()),
         "sel_vtx_minDxy" : Hist(samp,cut,ele_dxy,storage=hist.storage.Weight()),
+        "sel_vtx_minDxy_fine": Hist(samp,cut,dxy_fine,storage=hist.storage.Weight()),
         "sel_vtx_pt" : Hist(samp,cut,ele_pt,storage=hist.storage.Weight()),
         "sel_vtx_eta" : Hist(samp,cut,ele_eta,storage=hist.storage.Weight()),
         "sel_vtx_phi" : Hist(samp,cut,ele_phi,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso3" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso3M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso4" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso4M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso8" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFRelIso8M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso3" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso3M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso4" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso4M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso8" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
-        "sel_vtx_PFIso8M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso3" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso3M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso4" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso4M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso8" : Hist(samp,cut,ele_PFRelIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFRelIso8M" : Hist(samp,cut,ele_PFRelIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso3" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso3M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso4" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso4M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso8" : Hist(samp,cut,ele_PFIso,storage=hist.storage.Weight()),
+        #"sel_vtx_PFIso8M" : Hist(samp,cut,ele_PFIsoM,storage=hist.storage.Weight()),
         "sel_vtx_matchType" : Hist(samp,cut,vtx_matchType,storage=hist.storage.Weight()),
         "sel_vtx_max_chi2" : Hist(samp,cut,ele_chi2,storage=hist.storage.Weight()),
         "sel_vtx_min_pt" : Hist(samp,cut,ele_pt,storage=hist.storage.Weight()),
@@ -113,7 +114,7 @@ def make_histograms():
         "sel_vtx_METdPhi_vs_mindRj" : Hist(samp,cut,dphi,dRj,storage=hist.storage.Weight()),
         "sel_vtx_METdPhi_vs_minEledPhiJ" : Hist(samp,cut,dphi,dphiJ,storage=hist.storage.Weight()),
         "sel_vtx_METdPhi_vs_minEledRj" : Hist(samp,cut,dphi,dRj,storage=hist.storage.Weight()),
-        "sel_vtx_maxPFIso_vs_mindxy" : Hist(samp,cut,pfiso,ele_dxy,storage=hist.storage.Weight()),
+        "sel_vtx_maxPFIso_vs_mindxy" : Hist(samp,cut,pfiso,dxy,storage=hist.storage.Weight()),
         "sel_vtx_mindRj_vs_mindxy" : Hist(samp,cut,dR,dxy,storage=hist.storage.Weight()),
         "sel_vtx_mindRj_vs_maxPFIso" : Hist(samp,cut,dR,pfiso,storage=hist.storage.Weight()),
         "sel_vtx_mindPhiJ_vs_mindxy" : Hist(samp,cut,dphi,dxy,storage=hist.storage.Weight()),
@@ -126,6 +127,7 @@ def make_histograms():
         "sel_vtx_minEledRj_vs_minEledPhiJ" : Hist(samp,cut,dR,dphi,storage=hist.storage.Weight()),
         
         # Misc other plots
+        "met_over_lead_jet_pt" : Hist(samp,cut,met_over_pt,storage=hist.storage.Weight()),
         "lead_jet_met_dPhi" : Hist(samp,cut,dphi,storage=hist.storage.Weight()),
         "min_jet_met_dPhi" : Hist(samp,cut,dphi,storage=hist.storage.Weight()),
         "vtx_met_dPhi" : Hist(samp,cut,dphi,storage=hist.storage.Weight()),
@@ -227,21 +229,22 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["sel_vtx_vxySignif"].fill(samp=samp,cut=cut,vxy_signif=vtx.vxy/vtx.sigmavxy,weight=wgt)
     histos["sel_vtx_mass"].fill(samp=samp,cut=cut,mass=vtx.m,weight=wgt)
     histos["sel_vtx_minDxy"].fill(samp=samp,cut=cut,dxy=min_dxy,weight=wgt)
+    histos["sel_vtx_minDxy_fine"].fill(samp=samp,cut=cut,dxy=min_dxy,weight=wgt)
     histos["sel_vtx_pt"].fill(samp=samp,cut=cut,pt=vtx.pt,weight=wgt)
     histos["sel_vtx_eta"].fill(samp=samp,cut=cut,eta=vtx.eta,weight=wgt)
     histos["sel_vtx_phi"].fill(samp=samp,cut=cut,phi=vtx.phi,weight=wgt)
-    histos["sel_vtx_PFRelIso3"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso3,weight=wgt)
-    histos["sel_vtx_PFRelIso3M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso3*vtx.m,weight=wgt)
-    histos["sel_vtx_PFRelIso4"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso4,weight=wgt)
-    histos["sel_vtx_PFRelIso4M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso4*vtx.m,weight=wgt)
-    histos["sel_vtx_PFRelIso8"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso8,weight=wgt)
-    histos["sel_vtx_PFRelIso8M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso8*vtx.m,weight=wgt)
-    histos["sel_vtx_PFIso3"].fill(samp=samp,cut=cut,iso=vtx.PFIso3,weight=wgt)
-    histos["sel_vtx_PFIso3M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso3*vtx.m,weight=wgt)
-    histos["sel_vtx_PFIso4"].fill(samp=samp,cut=cut,iso=vtx.PFIso4,weight=wgt)
-    histos["sel_vtx_PFIso4M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso4*vtx.m,weight=wgt)
-    histos["sel_vtx_PFIso8"].fill(samp=samp,cut=cut,iso=vtx.PFIso8,weight=wgt)
-    histos["sel_vtx_PFIso8M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso8*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFRelIso3"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso3,weight=wgt)
+    #histos["sel_vtx_PFRelIso3M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso3*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFRelIso4"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso4,weight=wgt)
+    #histos["sel_vtx_PFRelIso4M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso4*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFRelIso8"].fill(samp=samp,cut=cut,relIso=vtx.PFRelIso8,weight=wgt)
+    #histos["sel_vtx_PFRelIso8M"].fill(samp=samp,cut=cut,isoM=vtx.PFRelIso8*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFIso3"].fill(samp=samp,cut=cut,iso=vtx.PFIso3,weight=wgt)
+    #histos["sel_vtx_PFIso3M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso3*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFIso4"].fill(samp=samp,cut=cut,iso=vtx.PFIso4,weight=wgt)
+    #histos["sel_vtx_PFIso4M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso4*vtx.m,weight=wgt)
+    #histos["sel_vtx_PFIso8"].fill(samp=samp,cut=cut,iso=vtx.PFIso8,weight=wgt)
+    #histos["sel_vtx_PFIso8M"].fill(samp=samp,cut=cut,isoM=vtx.PFIso8*vtx.m,weight=wgt)
     histos["sel_vtx_max_chi2"].fill(samp=samp,cut=cut,chi2=ak.where(e1.trkChi2>e2.trkChi2,e1.trkChi2,e2.trkChi2),weight=wgt)
     histos["sel_vtx_min_pt"].fill(samp=samp,cut=cut,pt=ak.where(e1.pt<e2.pt,e1.pt,e2.pt),weight=wgt)
     histos["sel_vtx_maxPFIso"].fill(samp=samp,cut=cut,relIso=max_pfiso,weight=wgt)
@@ -274,6 +277,7 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["sel_vtx_minEledRj_vs_minEledPhiJ"].fill(samp=samp,cut=cut,dr=np.minimum(e1.mindRj,e2.mindRj),dphi=np.minimum(e1.mindPhiJ,e2.mindPhiJ),weight=wgt)
 
     # Misc other plots
+    histos["met_over_lead_jet_pt"].fill(samp=samp,cut=cut,met_over_pt=events.PFMET.pt/events.PFJet.pt[:,0],weight=wgt)
     histos["lead_jet_met_dPhi"].fill(samp=samp,cut=cut,dphi=np.abs(events.PFJet.METdPhi[:,0]),weight=wgt)
     histos["min_jet_met_dPhi"].fill(samp=samp,cut=cut,dphi=ak.min(np.abs(events.PFJet.METdPhi),axis=1))
     histos["vtx_met_dPhi"].fill(samp=samp,cut=cut,dphi=np.abs(events.sel_vtx.METdPhi),weight=wgt)

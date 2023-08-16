@@ -34,7 +34,7 @@ ele_PFRelIsoM = Regular(100,0,200,name="isoM",label="$I_{PF}^{rel} \\times m_{e^
 ele_PFIsoM = Regular(100,0,200,name="isoM",label="$I_{PF} \\times m_{e^+e^-}$")
 ele_prob = Regular(100,0,1,name="prob",label="Electron Track $\\chi^2$ Probability")
 ele_angRes = Regular(100,0,0.1,name="angRes",label="Angular Resolution $\\sqrt{\\sigma_\\eta^2 + \\sigma_\\phi^2}$")
-ele_dxy = Regular(50,0,5,name="dxy",label="Electron Track $d_{xy}$")
+ele_dxy = Regular(500,0,5,name="dxy",label="Electron Track $d_{xy}$")
 ele_dxySignif = Regular(150,0,150,name="dxy_signif",label="Electron Track $d_{xy}/\\sigma_{d_{xy}}$")
 
 # Vertices
@@ -67,13 +67,15 @@ nPmatch = Regular(5,0,5,name="nPmatch",label="Number of Gen Positron Matches")
 matchClass = Regular(4,0,4,name="matchClass",label="Match Class")
 
 # Generic quantities
+met_over_pt = Regular(100,0,2,name='met_over_pt',label="$p_T^\mathrm{miss}/p_T^{j_1}$")
 dphi = Regular(64,0,3.2,name="dphi",label="$\Delta \phi$")
 dphiJ = Regular(64,0,3.2,name="dphiJ",label="$\Delta \phi$")
 dR = Regular(100,0,6,name='dr',label="$\Delta R$")
 dRj = Regular(100,0,6,name='drj',label="$\Delta R$")
 dphi = Regular(64,0,3.2,name="dphi",label="$\Delta \phi$")
-dxy = Regular(100,0,5,name='dxy',label="$d_{xy}$ [cm]")
-pfiso = Regular(100,0,5,name='pfiso',label="$I_{\mathrm{PF}}^{\mathrm{rel}}$")
+dxy = Regular(40,0,0.2,name='dxy',label="$d_{xy}$ [cm]")
+dxy_fine = Regular(100,0,0.2,name='dxy',label="$d_{xy}$ [cm]")
+pfiso = Regular(100,0,1,name='pfiso',label="$I_{\mathrm{PF}}^{\mathrm{rel}}$")
 dphi_generic = Regular(32,0,3.2,name="dphi",label=r"$\Delta \phi$")
 met_pt = Regular(300,0,300,name="met_pt",label="$p_T^{miss}$")
 njets = Integer(0,8,name="njets",label="$N_{jets}$")

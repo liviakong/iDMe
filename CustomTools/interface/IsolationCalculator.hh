@@ -21,7 +21,7 @@
 #include "DataFormats/PatCandidates/interface/PackedCandidate.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
-#include "iDMeAnalysis/CustomTools/interface/NtupleContainerV2.hh"
+#include "iDMe/CustomTools/interface/NtupleContainerV2.hh"
 
 using std::vector;
 

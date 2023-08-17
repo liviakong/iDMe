@@ -47,10 +47,10 @@ if avg_nfiles < n_file_per:
         with open(dirname+"samples.json","w") as f:
             json.dump(list(chunk),f,indent=4)
 
-        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
-        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
-        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
-        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
+        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
+        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
+        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
+        os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
         os.system("cp {0} {1}/histos.py".format(histos,dirname))
         os.system("cp {0} {1}/cuts.py".format(cuts,dirname))
         
@@ -92,10 +92,10 @@ else:
             with open(dirname+"samples.json","w") as f:
                 json.dump([subsample],f,indent=4)
 
-            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
-            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
-            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
-            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
+            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
+            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
+            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
+            os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
             os.system("cp {0} {1}/histos.py".format(histos,dirname))
             os.system("cp {0} {1}/cuts.py".format(cuts,dirname))
 

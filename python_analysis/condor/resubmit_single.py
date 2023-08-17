@@ -26,10 +26,10 @@ if os.path.isdir(dirname+"Logs"):
     shutil.rmtree(dirname+"Logs")
 
 # copy new versions of the analysis code
-os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
-os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
-os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
-os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
+os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisTools.py {0}".format(dirname))
+os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/analysisSubroutines.py {0}".format(dirname))
+os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/analysisTools/mySchema.py {0}".format(dirname))
+os.system("cp /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/python_analysis/configs/histo_configs/histobins.py {0}".format(dirname))
 
 subprocess.run("tar czf {0} -C submissions/{1}/{2}/ .".format(tgz,jobname_base,jobname),shell=True)
 os.mkdir(dirname+"Logs/")

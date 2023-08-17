@@ -2,7 +2,7 @@
 The scripts in this directory control MC generation of signal (from Madgraph+Pythia through to AOD). The eras, global tags, process modifiers, etc. are put together based on a combination of reading McM configs from UL campaigns, [this page](https://exo-mc-and-i.gitbook.io/exo-mc-and-interpretation/how-to-sample-production-private) from MC&I, and [this repo](https://gitlab.cern.ch/cms-exo-mci/EXO-MCsampleProductions) from MC&I that generates `cmsDriver` configs for UL campaigns. Currently, only the 2018 MC production is implemented.
 
 # Usage
-The main driver script is `submitCondor.py`, which will submit condor jobs to do the full production pipeline for a given $(m_\chi, \Delta m_\chi, c\tau)$ combination. You will need to supply an iDM gridpack (not uploaded to github), which can be found here : `/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/UL_MCProduction/gridpacks`. Currently there are only gridpacks for the 1 jet case (`p p > j chi1 chi2`). Usage is as follows:
+The main driver script is `submitCondor.py`, which will submit condor jobs to do the full production pipeline for a given $(m_\chi, \Delta m_\chi, c\tau)$ combination. You will need to supply an iDM gridpack (not uploaded to github), which can be found here : `/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/UL_MCProduction/gridpacks`. Currently there are only gridpacks for the 1 jet case (`p p > j chi1 chi2`). Usage is as follows:
 
 ``python submitCondor.py path_to_gridpack lifetime year nEvents nThreads [nev_per_job]``
 

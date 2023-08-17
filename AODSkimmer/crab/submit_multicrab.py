@@ -74,11 +74,11 @@ def main():
     config = CRABClient.UserUtilities.config()
 
     # Basic settings common to all runs 
-    config.General.workArea = base_dir+'/src/iDMeAnalysis/AODSkimmer/crab/'
+    config.General.workArea = base_dir+'/src/iDMe/AODSkimmer/crab/'
     config.General.transferOutputs = True
     config.General.transferLogs = True
     config.JobType.pluginName = 'Analysis'
-    config.JobType.psetName = base_dir+'/src/iDMeAnalysis/AODSkimmer/scripts/run_AODntuplizer_cfg.py'
+    config.JobType.psetName = base_dir+'/src/iDMe/AODSkimmer/scripts/run_AODntuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
     #config.Data.splitting = 'Automatic'

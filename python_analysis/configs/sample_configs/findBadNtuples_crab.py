@@ -26,7 +26,7 @@ for samp in samples:
 
     crab_job = [k for k in fullList[0].split("/") if "crab_iDMe_" in k][0]
     print("Crab job : "+crab_job)
-    with open("/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/AODSkimmer/crab/submissions_miniNtuplizer/"+crab_job+"/failedJobs.txt") as f:
+    with open("/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/AODSkimmer/crab/submissions_miniNtuplizer/"+crab_job+"/failedJobs.txt") as f:
         failedJobs = f.read().splitlines()
     failedJobs = [j+".root" for j in failedJobs]
 

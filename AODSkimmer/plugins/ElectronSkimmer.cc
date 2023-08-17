@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    iDMeAnalysis/ElectronSkimmer
+// Package:    iDMe/ElectronSkimmer
 // Class:      ElectronSkimmer
 //
-/**\class ElectronSkimmer ElectronSkimmer.cc iDMeAnalysis/ElectronSkimmer/plugins/ElectronSkimmer.cc
+/**\class ElectronSkimmer ElectronSkimmer.cc iDMe/ElectronSkimmer/plugins/ElectronSkimmer.cc
 
  Description: MiniAOD skimmer for iDM analysis with electrons
 */
@@ -88,11 +88,11 @@
 
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
 
-#include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
-#include "iDMeAnalysis/CustomTools/interface/JetCorrections.hh"
-#include "iDMeAnalysis/CustomTools/interface/NtupleContainerV2.hh"
-#include "iDMeAnalysis/CustomTools/interface/IsolationCalculator.hh"
-#include "iDMeAnalysis/CustomTools/interface/Helpers.hh"
+#include "iDMe/CustomTools/interface/DisplacedDileptonAOD.hh"
+#include "iDMe/CustomTools/interface/JetCorrections.hh"
+#include "iDMe/CustomTools/interface/NtupleContainerV2.hh"
+#include "iDMe/CustomTools/interface/IsolationCalculator.hh"
+#include "iDMe/CustomTools/interface/Helpers.hh"
 
 #include "TTree.h"
 #include "TMath.h"

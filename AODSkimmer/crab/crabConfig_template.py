@@ -3,13 +3,13 @@ config = Configuration()
 
 config.section_("General")
 config.General.requestName = 'QCD_ntuplizer_test0'
-config.General.workArea = '/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/iDMeSkimmer/crab/'
+config.General.workArea = '/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/iDMeSkimmer/crab/'
 config.General.transferOutputs = True
 config.General.transferLogs = True
 
 config.section_("JobType")
 config.JobType.pluginName = 'Analysis'
-config.JobType.psetName = '/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/iDMeSkimmer/scripts/run_ntuplizer_cfg.py'
+config.JobType.psetName = '/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/iDMeSkimmer/scripts/run_ntuplizer_cfg.py'
 config.JobType.allowUndistributedCMSSW = True
 config.JobType.pyCfgParams = ['outfile=test_QCD.root','numThreads=1']
 config.JobType.numCores = 1

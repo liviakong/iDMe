@@ -4,7 +4,7 @@ import FWCore.ParameterSet.Config as cms
 # Setting up MET filters as in https://github.com/cms-sw/cmssw/blob/CMSSW_10_6_X/PhysicsTools/PatAlgos/python/slimming/metFilterPaths_cff.py
 
 # Custom primary vertex filter that allows taggingMode = True
-from iDMeAnalysis.AODSkimmer.myPrimaryVertexFilter_cfi import *
+from iDMe.AODSkimmer.myPrimaryVertexFilter_cfi import *
 # Beam halo filter
 from RecoMET.METFilters.globalSuperTightHalo2016Filter_cfi import *
 # HBHE filters

@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    iDMeAnalysis/IsoSkimmer
+// Package:    iDMe/IsoSkimmer
 // Class:      IsoSkimmer
 //
-/**\class IsoSkimmer IsoSkimmer.cc iDMeAnalysis/IsoSkimmer/plugins/IsoSkimmer.cc
+/**\class IsoSkimmer IsoSkimmer.cc iDMe/IsoSkimmer/plugins/IsoSkimmer.cc
 
  Description: MiniAOD skimmer for iDM analysis with electrons
 */
@@ -83,11 +83,11 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
-#include "iDMeAnalysis/CustomTools/interface/DisplacedDileptonAOD.hh"
-#include "iDMeAnalysis/CustomTools/interface/JetCorrections.hh"
-#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
-#include "iDMeAnalysis/CustomTools/interface/IsoNtupleContainer.hh"
-#include "iDMeAnalysis/CustomTools/interface/Helpers.hh"
+#include "iDMe/CustomTools/interface/DisplacedDileptonAOD.hh"
+#include "iDMe/CustomTools/interface/JetCorrections.hh"
+#include "iDMe/CustomTools/interface/NtupleContainer.hh"
+#include "iDMe/CustomTools/interface/IsoNtupleContainer.hh"
+#include "iDMe/CustomTools/interface/Helpers.hh"
 
 #include "TTree.h"
 #include "TMath.h"

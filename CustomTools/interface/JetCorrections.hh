@@ -30,7 +30,7 @@
 #include "DataFormats/METReco/interface/GenMET.h"
 #include "DataFormats/Math/interface/deltaR.h"
 
-#include "iDMeAnalysis/CustomTools/interface/NtupleContainer.hh"
+#include "iDMe/CustomTools/interface/NtupleContainer.hh"
 
 using std::vector;
 

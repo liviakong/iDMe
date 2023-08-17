@@ -2,7 +2,7 @@
 
 source /cvmfs/cms.cern.ch/cmsset_default.sh
 
-BASE=/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMeAnalysis/
+BASE=/uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/iDMe/
 HEAD=/uscms/home/sbrightt/nobackup/iDMe/compiled_CMSSW_envs/ntuplizer_CMSSW_10_6_26
 
 mkdir -p $HEAD
@@ -16,25 +16,25 @@ cd CMSSW_10_6_26/src
 eval `scram runtime -sh`
 rm -rf *
 
-mkdir iDMeAnalysis
-mkdir iDMeAnalysis/iDMeSkimmer
-mkdir iDMeAnalysis/AODSkimmer
-mkdir iDMeAnalysis/CustomTools
+mkdir iDMe
+mkdir iDMe/iDMeSkimmer
+mkdir iDMe/AODSkimmer
+mkdir iDMe/CustomTools
 
-cp -r $BASE/iDMeSkimmer/plugins iDMeAnalysis/iDMeSkimmer/
-cp -r $BASE/iDMeSkimmer/python iDMeAnalysis/iDMeSkimmer/
-cp -r $BASE/iDMeSkimmer/test iDMeAnalysis/iDMeSkimmer/
+cp -r $BASE/iDMeSkimmer/plugins iDMe/iDMeSkimmer/
+cp -r $BASE/iDMeSkimmer/python iDMe/iDMeSkimmer/
+cp -r $BASE/iDMeSkimmer/test iDMe/iDMeSkimmer/
 
-cp -r $BASE/AODSkimmer/plugins iDMeAnalysis/AODSkimmer/
-cp -r $BASE/AODSkimmer/python iDMeAnalysis/AODSkimmer/
-cp -r $BASE/AODSkimmer/test iDMeAnalysis/AODSkimmer/
+cp -r $BASE/AODSkimmer/plugins iDMe/AODSkimmer/
+cp -r $BASE/AODSkimmer/python iDMe/AODSkimmer/
+cp -r $BASE/AODSkimmer/test iDMe/AODSkimmer/
 
-cp -r $BASE/CustomTools/* iDMeAnalysis/CustomTools/
+cp -r $BASE/CustomTools/* iDMe/CustomTools/
 
-cp $BASE/iDMeSkimmer/scripts/run_ntuplizer_cfg.py iDMeAnalysis/iDMeSkimmer/
-cp $BASE/AODSkimmer/scripts/run_AODntuplizer_cfg.py iDMeAnalysis/AODSkimmer/
-cp $BASE/AODSkimmer/scripts/run_isoNtuplizer_cfg.py iDMeAnalysis/AODSkimmer/
-cp $BASE/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py iDMeAnalysis/AODSkimmer/
+cp $BASE/iDMeSkimmer/scripts/run_ntuplizer_cfg.py iDMe/iDMeSkimmer/
+cp $BASE/AODSkimmer/scripts/run_AODntuplizer_cfg.py iDMe/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/run_isoNtuplizer_cfg.py iDMe/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py iDMe/AODSkimmer/
 
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoVertex .
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoEgamma .

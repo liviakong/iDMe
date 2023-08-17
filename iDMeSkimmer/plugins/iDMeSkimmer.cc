@@ -1,9 +1,9 @@
 // -*- C++ -*-
 //
-// Package:    iDMeAnalysis/iDMeSkimmer
+// Package:    iDMe/iDMeSkimmer
 // Class:      iDMeSkimmer
 //
-/**\class iDMeSkimmer iDMeSkimmer.cc iDMeAnalysis/iDMeSkimmer/plugins/iDMeSkimmer.cc
+/**\class iDMeSkimmer iDMeSkimmer.cc iDMe/iDMeSkimmer/plugins/iDMeSkimmer.cc
 
  Description: MiniAOD skimmer for iDM analysis with electrons
 */
@@ -65,7 +65,7 @@
 #include "SimDataFormats/PileupSummaryInfo/interface/PileupSummaryInfo.h"
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
-#include "iDMeAnalysis/CustomTools/interface/DisplacedDilepton.hh"
+#include "iDMe/CustomTools/interface/DisplacedDilepton.hh"
 
 #include "TTree.h"
 

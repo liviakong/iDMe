@@ -26,21 +26,6 @@ index f040fd6..1f6ea55 100644
  # Modifier for bParking (fully open selection)
  from Configuration.Eras.Modifier_bParking_cff import bParking
  bParking.toModify(selectedPatLowPtElectrons,cut = "pt>1.")
-diff --git a/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py b/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
-index b078626..a32ded5 100644
---- a/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
-+++ b/PhysicsTools/PatAlgos/python/slimming/isolatedTracks_cfi.py
-@@ -38,8 +38,8 @@ isolatedTracks = cms.EDProducer("PATIsolatedTrackProducer",
-     addPrescaledDeDxTracks = cms.bool(False),
-     usePrecomputedDeDxStrip = cms.bool(True),        # if these are set to True, will get estimated DeDx from DeDxData branches
-     usePrecomputedDeDxPixel = cms.bool(True),        # if set to False, will manually compute using dEdxHitInfo
--    pT_cut = cms.double(5.0),         # save tracks above this pt
--    pT_cut_noIso = cms.double(20.0),  # for tracks with at least this pT, don't apply any iso cut
-+    pT_cut = cms.double(1.0),         # save tracks above this pt
-+    pT_cut_noIso = cms.double(1.0),  # for tracks with at least this pT, don't apply any iso cut
-     pfIsolation_DR = cms.double(0.3),
-     pfIsolation_DZ = cms.double(0.1),
-     miniIsoParams = cms.vdouble(0.05, 0.2, 10.0), # (minDR, maxDR, kT)
 diff --git a/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py b/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py
 index 053294a..729126f 100644
 --- a/PhysicsTools/PatAlgos/python/slimming/slimmedElectrons_cfi.py

@@ -1,2 +1,0 @@
-root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/MINI_lowPtRegIDNoCut//Mchi-42p0_dMchi-4p0_ctau-1/merged_Mchi-42p0_dMchi-4p0_ctau-1_00.root
-root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/MINI_lowPtRegIDNoCut//Mchi-42p0_dMchi-4p0_ctau-1/merged_Mchi-42p0_dMchi-4p0_ctau-1_01.root

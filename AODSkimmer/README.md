@@ -17,7 +17,8 @@ Here's an example command to analyze 1000 events from the $m_\chi = 10$ GeV, $\D
 ```bash
 cmsRun scripts/miniPlusElectronNtuplizer_cfg.py year=2018 data=0 signal=1 \
 nEvents=1000 flist="fileLists/signal/Mchi-10p5_dMchi-1p0_ctau-1.txt" \
-outfile=test_signal_output.root```
+outfile=test_signal_output.root
+```
 
 ## File lists
 File lists for signal and background samples are found in sub-folders of the `fileLists` directory. Currently, it is only possible to run over signal files on the FNAL LPC (either locally or using condor). Running over backgrounds requires submitting jobs to `crab` (see the README in the `crab` directory).

@@ -263,7 +263,6 @@ class iDMeProcessorLite(iDMeProcessor):
         events['DP_dotJet1'] = (dp_px*jet_px[:,0] + dp_py*jet_py[:,0])/(dp_pt*events.PFJet.pt[:,0])
         events['DP_dotJet12'] = (dp_px*alljet_px + dp_py*alljet_py)/(dp_pt*alljet_pt)"""
 
-
         # computing some signal-only diagnostic quantities
         if info['type'] == "signal":
             e1_match = routines.matchedVertexElectron(events,1)

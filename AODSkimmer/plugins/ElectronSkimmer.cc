@@ -261,7 +261,7 @@ ElectronSkimmer::beginRun(edm::Run const& iRun, edm::EventSetup const& iSetup)
          hltConfig_.dump("GlobalTag");
          hltConfig_.dump("TableName");
       }
-   } 
+   }
    else {
       LogError("HLTConfig") << "iDMAnalyzer::beginRun: config extraction failure with triggerProcessName -> " << triggerProcessName_;
       return;

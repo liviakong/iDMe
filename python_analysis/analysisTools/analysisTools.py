@@ -102,12 +102,9 @@ class Analyzer:
             self.sample_names.append(name)
             loaded += 1
 
-    def process(self,treename='ntuples/outT',execr="iterative",workers=4,lite=False):
+    def process(self,treename='ntuples/outT',execr="iterative",workers=4):
         fileset = self.sample_locs
-        if lite:
-            proc = iDMeProcessorLite(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
-        else:
-            proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
+        proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
         if execr == "iterative":
             executor = processor.IterativeExecutor()
         elif execr == "futures":
@@ -165,26 +162,44 @@ class iDMeProcessor(processor.ProcessorABC):
         events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
 
         # Initial number of events
-        cutflow['initial'] += np.sum(events.genWgt)/sum_wgt
-        cutflow_nevts['initial'] += len(events)
-        histos['cutDesc']['initial'] = 'No cuts'
+        cutflow['all'] += np.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['all'] += len(events)
+        histos['cutDesc']['all'] = 'No cuts'
 
-        # Preselection
-        routines.selectGoodElesAndVertices(events)
+        #################################
+        #### Hard-coded basic cuts ######
+        #################################
+        # 1 or 2 jets in the event
+        nJets = ak.count(events.PFJet.pt,axis=1)
+        events = events[(nJets>0) & (nJets<3)]
+
+        #################################
+        ## Calculating Additional Vars ##
+        #################################
+        routines.electronJetSeparation(events) # dR and dPhi between electrons and jets
+        routines.electronID(events) # electron kinematic/ID definition
+        routines.vtxElectronConnection(events) # associate electrons to vertices
+        routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
+
+        #################################
+        #### Demand >= 1 ee vertices ####
+        #################################
         events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
         events = events[events.nGoodVtx > 0]
-        
-        # pre-computing quantities for cuts
-        events.__setitem__("JetMETdPhi",np.abs(deltaPhi(events.PFJet.corrPhi,events.PFMET.phi)))
+        # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
         routines.selectBestVertex(events)
-        events.__setitem__("VtxMETdPhi",np.abs(deltaPhi(events.sel_vtx.phi,events.PFMET.phi)))
-        # computing some signal-only diagnostic quantities
-        if info['type'] == "signal":
-            e1_match = routines.matchedVertexElectron(events,1)
-            e2_match = routines.matchedVertexElectron(events,2)
-            events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
 
-        # pre-computing quantities for histograms, as specified in the histo config
+        # Fill cutflow after baseline selection
+        cutflow['hasVtx'] += np.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['hasVtx'] += len(events)
+        histos['cutDesc']['hasVtx'] = 'Baseline Selection'
+        
+        # Compute miscellaneous extra variables -- add anything you want to this function
+        routines.miscExtraVariables(events)
+        if info['type'] == "signal":
+            routines.miscExtraVariablesSignal(events)
+
+        # computing any extra quantities specified in the histogram config file
         for subroutine in self.subroutines:
             getattr(routines,subroutine)(events)
         
@@ -214,105 +229,6 @@ class iDMeProcessor(processor.ProcessorABC):
         for cutName in list(accumulator['cutDesc'].keys()):
             accumulator['cutDesc'][cutName] = accumulator['cutDesc'][cutName].split("@")[0]
         return accumulator
-
-class iDMeProcessorLite(iDMeProcessor):
-    def process(self,events):
-        samp = events.metadata["dataset"]
-        histos = self.histoMod.make_histograms()
-        histos['cutDesc'] = defaultdict(str)
-        cutflow = defaultdict(float)
-        cutflow_counts = defaultdict(float)
-        cutflow_nevts = defaultdict(int)
-        info = self.sampleInfo[samp]
-        sum_wgt = info["sum_wgt"]
-        lumi, unc = getLumi(info['year'])
-        xsec = info['xsec']
-
-        # register event weight branch
-        events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
-
-        # fill initial cutflow
-        cutflow['all'] += np.sum(events.genWgt)/sum_wgt
-        cutflow_nevts['all'] += len(events)
-        histos['cutDesc']['all'] = 'No Cuts'
-
-        # Preselection
-        routines.selectExistingGoodVtx(events)
-        events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
-        events = events[events.nGoodVtx > 0]
-        routines.selectBestVertex(events)
-
-        # Initial number of events
-        cutflow['initial'] += np.sum(events.genWgt)/sum_wgt
-        cutflow_nevts['initial'] += len(events)
-        histos['cutDesc']['initial'] = 'Preselection'
-
-        # compute dR and dPhi between selected vertex and jets
-        events["sel_vtx","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)**2 + (events.PFJet.eta-events.sel_vtx.eta)**2),axis=1)
-        events["sel_vtx","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)),axis=1)
-
-        # compute composite MET + leptons (px,py) and dot w/ leading jet(s) (px,py)
-        """dp_px = events.PFMET.pt*np.cos(events.PFMET.phi) + events.sel_vtx.px
-        dp_py = events.PFMET.pt*np.sin(events.PFMET.phi) + events.sel_vtx.py
-        dp_pt = np.sqrt(dp_px**2+dp_py**2)
-        jet_px = events.PFJet.pt*np.cos(events.PFJet.phi)
-        jet_py = events.PFJet.pt*np.sin(events.PFJet.phi)
-        alljet_px = ak.sum(jet_px,axis=1)
-        alljet_py = ak.sum(jet_py,axis=1)
-        alljet_pt = np.sqrt(alljet_px**2+alljet_py**2)
-        events['DP_dotJet1'] = (dp_px*jet_px[:,0] + dp_py*jet_py[:,0])/(dp_pt*events.PFJet.pt[:,0])
-        events['DP_dotJet12'] = (dp_px*alljet_px + dp_py*alljet_py)/(dp_pt*alljet_pt)"""
-
-        # computing some signal-only diagnostic quantities
-        if info['type'] == "signal":
-            e1_match = routines.matchedVertexElectron(events,1)
-            e2_match = routines.matchedVertexElectron(events,2)
-            genj_phi_pt30 = ak.fill_none(ak.pad_none(events.GenJet.phi[events.GenJet.pt>30],1),999)
-            genj_eta_pt30 = ak.fill_none(ak.pad_none(events.GenJet.eta[events.GenJet.pt>30],1),999)
-            events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
-            
-            events["GenEle","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenEle.phi)**2 + (events.PFJet.eta-events.GenEle.eta)**2),axis=1)
-            events["GenEle","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenEle.phi)),axis=1)
-            events["GenEle","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenEle.phi)**2 + (genj_eta_pt30-events.GenEle.eta)**2),axis=1)
-            events["GenEle","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenEle.phi)),999),axis=1)
-            
-            events["GenPos","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenPos.phi)**2 + (events.PFJet.eta-events.GenPos.eta)**2),axis=1)
-            events["GenPos","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenPos.phi)),axis=1)
-            events["GenPos","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenPos.phi)**2 + (genj_eta_pt30-events.GenPos.eta)**2),axis=1)
-            events["GenPos","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenPos.phi)),999),axis=1)
-
-            events["genEE","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.genEE.phi)**2 + (events.PFJet.eta-events.genEE.eta)**2),axis=1)
-            events["genEE","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.genEE.phi)),axis=1)
-            events["genEE","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.genEE.phi)**2 + (genj_eta_pt30-events.genEE.eta)**2),axis=1)
-            events["genEE","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.genEE.phi)),999),axis=1)
-
-        # pre-computing quantities for histograms, as specified in the histo config
-        for subroutine in self.subroutines:
-            getattr(routines,subroutine)(events)
-
-        # Fill histograms with initial spectra
-        self.histoFill(events,histos,samp,"nocut",info,sum_wgt=sum_wgt)
-        
-        ###############################
-        ######## CUTS & HISTOS ########
-        ###############################
-        for cut in self.cuts:
-            events, cutName, cutDesc, savePlots = cut(events,info)
-            cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
-            cutflow_nevts[cutName] += len(events)
-            histos['cutDesc'][cutName] += cutDesc + "@"
-
-            # Fill histograms
-            if savePlots:
-                self.histoFill(events,histos,samp,cutName,info,sum_wgt=sum_wgt)
-        
-        for k in cutflow.keys():
-            cutflow_counts[k] = xsec*lumi*cutflow[k]
-        histos['cutflow'] = {samp:cutflow}
-        histos['cutflow_cts'] = {samp:cutflow_counts}
-        histos['cutflow_nevts'] = {samp:cutflow_nevts}
-
-        return histos
 
 class fileSkimmer:
     def __init__(self,sampFile,sampleInfo,cutFile,mode='signal'):

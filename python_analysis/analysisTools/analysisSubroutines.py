@@ -30,36 +30,10 @@ def deltaPhi(v1,v2):
     return output
 
 # Routines to produce additional variables (e.g. best vertex, good electrons, etc) for cuts
-# These are produced every time the analyzer is run
-def selectGoodElesAndVertices(events):
-    # Selecting electrons that pass basic pT and eta cuts
-    eles = events.Electron
-    lpt_eles = events.LptElectron
-    vtx = events.vtx
-    
-    events["Electron","passCut"] = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
-    events["LptElectron","passCut"] = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4)
-
-    all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
-    n_reg = ak.count(eles.pt,axis=1)
-    # shitty fix for weird bug when there's just 1 event with 1 vertex (happens with slimmed QCD files)
-    if len(events) == 1 and len(vtx.pt) == 1:
-        events["vtx","e1"] = events.LptElectron[vtx.e1_idx] if vtx.e1_typ[0][0]=="L" else events.Electron[vtx.e1_idx]
-        events["vtx","e2"] = events.LptElectron[vtx.e2_idx] if vtx.e2_typ[0][0]=="L" else events.Electron[vtx.e2_idx]
-    else:
-        isLow1 = ak.values_astype(vtx.e1_typ=="L","int")
-        isLow2 = ak.values_astype(vtx.e2_typ=="L","int")
-    
-        vtx_e1_flatIdx = vtx.e1_idx + isLow1*n_reg
-        vtx_e2_flatIdx = vtx.e2_idx + isLow2*n_reg
-
-        events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
-        events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
-
-    events.__setitem__("good_vtx",events.vtx[events.vtx.e1.passCut & events.vtx.e2.passCut])
-
-def selectExistingGoodVtx(events):
-    # compute deltaR between electrons and jets for rejection
+def electronJetSeparation(events):
+    """
+    Function to compute angular separations between electrons and jets
+    """
     j0_eta = events.PFJet.eta[:,0]
     j0_phi = events.PFJet.phi[:,0]
     j1_eta = ak.fill_none(ak.pad_none(events.PFJet.eta,2),-999)[:,1]
@@ -72,7 +46,6 @@ def selectExistingGoodVtx(events):
     events["Electron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.Electron.phi,j1_phi)),999)
     events["Electron","mindRj"] = np.minimum(events.Electron.dRj0,events.Electron.dRj1)
     events["Electron","mindPhiJ"] = np.minimum(events.Electron.dPhij0,events.Electron.dPhij1)
-    events["Electron","cutID"] = events.Electron.IDcutLoose
     
     events["LptElectron","dRj0"] = np.sqrt(deltaPhi(events.LptElectron.phi,j0_phi)**2 + (events.LptElectron.eta-j0_eta)**2)
     events["LptElectron","dPhij0"] = np.abs(deltaPhi(events.LptElectron.phi,j0_phi))
@@ -80,8 +53,26 @@ def selectExistingGoodVtx(events):
     events["LptElectron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.LptElectron.phi,j1_phi)),999)
     events["LptElectron","mindRj"] = np.minimum(events.LptElectron.dRj0,events.LptElectron.dRj1)
     events["LptElectron","mindPhiJ"] = np.minimum(events.LptElectron.dPhij0,events.LptElectron.dPhij1)
-    events["LptElectron","cutID"] = ak.ones_like(events.LptElectron.pt)
 
+def electronID(events):
+    """
+    Function to tag electrons as good/bad according to cuts we define
+    """
+    eles = events.Electron
+    lpt_eles = events.LptElectron
+    
+    ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4) & (eles.mindRj > 0.4)
+    ele_id_cut = eles.IDcutLoose==1
+    events["Electron","passID"] = ele_kinematic_cut & ele_id_cut
+
+    lpt_ele_kinematic_cut = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4) & (lpt_eles.mindRj > 0.4)
+    lpt_ele_id_cut = ak.ones_like(lpt_eles.pt)==1
+    events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
+
+def vtxElectronConnection(events):
+    """
+    Function to associate electrons to vertices, so they can be easily accessed as vtx.e1 and vtx.e2
+    """
     all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
     n_reg = ak.count(events.Electron.pt,axis=1)
     vtx = events.vtx
@@ -99,14 +90,62 @@ def selectExistingGoodVtx(events):
 
         events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
         events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
-    
-    #events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
-    #events.__setitem__("good_vtx",events.vtx[(events.vtx.isGood) & (events.vtx.e1.mindRj > 0.4) & (events.vtx.e2.mindRj > 0.4)])
-    events.__setitem__("good_vtx",events.vtx[(events.vtx.isGood) & (events.vtx.e1.mindRj > 0.4) & (events.vtx.e2.mindRj > 0.4) & (events.vtx.e1.cutID == 1) & (events.vtx.e2.cutID == 1)])
+
+def defineGoodVertices(events):
+    # Selecting electrons that pass basic pT and eta cuts
+    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID
+    events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
 
 def selectBestVertex(events):
     sel_vtx = ak.flatten(events.good_vtx[ak.argmin(events.good_vtx.reduced_chi2,axis=1,keepdims=True)])
     events.__setitem__("sel_vtx",sel_vtx)
+
+def miscExtraVariables(events):
+    # Jet-MET and vertex-MET deltaPhi
+    events.__setitem__("JetMETdPhi",np.abs(deltaPhi(events.PFJet.phi,events.PFMET.phi)))
+    events.__setitem__("VtxMETdPhi",np.abs(deltaPhi(events.sel_vtx.phi,events.PFMET.phi)))
+    events["sel_vtx","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)**2 + (events.PFJet.eta-events.sel_vtx.eta)**2),axis=1)
+    events["sel_vtx","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)),axis=1)
+
+    # compute composite MET + leptons (px,py) and dot w/ leading jet(s) (px,py)
+    dp_px = events.PFMET.pt*np.cos(events.PFMET.phi) + events.sel_vtx.px
+    dp_py = events.PFMET.pt*np.sin(events.PFMET.phi) + events.sel_vtx.py
+    dp_pt = np.sqrt(dp_px**2+dp_py**2)
+    jet_px = events.PFJet.pt*np.cos(events.PFJet.phi)
+    jet_py = events.PFJet.pt*np.sin(events.PFJet.phi)
+    alljet_px = ak.sum(jet_px,axis=1)
+    alljet_py = ak.sum(jet_py,axis=1)
+    alljet_pt = np.sqrt(alljet_px**2+alljet_py**2)
+    events['DP_dotJet1'] = (dp_px*jet_px[:,0] + dp_py*jet_py[:,0])/(dp_pt*events.PFJet.pt[:,0])
+    events['DP_dotJet12'] = (dp_px*alljet_px + dp_py*alljet_py)/(dp_pt*alljet_pt)
+
+def miscExtraVariablesSignal(events):
+    # determine if gen e+/e- are matched to reco-level objects
+    events["GenEle","matched"] = (events.GenEleClosest.typ > 0) & (events.GenEleClosest.dr < 0.1)
+    events["GenPos","matched"] = (events.GenPosClosest.typ > 0) & (events.GenPosClosest.dr < 0.1)
+
+    # determine if the selected vertex is gen-matched
+    e1_match = matchedVertexElectron(events,1)
+    e2_match = matchedVertexElectron(events,2)
+    events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
+
+    # separation between jets and gen e+/e-
+    genj_phi_pt30 = ak.fill_none(ak.pad_none(events.GenJet.phi[events.GenJet.pt>30],1),999)
+    genj_eta_pt30 = ak.fill_none(ak.pad_none(events.GenJet.eta[events.GenJet.pt>30],1),999)
+    events["GenEle","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenEle.phi)**2 + (events.PFJet.eta-events.GenEle.eta)**2),axis=1)
+    events["GenEle","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenEle.phi)),axis=1)
+    events["GenEle","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenEle.phi)**2 + (genj_eta_pt30-events.GenEle.eta)**2),axis=1)
+    events["GenEle","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenEle.phi)),999),axis=1)
+    
+    events["GenPos","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenPos.phi)**2 + (events.PFJet.eta-events.GenPos.eta)**2),axis=1)
+    events["GenPos","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenPos.phi)),axis=1)
+    events["GenPos","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenPos.phi)**2 + (genj_eta_pt30-events.GenPos.eta)**2),axis=1)
+    events["GenPos","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenPos.phi)),999),axis=1)
+
+    events["genEE","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.genEE.phi)**2 + (events.PFJet.eta-events.genEE.eta)**2),axis=1)
+    events["genEE","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.genEE.phi)),axis=1)
+    events["genEE","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.genEE.phi)**2 + (genj_eta_pt30-events.genEE.eta)**2),axis=1)
+    events["genEE","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.genEE.phi)),999),axis=1)
 
 def matchedVertexElectron(events,i):
     vtx = events.sel_vtx
@@ -118,7 +157,10 @@ def matchedVertexElectron(events,i):
     matched = ak.where(pmatch,1,matched) # e & p can't be matched to same object, ensured in ntuplizer code
     return matched
 
-# Specialized routines to create variables for particular histograms
+#############################################
+########## Specialized routines #############
+#############################################
+
 # Must specify which ones you want to run in the histogram config (will need to run the ones that make the vars for your histograms)
 
 def eleVtxGenMatching(events):

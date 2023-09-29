@@ -11,10 +11,10 @@
         "nFiles": 1007,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_5.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0002//ntuples_0002_5.root"
         ]
     },
     {
@@ -29,19 +29,19 @@
         "nFiles": 2695,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_10.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_11.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_12.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_13.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_7.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_8.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_9.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_10.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_11.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_12.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_13.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_7.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_8.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0000//ntuples_0000_9.root"
         ]
     },
     {
@@ -60,7 +60,7 @@
             "DYJetsToLL_1-4120.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0004//ntuples_0004_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0004//ntuples_0004_2.root"
         ]
     },
     {
@@ -75,11 +75,11 @@
         "nFiles": 1879,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_9.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/output_0001//ntuples_0001_9.root"
         ]
     },
     {

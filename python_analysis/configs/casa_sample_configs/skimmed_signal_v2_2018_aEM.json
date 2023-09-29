@@ -14,8 +14,8 @@
         "num_events": 189059,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-1//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-1_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-1//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-1_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-1//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-1_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-1//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-1_1.root"
         ]
     },
     {
@@ -33,9 +33,9 @@
         "num_events": 316212,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-10//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-10_2.root"
         ]
     },
     {
@@ -53,14 +53,14 @@
         "num_events": 1219823,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_6.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_7.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_6.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-10p5_dMchi-1p0_ct-100//ntuples_sig_Mchi-10.5_dMchi-1.0_ct-100_7.root"
         ]
     },
     {
@@ -78,8 +78,8 @@
         "num_events": 148092,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-1_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-1_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-1_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-1_1.root"
         ]
     },
     {
@@ -97,9 +97,9 @@
         "num_events": 265532,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-10_2.root"
         ]
     },
     {
@@ -117,10 +117,10 @@
         "num_events": 434266,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_3.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-11p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-11.0_dMchi-2.0_ct-100_3.root"
         ]
     },
     {
@@ -138,7 +138,7 @@
         "num_events": 129152,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-1//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-1_0.root"
         ]
     },
     {
@@ -156,8 +156,8 @@
         "num_events": 210463,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-10_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-10//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-10_1.root"
         ]
     },
     {
@@ -175,11 +175,11 @@
         "num_events": 713238,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_4.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-21p0_dMchi-2p0_ct-100//ntuples_sig_Mchi-21.0_dMchi-2.0_ct-100_4.root"
         ]
     },
     {
@@ -197,8 +197,8 @@
         "num_events": 119820,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-1_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-1_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-1_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-1_1.root"
         ]
     },
     {
@@ -216,8 +216,8 @@
         "num_events": 225012,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-10_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-10_1.root"
         ]
     },
     {
@@ -235,9 +235,9 @@
         "num_events": 305477,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-22p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-22.0_dMchi-4.0_ct-100_2.root"
         ]
     },
     {
@@ -255,7 +255,7 @@
         "num_events": 112966,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-1//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-1//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-1_0.root"
         ]
     },
     {
@@ -273,8 +273,8 @@
         "num_events": 188899,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-10//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-10//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-10_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-10//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-10//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-10_1.root"
         ]
     },
     {
@@ -294,11 +294,11 @@
             "ntuples_Mchi-31p5_dMchi-3p0_ctau-100_22.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_4.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-31p5_dMchi-3p0_ct-100//ntuples_sig_Mchi-31.5_dMchi-3.0_ct-100_4.root"
         ]
     },
     {
@@ -316,7 +316,7 @@
         "num_events": 92695,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-33p0_dMchi-6p0_ct-1//ntuples_sig_Mchi-33.0_dMchi-6.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-33p0_dMchi-6p0_ct-1//ntuples_sig_Mchi-33.0_dMchi-6.0_ct-1_0.root"
         ]
     },
     {
@@ -334,7 +334,7 @@
         "num_events": 94204,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-33p0_dMchi-6p0_ct-10//ntuples_sig_Mchi-33.0_dMchi-6.0_ct-10_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-33p0_dMchi-6p0_ct-10//ntuples_sig_Mchi-33.0_dMchi-6.0_ct-10_0.root"
         ]
     },
     {
@@ -352,7 +352,7 @@
         "num_events": 88092,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-1//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-1_0.root"
         ]
     },
     {
@@ -370,8 +370,8 @@
         "num_events": 146058,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-10_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-10_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-10_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-10//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-10_1.root"
         ]
     },
     {
@@ -389,11 +389,11 @@
         "num_events": 605864,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_4.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-42p0_dMchi-4p0_ct-100//ntuples_sig_Mchi-42.0_dMchi-4.0_ct-100_4.root"
         ]
     },
     {
@@ -411,9 +411,9 @@
         "num_events": 296762,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-44p0_dMchi-8p0_ct-100//ntuples_sig_Mchi-44.0_dMchi-8.0_ct-100_2.root"
         ]
     },
     {
@@ -431,7 +431,7 @@
         "num_events": 80269,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-1//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-1//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-1_0.root"
         ]
     },
     {
@@ -451,7 +451,7 @@
             "ntuples_Mchi-52p5_dMchi-5p0_ctau-10_02.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-10//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-10_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-10//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-10_0.root"
         ]
     },
     {
@@ -471,9 +471,9 @@
             "ntuples_Mchi-52p5_dMchi-5p0_ctau-100_02.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-52p5_dMchi-5p0_ct-100//ntuples_sig_Mchi-52.5_dMchi-5.0_ct-100_2.root"
         ]
     },
     {
@@ -491,7 +491,7 @@
         "num_events": 22500,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-1//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-1_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-1//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-1_0.root"
         ]
     },
     {
@@ -509,7 +509,7 @@
         "num_events": 115956,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-10//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-10_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-10//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-10_0.root"
         ]
     },
     {
@@ -527,9 +527,9 @@
         "num_events": 311639,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/signal/signal_v2_2018_aEM_rdfSkim/output_sig_Mchi-55p0_dMchi-10p0_ct-100//ntuples_sig_Mchi-55.0_dMchi-10.0_ct-100_2.root"
         ]
     }
 ]

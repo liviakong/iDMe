@@ -15,14 +15,14 @@
             "TTJets_DiLept_105.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_6.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_7.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_6.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets_DiLept//ntuples_TTJets_DiLept_7.root"
         ]
     }
 ]

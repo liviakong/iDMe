@@ -18,8 +18,8 @@
             "QCD_HT2000toInf_1-47.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT2000toInf//ntuples_QCD_HT2000toInf_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT2000toInf//ntuples_QCD_HT2000toInf_1.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT2000toInf//ntuples_QCD_HT2000toInf_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT2000toInf//ntuples_QCD_HT2000toInf_1.root"
         ]
     },
     {
@@ -46,14 +46,14 @@
             "QCD_HT300to500_1214.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_10.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_11.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_6.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_9.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_10.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_11.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_6.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500//ntuples_QCD_HT300to500_9.root"
         ]
     },
     {
@@ -82,11 +82,11 @@
             "QCD_HT1000to1500_3-334.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_4.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500//ntuples_QCD_HT1000to1500_4.root"
         ]
     },
     {
@@ -134,9 +134,9 @@
             "QCD_HT1500to2000_102.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000//ntuples_QCD_HT1500to2000_2.root"
         ]
     },
     {
@@ -209,18 +209,18 @@
             "QCD_HT500to700_43.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_10.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_11.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_6.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_7.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_8.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_9.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_10.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_11.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_6.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_7.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_8.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700//ntuples_QCD_HT500to700_9.root"
         ]
     },
     {
@@ -288,20 +288,20 @@
             "QCD_HT700to1000_300.root"
         ],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_10.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_11.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_12.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_13.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_3.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_4.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_5.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_6.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_7.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_8.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_9.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_10.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_11.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_12.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_13.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_3.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_4.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_5.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_6.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_7.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_8.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000//ntuples_QCD_HT700to1000_9.root"
         ]
     }
 ]

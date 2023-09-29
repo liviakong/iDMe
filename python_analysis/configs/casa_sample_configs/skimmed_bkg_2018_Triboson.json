@@ -11,7 +11,7 @@
         "nFiles": 10,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWW//ntuples_WWW_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWW//ntuples_WWW_0.root"
         ]
     },
     {
@@ -26,7 +26,7 @@
         "nFiles": 21,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_ZZZ//ntuples_ZZZ_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_ZZZ//ntuples_ZZZ_0.root"
         ]
     },
     {
@@ -41,7 +41,7 @@
         "nFiles": 7,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWZ//ntuples_WWZ_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWZ//ntuples_WWZ_0.root"
         ]
     },
     {
@@ -56,7 +56,7 @@
         "nFiles": 14,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WZZ//ntuples_WZZ_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WZZ//ntuples_WZZ_0.root"
         ]
     }
 ]

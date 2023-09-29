@@ -11,10 +11,10 @@
         "nFiles": 649,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_2.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_3.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_2.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW//ntuples_WW_3.root"
         ]
     },
     {
@@ -29,7 +29,7 @@
         "nFiles": 186,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_ZZ//ntuples_ZZ_0.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_ZZ//ntuples_ZZ_0.root"
         ]
     },
     {
@@ -44,9 +44,9 @@
         "nFiles": 436,
         "blacklist": [],
         "fileset": [
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_0.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_1.root",
-            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_2.root"
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_0.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_1.root",
+            "root://xcache//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ//ntuples_WZ_2.root"
         ]
     }
 ]

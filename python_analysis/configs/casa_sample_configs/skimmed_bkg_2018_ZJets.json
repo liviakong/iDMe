@@ -1,0 +1,131 @@
+[
+    {
+        "name": "ZJetsNuNu_HT400to600",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600/"
+        ],
+        "sum_wgt": 20755648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 9961.0,
+        "nFiles": 868,
+        "blacklist": [
+            "ZJetsNuNu_HT400to600_293.root"
+        ],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600//ntuples_ZJetsNuNu_HT400to600_0.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600//ntuples_ZJetsNuNu_HT400to600_1.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600//ntuples_ZJetsNuNu_HT400to600_2.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600//ntuples_ZJetsNuNu_HT400to600_3.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600//ntuples_ZJetsNuNu_HT400to600_4.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT800to1200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT800to1200/"
+        ],
+        "sum_wgt": 2144959.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1076.0,
+        "nFiles": 113,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT800to1200//ntuples_ZJetsNuNu_HT800to1200_0.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT2500toInf",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT2500toInf/"
+        ],
+        "sum_wgt": 268224.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5.609,
+        "nFiles": 14,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT2500toInf//ntuples_ZJetsNuNu_HT2500toInf_0.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT200to400",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400/"
+        ],
+        "sum_wgt": 23543145.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 72690.0,
+        "nFiles": 1195,
+        "blacklist": [
+            "ZJetsNuNu_HT200to400_766.root"
+        ],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_0.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_1.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_2.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_3.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_4.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400//ntuples_ZJetsNuNu_HT200to400_5.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT100to200",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200/"
+        ],
+        "sum_wgt": 29066202.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 271300.0,
+        "nFiles": 1122,
+        "blacklist": [
+            "ZJetsNuNu_HT100to200_391.root",
+            "ZJetsNuNu_HT100to200_310.root",
+            "ZJetsNuNu_HT100to200_617.root",
+            "ZJetsNuNu_HT100to200_399.root",
+            "ZJetsNuNu_HT100to200_679.root"
+        ],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_0.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_1.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_2.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_3.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_4.root",
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200//ntuples_ZJetsNuNu_HT100to200_5.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT600to800",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT600to800/"
+        ],
+        "sum_wgt": 5964799.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 2425.0,
+        "nFiles": 196,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT600to800//ntuples_ZJetsNuNu_HT600to800_0.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT1200to2500",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT1200to2500/"
+        ],
+        "sum_wgt": 381695.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 247.4,
+        "nFiles": 15,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT1200to2500//ntuples_ZJetsNuNu_HT1200to2500_0.root"
+        ]
+    }
+]

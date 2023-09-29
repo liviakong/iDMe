@@ -83,6 +83,8 @@ class Analyzer:
                 self.sample_locs[name] = [sample['location']]
             elif 'fileset' in sample.keys():
                 self.sample_locs[name] = [f for f in sample['fileset'] if f.split("/")[-1] not in sample['blacklist']]
+                if self.max_files_per_samp > 0 and len(self.sample_locs[name]) > self.max_files_per_samp:
+                    self.sample_locs[name] = self.sample_locs[name][:self.max_files_per_samp]
             else:
                 # if the location is a directory, use the xrootd client to get a list of files
                 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
@@ -94,8 +96,8 @@ class Analyzer:
                     for l in loc:
                         status, flist = xrdClient.dirlist(l)
                         fullList.extend(["root://cmsxrootd.fnal.gov/"+l+"/"+item.name for item in flist if (('.root' in item.name) and (item.name not in sample['blacklist']))])
-                if self.max_files_per_samp > 0:
-                    fullList = fullList[:self.max_files_per_samp] if len(fullList) > self.max_files_per_samp else fullList
+                if self.max_files_per_samp > 0 and len(fullList) > self.max_files_per_samp:
+                    fullList = fullList[:self.max_files_per_samp]
                 self.sample_locs[name] = fullList
             
             self.sample_info[name] = sample

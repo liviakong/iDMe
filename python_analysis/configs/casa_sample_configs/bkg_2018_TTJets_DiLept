@@ -1,0 +1,18 @@
+[
+    {
+        "name": "TTJets_DiLept",
+        "location": [
+            "/store/group/lpcmetx/iDMe/Samples/Ntuples/background/2018/Top/TTJets_DiLept/TTJets_DiLept_TuneCP5_13TeV-madgraphMLM-pythia8/crab_iDMe_TTJets_DiLept_2023_03_29-11_46/230329_164736/0000/"
+        ],
+        "sum_wgt": 29154266.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 53070.0,
+        "nFiles": 1542,
+        "blacklist": [
+            "TTJets_DiLept_102.root",
+            "TTJets_DiLept_110.root",
+            "TTJets_DiLept_105.root"
+        ]
+    }
+]

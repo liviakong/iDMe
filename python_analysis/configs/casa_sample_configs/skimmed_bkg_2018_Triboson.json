@@ -1,0 +1,62 @@
+[
+    {
+        "name": "WWW",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWW/"
+        ],
+        "sum_wgt": 51638.25830078125,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 215.8,
+        "nFiles": 10,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWW//ntuples_WWW_0.root"
+        ]
+    },
+    {
+        "name": "ZZZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_ZZZ/"
+        ],
+        "sum_wgt": 3452.6484146118164,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 14.76,
+        "nFiles": 21,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_ZZZ//ntuples_ZZZ_0.root"
+        ]
+    },
+    {
+        "name": "WWZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWZ/"
+        ],
+        "sum_wgt": 42310.52294921875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 170.7,
+        "nFiles": 7,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWZ//ntuples_WWZ_0.root"
+        ]
+    },
+    {
+        "name": "WZZ",
+        "location": [
+            "/store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WZZ/"
+        ],
+        "sum_wgt": 17121.263244628906,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 57.09,
+        "nFiles": 14,
+        "blacklist": [],
+        "fileset": [
+            "root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WZZ//ntuples_WZZ_0.root"
+        ]
+    }
+]

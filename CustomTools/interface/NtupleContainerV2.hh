@@ -193,6 +193,10 @@ public:
     vector<float> recoElectronPFRelIso_dR8_;
     vector<float> recoElectronPFIso_;
     vector<float> recoElectronPFRelIso_;
+    vector<float> recoElectronChadIso_;
+    vector<float> recoElectronNhadIso_;
+    vector<float> recoElectronPhoIso_;
+    vector<float> recoElectronRhoEA_;
     vector<float> recoElectronTrkProb_;
     vector<int> recoElectronTrkNumTrackerHits_;
     vector<int> recoElectronTrkNumPixHits_;
@@ -229,6 +233,10 @@ public:
     vector<float> recoLowPtElectronTrkProb_;
     vector<float> recoLowPtElectronPFIso_;
     vector<float> recoLowPtElectronPFRelIso_;
+    vector<float> recoLowPtElectronChadIso_;
+    vector<float> recoLowPtElectronNhadIso_;
+    vector<float> recoLowPtElectronPhoIso_;
+    vector<float> recoLowPtElectronRhoEA_;
     vector<int> recoLowPtElectronTrkNumTrackerHits_;
     vector<int> recoLowPtElectronTrkNumPixHits_;
     vector<int> recoLowPtElectronTrkNumStripHits_;

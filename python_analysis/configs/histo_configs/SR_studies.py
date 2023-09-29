@@ -6,6 +6,7 @@ import awkward as ak
 
 def make_histograms():
     histograms = {
+        # quantities associated w/ selected vertex
         "sel_vtx_type" : Hist(samp,cut,vtx_type,storage=hist.storage.Weight()),
         "sel_vtx_sign" : Hist(samp,cut,vtx_sign,storage=hist.storage.Weight()),
         "sel_vtx_dR" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
@@ -38,6 +39,9 @@ def make_histograms():
         "sel_vtx_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
         "sel_vtx_mindRj_vs_matchType" : Hist(samp,cut,dR,vtx_matchType,storage=hist.storage.Weight()),
         "sel_vtx_mindPhiJ_vs_matchType" : Hist(samp,cut,dphi_generic,vtx_matchType,storage=hist.storage.Weight()),
+
+        # other quantities
+        "num_electrons" : Hist(samp,cut,hist.axis.Integer(0,10,name="num_ele"),storage=hist.storage.Weight()),
 
         # 2D selected vertex histos
         "sel_vtx_mass_vs_mindxy" : Hist(samp,cut,mass,ele_dxy,storage=hist.storage.Weight()),
@@ -77,8 +81,9 @@ def make_histograms():
         "minBtag" : Hist(samp,cut,btag,storage=hist.storage.Weight()),
         "lead_jet_abseta" : Hist(samp,cut,jet_abseta,storage=hist.storage.Weight()),
         "lead_jet_pt" : Hist(samp,cut,jet_pt,storage=hist.storage.Weight()),
-        #"dp_dotJet1" : Hist(samp,cut,angleDot,storage=hist.storage.Weight()),
-        #"dp_dotJet12" : Hist(samp,cut,angleDot,storage=hist.storage.Weight()),
+        "dp_dotJet1" : Hist(samp,cut,angleDot,storage=hist.storage.Weight()),
+        "dp_dotJet12" : Hist(samp,cut,angleDot,storage=hist.storage.Weight()),
+        
         # Gen plots
         "genEle_mindRj" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
         "genEle_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
@@ -91,7 +96,9 @@ def make_histograms():
         "genEE_mindRj" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
         "genEE_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
         "genEE_mindRjGen" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
-        "genEE_mindPhiJGen" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight())
+        "genEE_mindPhiJGen" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
+        "genEE_dR" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
+        "genMatch_vs_vtxMatch" : Hist(samp,cut,hist.axis.Integer(0,3,name='gen'),hist.axis.IntCategory([0,1,2],name='sel'),storage=hist.storage.Weight())
     }
     return histograms
 
@@ -132,6 +139,10 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["sel_vtx_minEledPhiJ"].fill(samp=samp,cut=cut,dphi=np.minimum(e1.mindPhiJ,e2.mindPhiJ),weight=wgt)
     histos["sel_vtx_mindRj"].fill(samp=samp,cut=cut,dr=events.sel_vtx.mindRj,weight=wgt)
     histos["sel_vtx_mindPhiJ"].fill(samp=samp,cut=cut,dphi=events.sel_vtx.mindPhiJ,weight=wgt)
+
+    # other plots
+    histos['num_electrons'].fill(samp=samp,cut=cut,num_ele=ak.count(events.Electron.pt,axis=1)+ak.count(events.LptElectron.pt,axis=1),weight=wgt)
+    
     # 2D selected vertex plots
     histos["sel_vtx_mass_vs_mindxy"].fill(samp=samp,cut=cut,mass=vtx.m,dxy=min_dxy,weight=wgt)
     histos["sel_vtx_mass_vs_vxy"].fill(samp=samp,cut=cut,mass=vtx.m,vxy=vtx.vxy,weight=wgt)
@@ -170,8 +181,8 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["minBtag"].fill(samp=samp,cut=cut,btag=ak.fill_none(ak.min(events.PFJet.bTag,axis=1),-1),weight=wgt)
     histos["lead_jet_abseta"].fill(samp=samp,cut=cut,eta=np.abs(ak.fill_none(ak.pad_none(events.PFJet.eta,1),-999))[:,0],weight=wgt)
     histos["lead_jet_pt"].fill(samp=samp,cut=cut,pt=ak.fill_none(ak.pad_none(events.PFJet.pt,1),-999)[:,0],weight=wgt)
-    #histos["dp_dotJet1"].fill(samp=samp,cut=cut,dot=events.DP_dotJet1,weight=wgt)
-    #histos["dp_dotJet12"].fill(samp=samp,cut=cut,dot=events.DP_dotJet12,weight=wgt)
+    histos["dp_dotJet1"].fill(samp=samp,cut=cut,dot=events.DP_dotJet1,weight=wgt)
+    histos["dp_dotJet12"].fill(samp=samp,cut=cut,dot=events.DP_dotJet12,weight=wgt)
 
     if info["type"] == "signal":
         histos["sel_vtx_matchType"].fill(samp=samp,cut=cut,mtype=vtx.match,weight=wgt)
@@ -195,3 +206,5 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
         histos["genEE_mindPhiJ"].fill(samp=samp,cut=cut,dphi=events.genEE.mindPhiJ,weight=wgt)
         histos["genEE_mindRjGen"].fill(samp=samp,cut=cut,dr=events.genEE.mindRjGen,weight=wgt)
         histos["genEE_mindPhiJGen"].fill(samp=samp,cut=cut,dphi=events.genEE.mindPhiJGen,weight=wgt)
+        histos['genEE_dR'].fill(samp=samp,cut=cut,dr=events.genEE.dr,weight=wgt)
+        histos['genMatch_vs_vtxMatch'].fill(samp=samp,cut=cut,gen=events.signalReco,sel=events.sel_vtx.match)

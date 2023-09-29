@@ -61,6 +61,10 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_PFRelIso8",&recoElectronPFRelIso_dR8_);
     outT->Branch("Electron_PFIso",&recoElectronPFIso_);
     outT->Branch("Electron_PFRelIso",&recoElectronPFRelIso_);
+    outT->Branch("Electron_chadIso",&recoElectronChadIso_);
+    outT->Branch("Electron_nhadIso",&recoElectronNhadIso_);
+    outT->Branch("Electron_phoIso",&recoElectronPhoIso_);
+    outT->Branch("Electron_rhoEA",&recoElectronRhoEA_);
     outT->Branch("Electron_trkProb",&recoElectronTrkProb_);
     outT->Branch("Electron_numTrackerHits",&recoElectronTrkNumTrackerHits_);
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
@@ -96,6 +100,10 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_PFIso",&recoLowPtElectronPFIso_);
     outT->Branch("LptElectron_PFRelIso",&recoLowPtElectronPFRelIso_);
     outT->Branch("LptElectron_PFRelIso8",&recoLowPtElectronPFRelIso_dR8_);
+    outT->Branch("LptElectron_chadIso",&recoLowPtElectronChadIso_);
+    outT->Branch("LptElectron_nhadIso",&recoLowPtElectronNhadIso_);
+    outT->Branch("LptElectron_phoIso",&recoLowPtElectronPhoIso_);
+    outT->Branch("LptElectron_rhoEA",&recoLowPtElectronRhoEA_);
     outT->Branch("LptElectron_trkProb",&recoLowPtElectronTrkProb_);
     outT->Branch("LptElectron_numTrackerHits",&recoLowPtElectronTrkNumTrackerHits_);
     outT->Branch("LptElectron_numPixHits",&recoLowPtElectronTrkNumPixHits_);
@@ -510,6 +518,10 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronPFRelIso_dR8_.clear();
     recoElectronPFIso_.clear();
     recoElectronPFRelIso_.clear();
+    recoElectronChadIso_.clear();
+    recoElectronNhadIso_.clear();
+    recoElectronPhoIso_.clear();
+    recoElectronRhoEA_.clear();
     recoElectronTrkProb_.clear();
     recoElectronTrkNumTrackerHits_.clear();
     recoElectronTrkNumPixHits_.clear();
@@ -545,6 +557,10 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronPFRelIso_dR8_.clear();
     recoLowPtElectronPFIso_.clear();
     recoLowPtElectronPFRelIso_.clear();
+    recoLowPtElectronChadIso_.clear();
+    recoLowPtElectronNhadIso_.clear();
+    recoLowPtElectronPhoIso_.clear();
+    recoLowPtElectronRhoEA_.clear();
     recoLowPtElectronTrkProb_.clear();
     recoLowPtElectronTrkNumTrackerHits_.clear();
     recoLowPtElectronTrkNumPixHits_.clear();

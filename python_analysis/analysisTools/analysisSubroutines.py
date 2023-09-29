@@ -121,13 +121,16 @@ def miscExtraVariables(events):
 
 def miscExtraVariablesSignal(events):
     # determine if gen e+/e- are matched to reco-level objects
-    events["GenEle","matched"] = (events.GenEleClosest.typ > 0) & (events.GenEleClosest.dr < 0.1)
-    events["GenPos","matched"] = (events.GenPosClosest.typ > 0) & (events.GenPosClosest.dr < 0.1)
+    events["GenEle","matched"] = ak.where((events.GenEleClosest.typ > 0) & (events.GenEleClosest.dr < 0.1),1,0)
+    events["GenPos","matched"] = ak.where((events.GenPosClosest.typ > 0) & (events.GenPosClosest.dr < 0.1),1,0)
 
     # determine if the selected vertex is gen-matched
     e1_match = matchedVertexElectron(events,1)
     e2_match = matchedVertexElectron(events,2)
     events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
+
+    # record if signal is reconstructed
+    events["signalReco"] = events.GenEle.matched + events.GenPos.matched
 
     # separation between jets and gen e+/e-
     genj_phi_pt30 = ak.fill_none(ak.pad_none(events.GenJet.phi[events.GenJet.pt>30],1),999)

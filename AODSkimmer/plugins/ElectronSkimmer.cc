@@ -568,6 +568,11 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          }
       }
    }
+
+   // Record all electrons that are not part of PF -- either regulars that don't pass PF ID
+   // or low-pT that aren't reconstructed as PF
+   vector<math::XYZTLorentzVector> nonPF_ele_p4s;
+   
    
    ////////////////////////////////
    // Handling default electrons // 
@@ -613,6 +618,11 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       float iso = pfIso.sumChargedHadronPt + std::max(0.0f,pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt  - rho*eA);
       nt.recoElectronPFIso_.push_back(iso);
       nt.recoElectronPFRelIso_.push_back(iso/ele.pt());
+      // Saving individual isolation components
+      nt.recoElectronChadIso_.push_back(pfIso.sumChargedHadronPt);
+      nt.recoElectronNhadIso_.push_back(pfIso.sumNeutralHadronEt);
+      nt.recoElectronPhoIso_.push_back(pfIso.sumPhotonEt);
+      nt.recoElectronRhoEA_.push_back(rho*eA);
       // Filling track info
       nt.recoElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoElectronDxyError_.push_back(track->dxyError());
@@ -668,6 +678,11 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       float iso = pfIso.sumChargedHadronPt + std::max(0.0f,pfIso.sumNeutralHadronEt + pfIso.sumPhotonEt  - rho*eA);
       nt.recoLowPtElectronPFIso_.push_back(iso);
       nt.recoLowPtElectronPFRelIso_.push_back(iso/ele.pt());
+      // Saving individual isolation components
+      nt.recoElectronChadIso_.push_back(pfIso.sumChargedHadronPt);
+      nt.recoElectronNhadIso_.push_back(pfIso.sumNeutralHadronEt);
+      nt.recoElectronPhoIso_.push_back(pfIso.sumPhotonEt);
+      nt.recoElectronRhoEA_.push_back(rho*eA);
       // Filling tracks
       nt.recoLowPtElectronDxy_.push_back(track->dxy(pv.position()));
       nt.recoLowPtElectronDxyError_.push_back(track->dxyError());
@@ -942,6 +957,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          tk_idx++;
       }
 
+      // Matching gen e+/e- to reco objects
       vector<float> dR_genE;
       vector<int> dRtype_genE;
       vector<int> dRind_genE;

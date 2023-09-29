@@ -102,16 +102,22 @@ class Analyzer:
             self.sample_names.append(name)
             loaded += 1
 
-    def process(self,treename='ntuples/outT',execr="iterative",workers=4):
+    def process(self,treename='ntuples/outT',execr="iterative",workers=4,dask_client=None):
         fileset = self.sample_locs
         proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
         if execr == "iterative":
             executor = processor.IterativeExecutor()
         elif execr == "futures":
             executor = processor.FuturesExecutor(workers=workers)
+        elif execr == "dask":
+            if dask_client is None:
+                print("Need to supply a dask client!")
+                return
+            else:
+                executor = processor.DaskExecutor(client=dask_client)
         else:
             print("Invalid executor type specification!")
-            exit
+            return
         runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
         accumulator = runner(fileset,
                             treename=treename,

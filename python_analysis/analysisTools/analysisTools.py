@@ -120,7 +120,7 @@ class Analyzer:
         else:
             print("Invalid executor type specification!")
             return
-        runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
+        runner = processor.Runner(executor=executor,schema=NanoAODSchema,savemetrics=True)
         accumulator = runner(fileset,
                             treename=treename,
                             processor_instance=proc)
@@ -264,7 +264,7 @@ class fileSkimmer:
     
     def skim(self):
         with uproot.open(self.sampFile) as input_file:
-            events = NanoEventsFactory.from_root(input_file,treepath="ntuples/outT",schemaclass=MySchema).events()
+            events = NanoEventsFactory.from_root(input_file,treepath="ntuples/outT",schemaclass=NanoAODSchema).events()
             info = self.sampleInfo
             sum_wgt = info["sum_wgt"]
             lumi, unc = getLumi(info['year'])

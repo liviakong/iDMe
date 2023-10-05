@@ -7,6 +7,7 @@ import uproot
 import awkward as ak
 ak.behavior.update(vector.behavior)
 import numba as nb
+import awkward.numba
 import numpy as np
 import matplotlib.pyplot as plt
 import json
@@ -28,6 +29,30 @@ def deltaPhi(v1,v2):
     fine = ak.values_astype((dPhi <= M_PI) & (dPhi >= -1*M_PI),np.float32)
     output = fine*dPhi + under*(dPhi + 2.0*M_PI) + over*(dPhi - 2.0*M_PI)
     return output
+
+def deltaR(eta1,phi1,eta2,phi2):
+    return np.sqrt((eta1-eta2)**2 + deltaPhi(phi1,phi2)**2)
+
+@nb.njit()
+def deltaPhiSingle(phi1,phi2):
+    M_PI = 3.14159265358979323846264338328
+    dPhi = np.fmod(phi1-phi2,2*M_PI)
+    if dPhi < -1*M_PI:
+        dPhi += 2*M_PI
+    elif dPhi > M_PI:
+        dPhi -= 2*M_PI
+    return dPhi
+
+@nb.njit()
+def deltaRSingle(eta1,phi1,eta2,phi2):
+    return np.sqrt((eta1-eta2)**2 + deltaPhiSingle(phi1,phi2)**2)
+
+def runJitOutput(func,*args):
+    b = ak.ArrayBuilder()
+    func(b,*args)
+    out = b.snapshot()
+    del b
+    return out
 
 # Routines to produce additional variables (e.g. best vertex, good electrons, etc) for cuts
 def electronJetSeparation(events):
@@ -68,6 +93,13 @@ def electronID(events):
     lpt_ele_kinematic_cut = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4) & (lpt_eles.mindRj > 0.4)
     lpt_ele_id_cut = ak.ones_like(lpt_eles.pt)==1
     events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
+
+def electronIsoConePtSum(events):
+    all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
+    lpt_eles = events.LptElectron
+    reg_eles = events.Electron
+    events["LptElectron","elePtSumIsoCone"] = runJitOutput(sumPtInCone,lpt_eles.eta,lpt_eles.phi,all_eles.eta,all_eles.phi,all_eles.pt)
+    events["Electron","elePtSumIsoCone"] = runJitOutput(sumPtInCone,reg_eles.eta,reg_eles.phi,all_eles.eta,all_eles.phi,all_eles.pt)
 
 def vtxElectronConnection(events):
     """
@@ -159,6 +191,26 @@ def matchedVertexElectron(events,i):
     matched = ak.where(ematch,-1,0)
     matched = ak.where(pmatch,1,matched) # e & p can't be matched to same object, ensured in ntuplizer code
     return matched
+
+@nb.njit()
+def sumPtInCone(b,e1_eta,e1_phi,e2_eta,e2_phi,e2_pt):
+    nEvents = len(e1_eta)
+    for n in range(nEvents):
+        b.begin_list() # start list to record pt sums for each electron in e1
+        n_e1 = len(e1_eta[n])
+        n_e2 = len(e2_eta[n])
+        for i in range(n_e1):
+            pt_sum_cone = 0
+            for j in range(n_e2):
+                if e1_eta[n][i] == e2_eta[n][j] and e1_phi[n][i] == e2_phi[n][j]:
+                    # don't include in sum if it's the same electron (same pt and phi)
+                    continue
+                dR = deltaRSingle(e1_eta[n][i],e1_phi[n][i],e2_eta[n][j],e2_phi[n][j])
+                if dR < 0.3:
+                    pt_sum_cone += e2_pt[n][j]
+            b.real(pt_sum_cone)
+        b.end_list() # end list
+
 
 #############################################
 ########## Specialized routines #############

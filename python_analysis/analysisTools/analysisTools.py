@@ -120,7 +120,7 @@ class Analyzer:
         else:
             print("Invalid executor type specification!")
             return
-        runner = processor.Runner(executor=executor,schema=NanoAODSchema,savemetrics=True)
+        runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
         accumulator = runner(fileset,
                             treename=treename,
                             processor_instance=proc)
@@ -185,6 +185,7 @@ class iDMeProcessor(processor.ProcessorABC):
         ## Calculating Additional Vars ##
         #################################
         routines.electronJetSeparation(events) # dR and dPhi between electrons and jets
+        routines.electronIsoConePtSum(events) # for each electron, compute pT sum of any other electrons in event within dR < 0.3 of it
         routines.electronID(events) # electron kinematic/ID definition
         routines.vtxElectronConnection(events) # associate electrons to vertices
         routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
@@ -264,7 +265,7 @@ class fileSkimmer:
     
     def skim(self):
         with uproot.open(self.sampFile) as input_file:
-            events = NanoEventsFactory.from_root(input_file,treepath="ntuples/outT",schemaclass=NanoAODSchema).events()
+            events = NanoEventsFactory.from_root(input_file,treepath="ntuples/outT",schemaclass=MySchema).events()
             info = self.sampleInfo
             sum_wgt = info["sum_wgt"]
             lumi, unc = getLumi(info['year'])

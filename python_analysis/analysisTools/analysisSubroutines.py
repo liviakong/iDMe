@@ -68,14 +68,14 @@ def electronJetSeparation(events):
     events["Electron","dRj0"] = np.sqrt(deltaPhi(events.Electron.phi,j0_phi)**2 + (events.Electron.eta-j0_eta)**2)
     events["Electron","dPhij0"] = np.abs(deltaPhi(events.Electron.phi,j0_phi))
     events["Electron","dRj1"] = np.sqrt(deltaPhi(events.Electron.phi,j1_phi)**2 + (events.Electron.eta-j1_eta)**2)
-    events["Electron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.Electron.phi,j1_phi)),999)
+    events["Electron","dPhij1"] = ak.where(j1_phi != -999, ak.fill_none(ak.firsts(np.abs(deltaPhi(events.Electron.phi,j1_phi))),999), 999)
     events["Electron","mindRj"] = np.minimum(events.Electron.dRj0,events.Electron.dRj1)
     events["Electron","mindPhiJ"] = np.minimum(events.Electron.dPhij0,events.Electron.dPhij1)
     
     events["LptElectron","dRj0"] = np.sqrt(deltaPhi(events.LptElectron.phi,j0_phi)**2 + (events.LptElectron.eta-j0_eta)**2)
     events["LptElectron","dPhij0"] = np.abs(deltaPhi(events.LptElectron.phi,j0_phi))
     events["LptElectron","dRj1"] = np.sqrt(deltaPhi(events.LptElectron.phi,j1_phi)**2 + (events.LptElectron.eta-j1_eta)**2)
-    events["LptElectron","dPhij1"] = ak.where(j1_phi != -999,np.abs(deltaPhi(events.LptElectron.phi,j1_phi)),999)
+    events["LptElectron","dPhij1"] = ak.where(j1_phi != -999, ak.fill_none(ak.firsts(np.abs(deltaPhi(events.LptElectron.phi,j1_phi))),999), 999)
     events["LptElectron","mindRj"] = np.minimum(events.LptElectron.dRj0,events.LptElectron.dRj1)
     events["LptElectron","mindPhiJ"] = np.minimum(events.LptElectron.dPhij0,events.LptElectron.dPhij1)
 

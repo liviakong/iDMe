@@ -30,7 +30,8 @@ def make_histograms():
         "sel_vtx_minEledRj" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
         "sel_vtx_minEledPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
         "sel_vtx_mindRj" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
-        "sel_vtx_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight())
+        "sel_vtx_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
+        "lowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight())
     }
     return histograms
 
@@ -67,3 +68,4 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["sel_vtx_minEledPhiJ"].fill(samp=samp,cut=cut,dphi=np.minimum(e1.mindPhiJ,e2.mindPhiJ),weight=wgt)
     histos["sel_vtx_mindRj"].fill(samp=samp,cut=cut,dr=events.sel_vtx.mindRj,weight=wgt)
     histos["sel_vtx_mindPhiJ"].fill(samp=samp,cut=cut,dphi=events.sel_vtx.mindPhiJ,weight=wgt)
+    histos["lowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[events.sel_vtx.e1_typ=='L'])

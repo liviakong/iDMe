@@ -86,6 +86,10 @@ def electronID(events):
     eles = events.Electron
     lpt_eles = events.LptElectron
     
+    # define branches with the same name to store relevant MVA ID score for electrons/low-pT electrons
+    events['Electron','IDscore'] = eles.IDmvaLoose # 'loose' mva score for regular electrons (just a dummy value)
+    events['LptElectron','IDscore'] = lpt_eles.ID # use the actualy MVA score for low-pT electrons
+    
     ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4) & (eles.mindRj > 0.4)
     ele_id_cut = eles.IDcutLoose==1
     events["Electron","passID"] = ele_kinematic_cut & ele_id_cut

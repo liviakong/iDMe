@@ -82,3 +82,6 @@ njets = Integer(0,8,name="njets",label="$N_{jets}$")
 btag = Regular(100,0,1,name="btag",label="DeepJet B-Tag Score")
 jet_abseta = Regular(30,0,3,name="eta",label="$Leading Jet |\\eta|$")
 jet_pt = Regular(150,0,150,name="pt",label="Leading Jet $p_T$")
+
+# Electron ID
+ele_id = Regular(50,-1,4,name="ele_id",label="Low $p_T$ electron ID Score")

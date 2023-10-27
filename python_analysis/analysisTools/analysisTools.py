@@ -222,7 +222,7 @@ class iDMeProcessor(processor.ProcessorABC):
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms
-            if savePlots:
+            if savePlots and len(events) > 0:
                 self.histoFill(events,histos,samp,cutName,info,sum_wgt=sum_wgt)
         
         for k in cutflow.keys():

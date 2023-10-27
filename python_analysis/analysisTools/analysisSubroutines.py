@@ -85,6 +85,9 @@ def electronID(events):
     """
     eles = events.Electron
     lpt_eles = events.LptElectron
+
+    events['Electron','IDscore'] = eles.IDmvaLoose
+    events['LptElectron','IDscore'] = lpt_eles.ID
     
     ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4) & (eles.mindRj > 0.4)
     ele_id_cut = eles.IDcutLoose==1

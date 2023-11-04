@@ -10,6 +10,8 @@ import os
 mode = str(sys.argv[1])
 year = str(sys.argv[2])
 alpha = str(sys.argv[3])
+prefix = str(sys.argv[4])
+name = str(sys.argv[5])
 
 if mode != "sig" and mode != "bkg":
     print("Invalid mode: use sig or bkg")
@@ -22,8 +24,6 @@ if len(sys.argv) < 3:
 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
 
 if mode == "sig":
-    prefix = "/store/group/lpcmetx/iDMe//Samples/Ntuples/signal_v2/"
-
     status, points = xrdClient.dirlist(prefix+year)
     points = [item.name for item in points]
     output = []
@@ -50,11 +50,10 @@ if mode == "sig":
             info["nFiles"] = len(rootFiles)
             output.append(info)
 
-    out_json = "signal_{0}_{1}.json".format(year,alpha)
+    out_json = "{0}_{1}_{2}.json".format(name,year,alpha)
     with open(out_json,"w") as outfile:
         json.dump(output,outfile,indent=4)
 else:
-    prefix = "/store/group/lpcmetx/iDMe//Samples/Ntuples/background/"
     status, bkgs = xrdClient.dirlist(prefix+year)
     bkgs = [bkg.name for bkg in bkgs]
     for bkg in bkgs:
@@ -110,6 +109,6 @@ else:
             info["nFiles"] = nFiles
             output.append(info)
 
-        out_json = "bkg_{}_{}.json".format(year,bkg)
+        out_json = "bkg_{0}_{1}.json".format(year,bkg)
         with open(out_json,"w") as outfile:
             json.dump(output,outfile,indent=4)

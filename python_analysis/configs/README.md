@@ -1,4 +1,41 @@
-# Sample configs
+# Histo configs `histo_configs`
+
+When running coffea analyzer, a histogram config in `.py` will be needed. [histo_configs/SR_studies.py](https://github.com/kyungminparkdrums/iDMe/blob/main/python_analysis/configs/histo_configs/SR_studies.py) is an example config file. 
+
+Histograms saved in the coffea output are filled through [fillHistos](https://github.com/kyungminparkdrums/iDMe/blob/main/python_analysis/configs/histo_configs/SR_studies.py#L107) function in the config file, which is called in the [analysis tools](https://github.com/kyungminparkdrums/iDMe/blob/iDMe/python_analysis/analysisTools/analysisTools.py#L133) when running coffea. 
+
+Binning of the histograms are taken care of in [histobins.py](https://github.com/kyungminparkdrums/iDMe/blob/main/python_analysis/configs/histo_configs/histobins.py), which is imported in histo config files.
+
+## Add histograms in coffea output
+If you want to add any histograms in the coffea output file, edit the following:
+
+###  In `histo_configs/histobins.py`, add the variable and its range & binning. 
+```
+# example
+dR = Regular(100,0,6,name='dr',label="$\Delta R$")
+vtx_matchType = IntCategory([0,1,2],name="mtype",label="Vertex Gen Match Type")
+``` 
+
+### In a histo config json file you want to use, i.e. `histo_configs/SR_studies.py`, add the histogram in `make_histograms` function inside `histograms` dictionary.
+```
+# example
+"sel_vtx_dR" : Hist(samp,cut,dR,storage=hist.storage.Weight()),                                     # 1D
+"sel_vtx_minEledRj_vs_matchType" : Hist(samp,cut,dR,vtx_matchType,storage=hist.storage.Weight()),   # 2D
+```
+
+Inside the argument for constructing `Hist` instance, the third (for 1D; for 2D, it'll be third and 4th) argument after `cut` should match the variable you added in `histobins.py`. 
+
+### In the histo config file, add in `fillHistos` function what the histograms should be filled with. 
+```
+# example
+histos["sel_vtx_dR"].fill(samp=samp,cut=cut,dr=vtx.dR,weight=wgt), 
+histos["sel_vtx_minEledRj_vs_matchType"].fill(samp=samp,cut=cut,dr=np.minimum(e1.mindRj,e2.mindRj),mtype=vtx.match,weight=wgt),
+```
+
+Inside the argument for `fill`, th third (for 1D; for 2D, it'll be third and 4th) argument after `cut` should match the `name` of the variable you added in `histobins.py`. The value you assign to the `name` of the variable is named after the branch name in the ntuples. For example, in the ntuples we have [vtx_dR](https://github.com/kyungminparkdrums/iDMe/blob/iDMe/CustomTools/src/NtupleContainerV2.cc#L207C8-L207C8) branch. Coffea will read it as `vtx.dR`, and we assign this to `dr` in this case.  
+
+
+# Sample configs `sample_configs`
 
 ## Create json config for signal samples
 

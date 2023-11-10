@@ -215,6 +215,109 @@ def sumPtInCone(b,e1_eta,e1_phi,e2_eta,e2_phi,e2_pt):
             b.real(pt_sum_cone)
         b.end_list() # end list
 
+def getTrueVertex(events, evt_vtx, doGenMatch=False):
+# Get the index of events that have "true" vertex, formed by reco e+/e- that are closest to gen e+/e-.
+# For the events, get the index of "true" vertex in each event.
+# dR(gen, reco) < 0.1 gen matching cut is not applied when doGenMatch is set to False.
+    e = events.GenEleClosest # reco electron in the event that is closest to the gen e-
+    p = events.GenPosClosest # reco positron in the event that is closest to the gen e+
+
+    # vtx e1 -- match with either reco e- or reco e+
+    match_reco_e_vtx_e1 = (ak.where(e.typ == 1, 'R', 'L') == evt_vtx.e1_typ)
+    match_reco_e_vtx_e1 = (e.ind == evt_vtx.e1_idx) & match_reco_e_vtx_e1
+
+    match_reco_p_vtx_e1 = (ak.where(p.typ == 1, 'R', 'L') == evt_vtx.e1_typ)
+    match_reco_p_vtx_e1 = (p.ind == evt_vtx.e1_idx) & match_reco_p_vtx_e1
+
+    match_reco_vtx_e1 = (match_reco_e_vtx_e1 | match_reco_p_vtx_e1)
+
+    # vtx e2 -- match with either reco e- or reco e+
+    match_reco_e_vtx_e2 = (ak.where(e.typ == 1, 'R', 'L') == evt_vtx.e2_typ)
+    match_reco_e_vtx_e2 = (e.ind == evt_vtx.e2_idx) & match_reco_e_vtx_e2
+
+    match_reco_p_vtx_e2 = (ak.where(p.typ == 1, 'R', 'L') == evt_vtx.e2_typ)
+    match_reco_p_vtx_e2 = (p.ind == evt_vtx.e2_idx) & match_reco_p_vtx_e2
+
+    match_reco_vtx_e2 = (match_reco_e_vtx_e2 | match_reco_p_vtx_e2)
+
+    # Find vtx with both e1 and e2 matched with reco e+/e-.
+    match_reco_vtx_ee = (match_reco_vtx_e1 & match_reco_vtx_e2)
+
+    if doGenMatch: # also require dR(gen, reco) < 0.1
+        match_reco_e_vtx_e1_dR = (e.dr < 0.1) & match_reco_e_vtx_e1
+        match_reco_p_vtx_e1_dR = (p.dr < 0.1) & match_reco_p_vtx_e1
+    
+        match_reco_vtx_e1_dR = (match_reco_e_vtx_e1_dR | match_reco_p_vtx_e1_dR)
+    
+        match_reco_e_vtx_e2_dR = (e.dr < 0.1) & match_reco_e_vtx_e2
+        match_reco_p_vtx_e2_dR = (p.dr < 0.1) & match_reco_p_vtx_e2
+    
+        match_reco_vtx_e2_dR = (match_reco_e_vtx_e2_dR | match_reco_p_vtx_e2_dR)
+    
+        match_reco_vtx_ee_dR = (match_reco_vtx_e1_dR & match_reco_vtx_e2_dR)
+
+    has_matched_vtx = (ak.sum(match_reco_vtx_ee, axis=-1, keepdims=True) != 0)
+    idx_vtxMatch = ak.argmin(ak.where(match_reco_vtx_ee == True, 0, 1),axis=1,keepdims=True) # returns the index of the matched vertex if there is one, or 0 if there is no matched vertex; later, will only use the idx from events that do have matched vertex
+
+    if doGenMatch:
+        has_matched_vtx = (ak.sum(match_reco_vtx_ee_dR, axis=-1, keepdims=True) != 0)
+        idx_vtxMatch = ak.argmin(ak.where(match_reco_vtx_ee_dR == True, 0, 1),axis=1,keepdims=True)
+    
+    return idx_vtxMatch, has_matched_vtx
+
+def selectTrueVertex(events, evt_vtx, doGenMatch=False): 
+    '''
+    Select vertex formed with the reco e+,e- that are closest to gen e+,e- (true vertex); instead of the vertex with the lowest chi2.
+    dR(gen, reco) < 0.1 gen matching cut is not applied when doGenMatch is set to False.
+
+    - To call this function, in analysisTools; replace the line of `routines.selectBestVertex(events)` like the following
+
+    if info['type'] == "signal":
+        events = routines.selectTrueVertex(events, events.good_vtx, doGenMatch=False)           # select the true vertex
+
+    - To run it without electron cuts applied to vertex electrons, add the following lines before `events = events[events.nGoodVtx > 0]` cut
+    
+    if info['type'] == "signal":
+        events = routines.selectTrueVertex(events, events.vtx, doGenMatch=False)           # select the true vertex
+
+    '''
+    
+    idx_vtxMatch, has_matched_vtx = getTrueVertex(events, evt_vtx, doGenMatch=doGenMatch)
+
+    sel_vtx = ak.flatten(evt_vtx[idx_vtxMatch])
+    events.__setitem__("sel_vtx",sel_vtx)
+    events = events[ak.flatten(has_matched_vtx)] # reject the events which do not have the matched vertex
+
+    return events
+
+def selectTrueAndMinChi2Vtx(events, evt_vtx, doGenMatch=False): 
+    '''
+    Select vertex formed with the reco e+,e- that are closest to gen e+,e- (true vertex) that is also the lowest chi2 vertex.
+    dR(gen, reco) < 0.1 gen matching cut is not applied when doGenMatch is set to False.
+
+    - To call this function, in analysisTools; replace the line of `routines.selectBestVertex(events)` like the following
+
+    if info['type'] == "signal":
+        events = routines.selectTrueAndMinChi2Vertex(events, events.good_vtx, doGenMatch=False)      # select the true & min chi2 vertex
+
+    - To run it without electron cuts applied to vertex electrons, add the following lines before `events = events[events.nGoodVtx > 0]` cut
+    
+    if info['type'] == "signal":
+        events = routines.selectTrueAndMinChi2Vertex(events, events.vtx, doGenMatch=False)           # select the true vertex
+
+    '''
+    
+    # Index of true vertex in each event; for events that have the true vertex
+    idx_vtxMatch, has_matched_vtx = getTrueVertex(events, evt_vtx, doGenMatch=doGenMatch)
+    idx_vtxMatch = idx_vtxMatch[has_matched_vtx]
+    
+    # Index of vertex with the lowest chi2 in each event; for events that have the true vertex
+    idx_minChi2 = ak.argmin(evt_vtx.reduced_chi2,axis=1,keepdims=True)[has_matched_vtx]
+
+    events = events[ak.flatten(idx_vtxMatch == idx_minChi2)] # reject the events where the true vtx is not the same as the min chi2 vtx
+
+    return events
+
 
 #############################################
 ########## Specialized routines #############

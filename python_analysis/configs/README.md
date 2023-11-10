@@ -35,7 +35,7 @@ histos["sel_vtx_dR"].fill(samp=samp,cut=cut,dr=vtx.dR,weight=wgt),
 histos["sel_vtx_minEledRj_vs_matchType"].fill(samp=samp,cut=cut,dr=np.minimum(e1.mindRj,e2.mindRj),mtype=vtx.match,weight=wgt),
 ```
 
-Inside the argument for `fill`, th third (for 1D; for 2D, it'll be third and 4th) argument after `cut` should match the `name` of the variable you added in `histobins.py`. The value you assign to the `name` of the variable is named after the branch name in the ntuples. For example, in the ntuples we have [vtx_dR](https://github.com/kyungminparkdrums/iDMe/blob/iDMe/CustomTools/src/NtupleContainerV2.cc#L207C8-L207C8) branch. Coffea will read it as `vtx.dR`, and we assign this to `dr` in this case.  
+Inside the argument for `fill`, th third (for 1D; for 2D, it'll be third and 4th) argument after `cut` should match the `name` of the variable you added in `histobins.py`. The value you assign to the `name` of the variable is named after the branch name in the ntuples. For example, in the ntuples we have [vtx_dR](https://github.com/kyungminparkdrums/iDMe/blob/iDMe/CustomTools/src/NtupleContainerV2.cc#L207C8-L207C8) branch filled with [dR(e1,e2)](https://github.com/kyungminparkdrums/iDMe/blob/iDMe/AODSkimmer/plugins/ElectronSkimmer.cc#L744). Coffea will read it as `vtx.dR`, and we assign this to `dr` in this case.  
 
 
 ## Sample configs `sample_configs`

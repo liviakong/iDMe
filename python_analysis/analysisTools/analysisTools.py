@@ -189,7 +189,7 @@ class iDMeProcessor(processor.ProcessorABC):
         routines.electronID(events) # electron kinematic/ID definition
         routines.vtxElectronConnection(events) # associate electrons to vertices
         routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
-
+        
         #################################
         #### Demand >= 1 ee vertices ####
         #################################
@@ -202,6 +202,17 @@ class iDMeProcessor(processor.ProcessorABC):
         cutflow['hasVtx'] += np.sum(events.genWgt)/sum_wgt
         cutflow_nevts['hasVtx'] += len(events)
         histos['cutDesc']['hasVtx'] = 'Baseline Selection'
+
+        # For signal, require that the vertex ee are gen-matched
+        if info['type'] == "signal":
+            e1_match = routines.matchedVertexElectron(events,1)
+            e2_match = routines.matchedVertexElectron(events,2)
+            events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
+            events = events[events.sel_vtx.match == 2]
+
+            cutflow['vtxGenMatch'] += np.sum(events.genWgt)/sum_wgt
+            cutflow_nevts['vtxGenMatch'] += len(events)
+            histos['cutDesc']['vtxGenMatch'] = 'Vertex electrons gen-matching'
         
         # Compute miscellaneous extra variables -- add anything you want to this function
         routines.miscExtraVariables(events)

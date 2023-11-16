@@ -31,7 +31,8 @@ def make_histograms():
         "sel_vtx_minEledPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
         "sel_vtx_mindRj" : Hist(samp,cut,dR,storage=hist.storage.Weight()),
         "sel_vtx_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
-        "lowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight())
+        "lowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight()),
+        "lowPtElectron_matched_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight())
     }
     return histograms
 
@@ -70,3 +71,6 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
     histos["sel_vtx_mindPhiJ"].fill(samp=samp,cut=cut,dphi=events.sel_vtx.mindPhiJ,weight=wgt)
     histos["lowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[events.sel_vtx.e1_typ=='L'],weight=1)
     histos["lowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[events.sel_vtx.e2_typ=='L'],weight=1)
+    if info["type"] == "signal":
+        histos["lowPtElectron_matched_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched)],weight=1)
+        histos["lowPtElectron_matched_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],weight=1)

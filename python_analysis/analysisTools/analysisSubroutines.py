@@ -162,6 +162,8 @@ def miscExtraVariablesSignal(events):
     # determine if the selected vertex is gen-matched
     e1_match = matchedVertexElectron(events,1)
     e2_match = matchedVertexElectron(events,2)
+    events["sel_vtx","e1_matched"] = e1_match != 0
+    events["sel_vtx","e2_matched"] = e2_match != 0
     events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
 
     # record if signal is reconstructed

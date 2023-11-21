@@ -215,6 +215,14 @@ def sumPtInCone(b,e1_eta,e1_phi,e2_eta,e2_phi,e2_pt):
             b.real(pt_sum_cone)
         b.end_list() # end list
 
+def getEventsSelVtxIsTruthMatched(events):
+# for signal MC, return the events where selected vertex (lowest chi2) passes the truth-matching (gen-matching)
+    e1_match = matchedVertexElectron(events,1)
+    e2_match = matchedVertexElectron(events,2)
+    events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
+    
+    return events[events.sel_vtx.match == 2]
+
 def getTrueVertex(events, evt_vtx, doGenMatch=False):
 # Get the index of events that have "true" vertex, formed by reco e+/e- that are closest to gen e+/e-.
 # For the events, get the index of "true" vertex in each event.

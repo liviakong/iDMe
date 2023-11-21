@@ -158,9 +158,10 @@ class iDMeProcessor(processor.ProcessorABC):
         samp = events.metadata["dataset"]
         histos = self.histoMod.make_histograms()
         histos['cutDesc'] = defaultdict(str)
-        cutflow = defaultdict(float)
-        cutflow_counts = defaultdict(float)
-        cutflow_nevts = defaultdict(int)
+        cutflow = defaultdict(float)               # efficiency
+        cutflow_counts = defaultdict(float)        # xsec-weighted event counts
+        cutflow_nevts = defaultdict(int)           # raw event counts
+        cutflow_vtx_matched = defaultdict(float)   # (for signal MC) fraction that the selected vertex is truth-matched
         info = self.sampleInfo[samp]
         sum_wgt = info["sum_wgt"]
         lumi, unc = getLumi(info['year'])
@@ -172,6 +173,7 @@ class iDMeProcessor(processor.ProcessorABC):
         # Initial number of events
         cutflow['all'] += np.sum(events.genWgt)/sum_wgt
         cutflow_nevts['all'] += len(events)
+        cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
         histos['cutDesc']['all'] = 'No cuts'
 
         #################################
@@ -205,14 +207,8 @@ class iDMeProcessor(processor.ProcessorABC):
 
         # For signal, require that the vertex ee are gen-matched
         if info['type'] == "signal":
-            e1_match = routines.matchedVertexElectron(events,1)
-            e2_match = routines.matchedVertexElectron(events,2)
-            events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
-            events = events[events.sel_vtx.match == 2]
-
-            cutflow['vtxGenMatch'] += np.sum(events.genWgt)/sum_wgt
-            cutflow_nevts['vtxGenMatch'] += len(events)
-            histos['cutDesc']['vtxGenMatch'] = 'Vertex electrons gen-matching'
+            vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
+            cutflow_vtx_matched['hasVtx'] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
         
         # Compute miscellaneous extra variables -- add anything you want to this function
         routines.miscExtraVariables(events)
@@ -229,7 +225,10 @@ class iDMeProcessor(processor.ProcessorABC):
         for cut in self.cuts:
             events, cutName, cutDesc, savePlots = cut(events,info)
             cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
-            cutflow_nevts[cutName] += len(events)
+            cutflow_nevts[cutName] += len(events)            
+            if info['type'] == "signal":
+                vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
+                cutflow_vtx_matched[cutName] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms
@@ -241,6 +240,7 @@ class iDMeProcessor(processor.ProcessorABC):
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}
         histos['cutflow_nevts'] = {samp:cutflow_nevts}
+        histos['cutflow_vtx_matched'] = {samp:cutflow_vtx_matched}
 
         return histos
 

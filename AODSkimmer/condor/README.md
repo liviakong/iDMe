@@ -27,4 +27,6 @@ source submit_miniPlusNtuplizer_condor.sh [filelist in txt from Step 1] [year] [
 source submit_miniPlusNtuplizer_condor.sh ../fileLists/signal/Mchi-10p5_dMchi-1p0_ctau-1.txt 4 0 1
 ```
 
-This will run the ntuplizer based on `ntuplizer_CMSSW_10_6_26.tar.gz` in `/store/group/lpcmetx/iDMe/compiled_CMSSW_envs/` at the LPC eos area. If you have made any changes to your ntuplizer, make sure that you extract your `CMSSW` environment in `.tar.gz` and that your `CMSSW` environment is used in condor jobs. This can be done by updating [L11](https://github.com/kyungminparkdrums/iDMe/blob/main/AODSkimmer/condor/miniPlusNtuplizer/exec_miniPlusNtuplizer.sh#L11C1-L11C6) in `exec_miniPlusNtuplizer.sh`.  
+## Some notes
+- This will run the ntuplizer based on `ntuplizer_CMSSW_10_6_26.tar.gz` in `/store/group/lpcmetx/iDMe/compiled_CMSSW_envs/` at the LPC eos area. If you have made any changes to your ntuplizer, make sure that you extract your `CMSSW` environment in `.tar.gz` and that your `CMSSW` environment is used in condor jobs. This can be done by updating [L11](https://github.com/kyungminparkdrums/iDMe/blob/main/AODSkimmer/condor/miniPlusNtuplizer/exec_miniPlusNtuplizer.sh#L11C1-L11C6) in `exec_miniPlusNtuplizer.sh`.
+- In `miniPlusNtuplizer/miniPlusNtuplizer_config.jdl`, you will need to change the directory of `executable`, `output`, `error`, and `log` to match yours. 

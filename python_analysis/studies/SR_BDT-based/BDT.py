@@ -42,15 +42,20 @@ def cut6(events,info):
     desc = "BDT Loose WP"
     plots = True
 
-    input = routines.makeBDTinputs(events)
-
-    model = 'BDT_v1.json'
-    score_BDT = routines.getBDTscore(input, model)
-
     thres = 0.4035 # loose
     #thres = 0.8212 # medium
     #thres = 0.9208 # tight
 
-    cut = score_BDT < thres
+    if len(events) != 0:
+        input = routines.makeBDTinputs(events)
+    
+        model = 'BDT_v1.json'
+        score_BDT = routines.getBDTscore(input, model)
+
+        cut = score_BDT > thres
+
+        #print(f'Pass: {np.count_nonzero(cut)}/{len(cut)}')
+    else:
+        cut = []
     
     return events[cut], name, desc, plots

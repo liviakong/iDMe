@@ -24,7 +24,7 @@ In `miniPlusNtuplizer`, Run the following:
 source submit_miniPlusNtuplizer_condor.sh [filelist in txt from Step 1] [year] [nThreads] [isData; 0/1] [isSignal; 0/1]
 
 # example
-source submit_miniPlusNtuplizer_condor.sh ../fileLists/signal/Mchi-10p5_dMchi-1p0_ctau-1.txt 4 0 1
+source submit_miniPlusNtuplizer_condor.sh ../fileLists/signal/Mchi-10p5_dMchi-1p0_ctau-1.txt 2018 4 0 1
 ```
 
 ## Some notes

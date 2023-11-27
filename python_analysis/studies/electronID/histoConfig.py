@@ -33,7 +33,9 @@ def make_histograms():
         "sel_vtx_mindPhiJ" : Hist(samp,cut,dphi_generic,storage=hist.storage.Weight()),
         "lowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight()),
         "matchedLowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight()),
-        "fakeLowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight())
+        "fakeLowPtElectron_ID" : Hist(samp,cut,ele_id,storage=hist.storage.Weight()),
+        "matchedLowPtElectron_pt_vs_ID" : Hist(samp,cut,ele_id,ele_pt,storage=hist.storage.Weight()),
+        "matchedLowPtElectron_dxy_vs_ID" : Hist(samp,cut,ele_id,ele_dxy,storage=hist.storage.Weight())
     }
     return histograms
 
@@ -77,3 +79,7 @@ def fillHistos(events,histos,samp,cut,info,sum_wgt=1):
         histos["matchedLowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],weight=1)
         histos["fakeLowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched==0)],weight=1)
         histos["fakeLowPtElectron_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched==0)],weight=1)
+        histos["matchedLowPtElectron_pt_vs_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched)],pt=events.sel_vtx.e1.pt[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched)],weight=1)
+        histos["matchedLowPtElectron_pt_vs_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],pt=events.sel_vtx.e2.pt[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],weight=1)
+        histos["matchedLowPtElectron_dxy_vs_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e1.IDscore[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched)],dxy=events.sel_vtx.e1.dxy[(events.sel_vtx.e1_typ=='L') & (events.sel_vtx.e1_matched)],weight=1)
+        histos["matchedLowPtElectron_dxy_vs_ID"].fill(samp=samp,cut=cut,ele_id=events.sel_vtx.e2.IDscore[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],dxy=events.sel_vtx.e2.dxy[(events.sel_vtx.e2_typ=='L') & (events.sel_vtx.e2_matched)],weight=1)

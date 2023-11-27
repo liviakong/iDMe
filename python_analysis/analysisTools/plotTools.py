@@ -76,7 +76,7 @@ def reduceSampleName(name,lifetime=False,mass=False,full=False,verbosity=0):
     return output
 
 def signalPoint(name):
-    a = re.search('Mchi-(\d+p\d)_dMchi-(\d+p\d)_ctau-(\d+)',name)
+    a = re.search('Mchi-(\d+p\d+)_dMchi-(\d+p\d+)_ctau-(\d+)',name)
     mchi = float(a.group(1).replace("p","."))
     dmchi = float(a.group(2).replace("p","."))
     ctau = float(a.group(3).replace("p","."))

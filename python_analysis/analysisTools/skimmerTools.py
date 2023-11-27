@@ -22,6 +22,7 @@ import analysisSubroutines as routines
 import sys
 from collections import defaultdict
 from analysisTools import getLumi, deltaPhi
+import plotTools as ptools
 
 class Skimmer:
     def __init__(self,fileList,max_samples=-1,max_files_per_samp=-1):
@@ -125,11 +126,38 @@ class makeBDTInputs(processor.ProcessorABC):
         events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
         events.__setitem__("eventWgtNorm",xsec*lumi*events.genWgt/sum_wgt)
 
-        # Preselection
-        routines.selectExistingGoodVtx(events)
+        events.__setitem__("m1",ptools.signalPoint(samp)['m1'])
+        events.__setitem__("delta",ptools.signalPoint(samp)['delta'])
+        events.__setitem__("ctau",ptools.signalPoint(samp)['ctau'])
+
+        #################################
+        #### Hard-coded basic cuts ######
+        #################################
+        # 1 or 2 jets in the event
+        nJets = ak.count(events.PFJet.pt,axis=1)
+        events = events[(nJets>0) & (nJets<3)]
+
+        #################################
+        ## Calculating Additional Vars ##
+        #################################
+        routines.electronJetSeparation(events) # dR and dPhi between electrons and jets
+        routines.electronIsoConePtSum(events) # for each electron, compute pT sum of any other electrons in event within dR < 0.3 of it
+        routines.electronID(events) # electron kinematic/ID definition
+        routines.vtxElectronConnection(events) # associate electrons to vertices
+        routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
+        
+        #################################
+        #### Demand >= 1 ee vertices ####
+        #################################
         events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
         events = events[events.nGoodVtx > 0]
-        routines.selectBestVertex(events)
+        # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
+        #routines.selectBestVertex(events)
+
+        if info['type'] == "signal":
+            events = routines.selectTrueVertex(events, events.good_vtx, doGenMatch=True)
+        else:
+            routines.selectBestVertex(events)
 
         # compute dR and dPhi between selected vertex and jets
         events["sel_vtx","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)**2 + (events.PFJet.eta-events.sel_vtx.eta)**2),axis=1)
@@ -181,6 +209,9 @@ class makeBDTInputs(processor.ProcessorABC):
         outputs["sel_e2_dxySignif"] = column_accumulator((np.abs(e2.dxy)/e2.dxyErr).to_numpy())
         if info['type'] == 'signal':
             outputs['sel_vtx_match'] = column_accumulator(events.sel_vtx.match.to_numpy())
+            outputs['m1'] = column_accumulator(events["m1"].to_numpy())
+            outputs['delta'] = column_accumulator(events["delta"].to_numpy())
+            outputs['ctau'] = column_accumulator(events["ctau"].to_numpy())
 
         return outputs
 

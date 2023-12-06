@@ -25,7 +25,7 @@ from analysisTools import getLumi, deltaPhi
 import plotTools as ptools
 
 class Skimmer:
-    def __init__(self,fileList,max_samples=-1,max_files_per_samp=-1):
+    def __init__(self,fileList,cuts,max_samples=-1,max_files_per_samp=-1):
         # load in file config
         if type(fileList) == str and ".json" in fileList:
             with open(fileList) as f:
@@ -33,6 +33,9 @@ class Skimmer:
         else:
             self.fileList = fileList
 
+        # load in cuts config (should be a path to a .py file with cut methods)
+        self.cuts = cuts
+        
         self.sample_names = [] # list of sample names, readable names are generated from data in the fileList json
         self.sample_locs = {} # dictionary mapping sample name to file/directory location
         self.sample_info = {} # dictionary with sample metadata
@@ -93,7 +96,7 @@ class Skimmer:
 
     def process(self,treename='ntuples/outT',execr="iterative",workers=4):
         fileset = self.sample_locs
-        proc = makeBDTInputs(self.sample_names,self.sample_info,self.sample_locs,mode=self.mode)
+        proc = makeBDTInputs(self.sample_names,self.sample_info,self.sample_locs,self.cuts,mode=self.mode)
         if execr == "iterative":
             executor = processor.IterativeExecutor()
         elif execr == "futures":
@@ -108,11 +111,27 @@ class Skimmer:
         return accumulator
 
 class makeBDTInputs(processor.ProcessorABC):
-    def __init__(self,samples,sampleInfo,fileSet,mode='signal'):
+    def __init__(self,samples,sampleInfo,fileSet,cutFile,mode='signal'):
         self.samples = samples
         self.sampleInfo = sampleInfo
         self.sampleLocs = fileSet
         self.mode = mode
+
+        # load in cuts module
+        self.cutFile = cutFile
+        if "/" in self.cutFile: # if cut file is in a different directory
+            sys.path.append("/".join(self.cutFile.split("/")[:-1]))
+            cutFileName = self.cutFile.split("/")[-1].split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
+        else: # cut file is in the same directory (e.g. running on condor)
+            cutFileName = self.cutFile.split(".")[0]
+            self.cutLib = importlib.import_module(cutFileName)
+            cutList = [c for c in dir(self.cutLib) if "cut" in c]
+            cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
+            self.cuts = [getattr(self.cutLib,c) for c in cutList]
     
     def process(self,events):
         samp = events.metadata["dataset"]
@@ -126,9 +145,10 @@ class makeBDTInputs(processor.ProcessorABC):
         events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
         events.__setitem__("eventWgtNorm",xsec*lumi*events.genWgt/sum_wgt)
 
-        events.__setitem__("m1",ptools.signalPoint(samp)['m1'])
-        events.__setitem__("delta",ptools.signalPoint(samp)['delta'])
-        events.__setitem__("ctau",ptools.signalPoint(samp)['ctau'])
+        if info['type'] == "signal":
+            events.__setitem__("m1",ptools.signalPoint(samp)['m1'])
+            events.__setitem__("delta",ptools.signalPoint(samp)['delta'])
+            events.__setitem__("ctau",ptools.signalPoint(samp)['ctau'])
 
         #################################
         #### Hard-coded basic cuts ######
@@ -159,33 +179,17 @@ class makeBDTInputs(processor.ProcessorABC):
         else:
             routines.selectBestVertex(events)
 
-        # compute dR and dPhi between selected vertex and jets
-        events["sel_vtx","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)**2 + (events.PFJet.eta-events.sel_vtx.eta)**2),axis=1)
-        events["sel_vtx","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)),axis=1)
-
-        # computing some signal-only diagnostic quantities
+        # Compute miscellaneous extra variables -- add anything you want to this function
+        routines.miscExtraVariables(events)
         if info['type'] == "signal":
-            e1_match = routines.matchedVertexElectron(events,1)
-            e2_match = routines.matchedVertexElectron(events,2)
-            genj_phi_pt30 = ak.fill_none(ak.pad_none(events.GenJet.phi[events.GenJet.pt>30],1),999)
-            genj_eta_pt30 = ak.fill_none(ak.pad_none(events.GenJet.eta[events.GenJet.pt>30],1),999)
-            events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
-            
-            events["GenEle","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenEle.phi)**2 + (events.PFJet.eta-events.GenEle.eta)**2),axis=1)
-            events["GenEle","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenEle.phi)),axis=1)
-            events["GenEle","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenEle.phi)**2 + (genj_eta_pt30-events.GenEle.eta)**2),axis=1)
-            events["GenEle","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenEle.phi)),999),axis=1)
-            
-            events["GenPos","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.GenPos.phi)**2 + (events.PFJet.eta-events.GenPos.eta)**2),axis=1)
-            events["GenPos","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.GenPos.phi)),axis=1)
-            events["GenPos","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.GenPos.phi)**2 + (genj_eta_pt30-events.GenPos.eta)**2),axis=1)
-            events["GenPos","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.GenPos.phi)),999),axis=1)
+            routines.miscExtraVariablesSignal(events)
 
-            events["genEE","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.genEE.phi)**2 + (events.PFJet.eta-events.genEE.eta)**2),axis=1)
-            events["genEE","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.genEE.phi)),axis=1)
-            events["genEE","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.genEE.phi)**2 + (genj_eta_pt30-events.genEE.eta)**2),axis=1)
-            events["genEE","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.genEE.phi)),999),axis=1)
-
+        ###############################
+        ######## CUTS & HISTOS ########
+        ###############################
+        for cut in self.cuts:
+            events, cutName, cutDesc, savePlots = cut(events,info) # apply cuts on jets, BDT will be only used for vertex related variables
+        
         # filling outputs dictionary
         e1 = events.sel_vtx.e1
         e2 = events.sel_vtx.e2

@@ -216,27 +216,45 @@ def sumPtInCone(b,e1_eta,e1_phi,e2_eta,e2_phi,e2_pt):
             b.real(pt_sum_cone)
         b.end_list() # end list
 
-def makeBDTinputs(events):
+def makeBDTv1Inputs(events):
     '''
     variables = ['lead_jet_pt','lead_jet_eta','minJetMETdPhi','jetMETdPhi',
-                 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy',
-                 'vxy_signif']
+                 'sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy']
     '''
 
     lead_jet_pt_arr = events.PFJet.pt[:,0].to_numpy()
     lead_jet_eta_arr = events.PFJet.eta[:,0].to_numpy()
     minJetMETdPhi_arr = ak.min(np.abs(events.PFJet.METdPhi),axis=1).to_numpy()
     jetMETdPhi_arr = np.abs(events.PFJet.METdPhi[:,0]).to_numpy()
+    sel_vtx_sign_arr = events.sel_vtx.sign.to_numpy()
+    sel_vtx_chi2_arr = events.sel_vtx.reduced_chi2.to_numpy()
+    sel_vtx_METdPhi_arr = np.abs(events.sel_vtx.METdPhi).to_numpy()
+    sel_vtx_m_arr = events.sel_vtx.m.to_numpy()
+    sel_vtx_dR_arr = events.sel_vtx.dR.to_numpy()
+    sel_vtx_minDxy_arr = np.minimum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy)).to_numpy()
+    
+    input_arrs = (lead_jet_pt_arr, lead_jet_eta_arr, minJetMETdPhi_arr, jetMETdPhi_arr, \
+                  sel_vtx_sign_arr, sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, sel_vtx_minDxy_arr)
+    
+    input = np.stack(input_arrs, axis=1)
+
+    return input
+
+
+def makeBDTv2Inputs(events):
+    '''
+    variables = ['sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy_signif']
+    '''
+
+    sel_vtx_sign_arr = events.sel_vtx.sign.to_numpy()
     sel_vtx_chi2_arr = events.sel_vtx.reduced_chi2.to_numpy()
     sel_vtx_METdPhi_arr = np.abs(events.sel_vtx.METdPhi).to_numpy()
     sel_vtx_m_arr = events.sel_vtx.m.to_numpy()
     sel_vtx_dR_arr = events.sel_vtx.dR.to_numpy()
     sel_vtx_minDxy_arr = np.minimum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy)).to_numpy()
     vxy_signif_arr = (events.sel_vtx.vxy/events.sel_vtx.sigmavxy).to_numpy()
-
-    input_arrs = (lead_jet_pt_arr, lead_jet_eta_arr, minJetMETdPhi_arr, jetMETdPhi_arr, \
-                  sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, \
-                  sel_vtx_minDxy_arr, vxy_signif_arr)
+    
+    input_arrs = (sel_vtx_sign_arr, sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, sel_vtx_minDxy_arr, vxy_signif_arr)
     
     input = np.stack(input_arrs, axis=1)
 
@@ -259,6 +277,15 @@ def getEventsSelVtxIsTruthMatched(events):
     events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
     
     return events[events.sel_vtx.match == 2]
+
+def getEventsGenEEareReconstructed(events):
+# for signal MC, return the events where both the gen electrons (e-,e+) are reconstructed; have reco electron within dR < 0.1
+    e = events.GenEleClosest # reco electron in the event that is closest to the gen e-
+    p = events.GenPosClosest # reco positron in the event that is closest to the gen e+
+
+    isReconstructed = (e.dr < 0.1) & (p.dr < 0.1)
+    
+    return events[isReconstructed]
 
 def getTrueVertex(events, evt_vtx, doGenMatch=False):
 # Get the index of events that have "true" vertex, formed by reco e+/e- that are closest to gen e+/e-.

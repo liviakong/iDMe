@@ -1,7 +1,7 @@
 import numpy as np
 import awkward as ak
 import sys
-sys.path.append("../../analysisTools/")
+sys.path.append("../../../analysisTools/")
 import analysisSubroutines as routines
 
 def cut5(events,info):
@@ -9,7 +9,7 @@ def cut5(events,info):
     # using the medium WP, as in Andre's version of iDM
     name = "cut5"
     desc = "No b-tagged jets"
-    plots = False
+    plots = True
     bTag = events.PFJet.bTag
     # DeepFlavour working points for UL samples
     if info["year"] == 2018:
@@ -42,19 +42,23 @@ def cut6(events,info):
     desc = "BDT Loose WP"
     plots = True
 
-    thres = 0.4035 # loose
-    #thres = 0.8212 # medium
-    #thres = 0.9208 # tight
+    # BDT v1 thresholds
+    thres = 0.4695 # loose
+    #thres = 0.8820 # medium
+    #thres = 0.9533 # tight
+
+    variables = ['lead_jet_pt','lead_jet_eta','minJetMETdPhi','jetMETdPhi',
+                 'sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy'] # BDT v1 variables
 
     if len(events) != 0:
-        input = routines.makeBDTinputs(events)
+        input = routines.makeBDTv1Inputs(events)
     
-        model = 'BDT_v1.json'
+        model = './models/BDTv1_ctau-10_5to50.json'
         score_BDT = routines.getBDTscore(input, model)
 
         cut = score_BDT > thres
 
-        #print(f'Pass: {np.count_nonzero(cut)}/{len(cut)}')
+        print(f'Pass: {np.count_nonzero(cut)}/{len(cut)}')
     else:
         cut = []
     

@@ -162,6 +162,11 @@ class iDMeProcessor(processor.ProcessorABC):
         cutflow_counts = defaultdict(float)        # xsec-weighted event counts
         cutflow_nevts = defaultdict(int)           # raw event counts
         cutflow_vtx_matched = defaultdict(float)   # (for signal MC) fraction that the selected vertex is truth-matched
+        # (for signal MC) also check the above, but only counting the events where both gen ee are reconstructed: dR(reco,gen) < 0.1
+        cutflow_genEEreconstructed = defaultdict(float)             # (for signal MC) efficiency
+        cutflow_counts_genEEreconstructed = defaultdict(float)      # (for signal MC) xsec-weighted event counts
+        cutflow_vtx_matched_genEEreconstructed = defaultdict(float) # (for signal MC) fraction that the selected vertex is truth-matched 
+        
         info = self.sampleInfo[samp]
         sum_wgt = info["sum_wgt"]
         lumi, unc = getLumi(info['year'])
@@ -173,7 +178,14 @@ class iDMeProcessor(processor.ProcessorABC):
         # Initial number of events
         cutflow['all'] += np.sum(events.genWgt)/sum_wgt
         cutflow_nevts['all'] += len(events)
-        cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
+
+        if info['type'] == "signal":
+            cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
+            
+            has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
+            cutflow_genEEreconstructed['all'] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+            cutflow_vtx_matched_genEEreconstructed['all'] += 1 # dummy value before selecting a vertex
+            
         histos['cutDesc']['all'] = 'No cuts'
 
         #################################
@@ -205,10 +217,15 @@ class iDMeProcessor(processor.ProcessorABC):
         cutflow_nevts['hasVtx'] += len(events)
         histos['cutDesc']['hasVtx'] = 'Baseline Selection'
 
-        # For signal, require that the vertex ee are gen-matched
+        # For signal, (1) check if the vertex ee are gen-matched (2) check if the event has ee that are gen-matched
         if info['type'] == "signal":
             vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
             cutflow_vtx_matched['hasVtx'] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
+            
+            has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
+            cutflow_genEEreconstructed['hasVtx'] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+            vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
+            cutflow_vtx_matched_genEEreconstructed['hasVtx'] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
         
         # Compute miscellaneous extra variables -- add anything you want to this function
         routines.miscExtraVariables(events)
@@ -229,6 +246,11 @@ class iDMeProcessor(processor.ProcessorABC):
             if info['type'] == "signal":
                 vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
                 cutflow_vtx_matched[cutName] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
+
+                has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
+                cutflow_genEEreconstructed[cutName] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+                vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
+                cutflow_vtx_matched_genEEreconstructed[cutName] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms
@@ -237,11 +259,16 @@ class iDMeProcessor(processor.ProcessorABC):
         
         for k in cutflow.keys():
             cutflow_counts[k] = xsec*lumi*cutflow[k]
+            cutflow_counts_genEEreconstructed[k] = xsec*lumi*cutflow_genEEreconstructed[k]
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}
         histos['cutflow_nevts'] = {samp:cutflow_nevts}
         histos['cutflow_vtx_matched'] = {samp:cutflow_vtx_matched}
 
+        histos['cutflow_genEEreconstructed'] = {samp:cutflow_genEEreconstructed}
+        histos['cutflow_cts_genEEreconstructed'] = {samp:cutflow_counts_genEEreconstructed}
+        histos['cutflow_vtx_matched_genEEreconstructed'] = {samp:cutflow_vtx_matched_genEEreconstructed}
+        
         return histos
 
     def postprocess(self, accumulator):

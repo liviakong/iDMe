@@ -94,7 +94,8 @@ def electronID(events):
     events["Electron","passID"] = ele_kinematic_cut & ele_id_cut
 
     lpt_ele_kinematic_cut = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4) & (lpt_eles.mindRj > 0.4)
-    lpt_ele_id_cut = ak.ones_like(lpt_eles.pt)==1
+    #ID cut threshold
+    lpt_ele_id_cut = lpt_eles.ID > -1
     events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
 
 def electronIsoConePtSum(events):

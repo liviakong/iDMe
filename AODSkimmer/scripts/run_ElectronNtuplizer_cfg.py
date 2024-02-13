@@ -57,6 +57,8 @@ if options.flist != "":
     else:
         # we have passed a file name directly
         options.inputFiles = options.flist 
+        print("running on file:")
+        print(options.inputFiles)
 
 globaltag = ''
 if options.year == 2016:
@@ -188,6 +190,9 @@ triggerPaths18 = [
     "HLT_PFMETTypeOne140_PFMHT140_IDTight"
 ]
 
+# Electron effective area input file for PU-corrected PF isolation calculations
+effAreaInputPath = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
+
 ##############################
 ###### Main iDM analyzer #####
 ##############################
@@ -203,7 +208,8 @@ process.ntuples = ElectronSkimmer.clone(
     triggerPaths16 = cms.vstring(triggerPaths16),
     triggerPaths17 = cms.vstring(triggerPaths17),
     triggerPaths18 = cms.vstring(triggerPaths18),
-    allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18)))
+    allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18))),
+    effAreasConfigFile = cms.FileInPath(effAreaInputPath)
 )
 process.commonSequence = cms.Sequence(
     process.ntuples

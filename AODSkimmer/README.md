@@ -23,5 +23,11 @@ outfile=test_signal_output.root
 ## File lists
 File lists for signal and background samples are found in sub-folders of the `fileLists` directory. Currently, it is only possible to run over signal files on the FNAL LPC (either locally or using condor). Running over backgrounds requires submitting jobs to `crab` (see the README in the `crab` directory).
 
+## Adding stuff to the skimmer
+If you want to add stuff to the skimmer, edit the following and `scram`:
+- `plugins/ElectronSkimmer.cc`
+- `../CustomTools/src/NtupleContainerV2.cc`
+- `../CustomTools/interface/NtupleContainerV2.hh`
+
 ## Condor job submission
 See the README in the `condor` directory for instructions on how to submit analysis jobs to condor.

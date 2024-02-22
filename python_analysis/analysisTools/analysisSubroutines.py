@@ -130,7 +130,7 @@ def vtxElectronConnection(events):
 
 def defineGoodVertices(events):
     # Selecting electrons that pass basic pT and eta cuts
-    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID
+    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID & (events.vtx.sign == -1)
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
 
 def selectBestVertex(events):

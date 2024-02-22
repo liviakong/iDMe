@@ -70,6 +70,8 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_numPixHits",&recoElectronTrkNumPixHits_);
     outT->Branch("Electron_numStripHits",&recoElectronTrkNumStripHits_);
     outT->Branch("Electron_charge",&recoElectronCharge_);
+    outT->Branch("Electron_isPF",&recoElectronIsPF_);
+    outT->Branch("Electron_genMatched",&recoElectronGenMatched_);
 
     // Low pT electrons
     outT->Branch("nLptElectron",&nElectronLowPt_);
@@ -110,6 +112,8 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_numStripHits",&recoLowPtElectronTrkNumStripHits_);
     outT->Branch("LptElectron_charge",&recoLowPtElectronCharge_);
     outT->Branch("LptElectron_minDRtoReg",&recoLowPtElectronMinDrToReg_);
+    outT->Branch("LptElectron_isPF",&recoLowPtElectronIsPF_);
+    outT->Branch("LptElectron_genMatched",&recoLowPtElectronGenMatched_);
 
     // Photons
     outT->Branch("nPhoton",&nPhotons_);
@@ -233,8 +237,10 @@ void NtupleContainerV2::CreateTreeBranches() {
 
     outT->Branch("vtx_e1_typ",&vtx_e1_type_);
     outT->Branch("vtx_e1_idx",&vtx_e1_idx_);
+    outT->Branch("vtx_e1_isMatched",&vtx_e1_isMatched_);
     outT->Branch("vtx_e2_typ",&vtx_e2_type_);
     outT->Branch("vtx_e2_idx",&vtx_e2_idx_);
+    outT->Branch("vtx_e2_isMatched",&vtx_e2_isMatched_);
 
     // Gen information
     if (!isData_) {
@@ -306,42 +312,6 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenPosClosestReg_dr",&genPosClosestDr_reg_);
         outT->Branch("GenPosClosestLpt_ind",&genPosClosestInd_lpt_);
         outT->Branch("GenPosClosestLpt_dr",&genPosClosestDr_lpt_);
-
-        // Gen Electron matches to isoTracks
-        outT->Branch("nGenEleTrkMatches",&nGenEleTrkMatches);
-        outT->Branch("genEleNearTk_pt",&genEleNearestTrack_pt);
-        outT->Branch("genEleNearTk_eta",&genEleNearestTrack_eta);
-        outT->Branch("genEleNearTk_phi",&genEleNearestTrack_phi);
-        outT->Branch("genEleNearTk_dRgen",&genEleNearestTrack_dRGen);
-        outT->Branch("genEleNearTk_pfIso3",&genEleNearestTrack_pfIso3);
-        outT->Branch("genEleNearTk_miniIso",&genEleNearestTrack_miniIso);
-        outT->Branch("genEleNearTk_dxy",&genEleNearestTrack_dxy);
-        outT->Branch("genEleNearTk_dz",&genEleNearestTrack_dz);
-        outT->Branch("genEleNearTk_highPurity",&genEleNearestTrack_highPurity);
-        outT->Branch("genEleNearTk_loose",&genEleNearestTrack_Loose);
-        outT->Branch("genEleNearTk_charge",&genEleNearestTrack_charge);
-        outT->Branch("genEleNearTk_numPixHits",&genEleNearestTrack_numPixHits);
-        outT->Branch("genEleNearTk_numStripHits",&genEleNearestTrack_numStripHits);
-        outT->Branch("genEleNearTk_fromPV",&genEleNearestTrack_fromPV);
-        outT->Branch("genEleNearTk_tkIdx",&genEleNearestTrack_tkIdx);
-
-        // Gen Positron matches to isoTracks
-        outT->Branch("nGenPosTrkMatches",&nGenPosTrkMatches);
-        outT->Branch("genPosNearTk_pt",&genPosNearestTrack_pt);
-        outT->Branch("genPosNearTk_eta",&genPosNearestTrack_eta);
-        outT->Branch("genPosNearTk_phi",&genPosNearestTrack_phi);
-        outT->Branch("genPosNearTk_dRgen",&genPosNearestTrack_dRGen);
-        outT->Branch("genPosNearTk_pfIso3",&genPosNearestTrack_pfIso3);
-        outT->Branch("genPosNearTk_miniIso",&genPosNearestTrack_miniIso);
-        outT->Branch("genPosNearTk_dxy",&genPosNearestTrack_dxy);
-        outT->Branch("genPosNearTk_dz",&genPosNearestTrack_dz);
-        outT->Branch("genPosNearTk_highPurity",&genPosNearestTrack_highPurity);
-        outT->Branch("genPosNearTk_loose",&genPosNearestTrack_Loose);
-        outT->Branch("genPosNearTk_charge",&genPosNearestTrack_charge);
-        outT->Branch("genPosNearTk_numPixHits",&genPosNearestTrack_numPixHits);
-        outT->Branch("genPosNearTk_numStripHits",&genPosNearestTrack_numStripHits);
-        outT->Branch("genPosNearTk_fromPV",&genPosNearestTrack_fromPV);
-        outT->Branch("genPosNearTk_tkIdx",&genPosNearestTrack_tkIdx);
 
         // Gen Electron + Positron info
         outT->Branch("genEE_pt",&genEEPt_);
@@ -421,42 +391,6 @@ void NtupleContainerV2::ClearTreeBranches() {
     genPosClosestInd_lpt_ = -1;
     genPosClosestDr_lpt_ = 999.0;
 
-    // Gen Electron matches to isoTracks
-    nGenEleTrkMatches = 0;
-    genEleNearestTrack_pt = -999.0;
-    genEleNearestTrack_eta = -999.0;
-    genEleNearestTrack_phi = -999.0;
-    genEleNearestTrack_dRGen = -999.0;
-    genEleNearestTrack_pfIso3 = -999.0;
-    genEleNearestTrack_miniIso = -999.0;
-    genEleNearestTrack_dxy = -999.0;
-    genEleNearestTrack_dz = -999.0;
-    genEleNearestTrack_highPurity = false;
-    genEleNearestTrack_Loose = false;
-    genEleNearestTrack_charge = 0;
-    genEleNearestTrack_numPixHits = 0;
-    genEleNearestTrack_numStripHits = 0;
-    genEleNearestTrack_fromPV = 0;
-    genEleNearestTrack_tkIdx = -1;
-
-    // Gen Positron matches to isoTracks
-    nGenPosTrkMatches = 0;
-    genPosNearestTrack_pt = -999.0;
-    genPosNearestTrack_eta = -999.0;
-    genPosNearestTrack_phi = -999.0;
-    genPosNearestTrack_dRGen = -999.0;
-    genPosNearestTrack_pfIso3 = -999.0;
-    genPosNearestTrack_miniIso = -999.0;
-    genPosNearestTrack_dxy = -999.0;
-    genPosNearestTrack_dz = -999.0;
-    genPosNearestTrack_highPurity = false;
-    genPosNearestTrack_Loose = false;
-    genPosNearestTrack_charge = 0;
-    genPosNearestTrack_numPixHits = 0;
-    genPosNearestTrack_numStripHits = 0;
-    genPosNearestTrack_fromPV = 0;
-    genPosNearestTrack_tkIdx = -1;
-
     // Gen Electron + Positron info
     genEEPt_ = -999;
     genEEEta_ = -999;
@@ -527,6 +461,8 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronTrkNumPixHits_.clear();
     recoElectronTrkNumStripHits_.clear();
     recoElectronCharge_.clear();
+    recoElectronIsPF_.clear();
+    recoElectronGenMatched_.clear();
 
     // Low pT electrons
     nElectronLowPt_ = 0;
@@ -567,6 +503,8 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronTrkNumStripHits_.clear();
     recoLowPtElectronCharge_.clear();
     recoLowPtElectronMinDrToReg_.clear();
+    recoLowPtElectronIsPF_.clear();
+    recoLowPtElectronGenMatched_.clear();
 
     // Gen weight and pileup
     genwgt_ = 0;
@@ -696,6 +634,8 @@ void NtupleContainerV2::ClearTreeBranches() {
 
     vtx_e1_type_.clear();
     vtx_e1_idx_.clear();
+    vtx_e1_isMatched_.clear();
     vtx_e2_type_.clear();
     vtx_e2_idx_.clear();
+    vtx_e2_isMatched_.clear();
 }

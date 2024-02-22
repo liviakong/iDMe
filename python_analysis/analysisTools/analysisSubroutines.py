@@ -243,10 +243,10 @@ def makeBDTv1Inputs(events):
 
 def makeBDTv2Inputs(events):
     '''
-    variables = ['sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy_signif']
+    variables = ['sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy_signif']
     '''
 
-    sel_vtx_sign_arr = events.sel_vtx.sign.to_numpy()
+    #sel_vtx_sign_arr = events.sel_vtx.sign.to_numpy()
     sel_vtx_chi2_arr = events.sel_vtx.reduced_chi2.to_numpy()
     sel_vtx_METdPhi_arr = np.abs(events.sel_vtx.METdPhi).to_numpy()
     sel_vtx_m_arr = events.sel_vtx.m.to_numpy()
@@ -254,7 +254,7 @@ def makeBDTv2Inputs(events):
     sel_vtx_minDxy_arr = np.minimum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy)).to_numpy()
     vxy_signif_arr = (events.sel_vtx.vxy/events.sel_vtx.sigmavxy).to_numpy()
     
-    input_arrs = (sel_vtx_sign_arr, sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, sel_vtx_minDxy_arr, vxy_signif_arr)
+    input_arrs = (sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, sel_vtx_minDxy_arr, vxy_signif_arr)
     
     input = np.stack(input_arrs, axis=1)
 

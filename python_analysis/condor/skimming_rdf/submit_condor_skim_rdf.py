@@ -6,16 +6,17 @@ from XRootD import client
 import numpy as np
 import subprocess
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 5:
     print("Wrong inputs!")
-    print("Usage: python submit_condor_skim_rdf.py sampleConfig.json n_file_per n_cores")
+    print("Usage: python submit_condor_skim_rdf.py sampleConfig.json n_file_per n_cores MET_cut")
 
 samples = sys.argv[1]
 n_file_per = int(sys.argv[2])
 n_cores = int(sys.argv[3])
+MET_cut = float(sys.argv[4])
 
 sampFile = samples.split("/")[-1]
-jobname_base = sampFile.split(".")[0] + "_rdfSkim"
+jobname_base = sampFile.split(".")[0] + f"_rdfSkim_MET{int(MET_cut)}"
 
 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
 
@@ -62,7 +63,7 @@ for i in range(n_samp):
 
         print("done tarring")
 
-        submit_cmd = f"condor_submit condor_skim_rdf.jdl -append \"Arguments = {jobname_base} {jobname} {mode} {n_cores} {outDir}\" -append \"transfer_input_files = {tgz}\" -append \"Output = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stdout.out\" -append \"Error = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stderr.err\" -append \"Log = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/log.log\" -append \"request_cpus = {n_cores}\""
+        submit_cmd = f"condor_submit condor_skim_rdf.jdl -append \"Arguments = {jobname_base} {jobname} {mode} {n_cores} {outDir} {MET_cut}\" -append \"transfer_input_files = {tgz}\" -append \"Output = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stdout.out\" -append \"Error = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stderr.err\" -append \"Log = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/log.log\" -append \"request_cpus = {n_cores}\""
         
         subprocess.run(submit_cmd,shell=True)
         

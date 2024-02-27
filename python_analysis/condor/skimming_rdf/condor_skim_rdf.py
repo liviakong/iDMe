@@ -130,9 +130,9 @@ bool anyTrue(ROOT::VecOps::RVec<bool> vals) {
 }
 '''
 if __name__ == "__main__":
-    if len(sys.argv) != 6:
+    if len(sys.argv) != 7:
         print("Bad input!")
-        print("Usage: ./condor_skim_rdf jobname_base jobname mode n_cores outDir")
+        print("Usage: ./condor_skim_rdf jobname_base jobname mode n_cores outDir MET_cut")
     t = time.time()
     ROOT.gInterpreter.Declare(elePassCut)
     ROOT.gInterpreter.Declare(isGoodVtx)
@@ -151,6 +151,7 @@ if __name__ == "__main__":
     mode = sys.argv[3]
     n_cores = int(sys.argv[4])
     outDir = sys.argv[5]
+    MET_cut = sys.argv[6]
 
     with open('samples.json','r') as fin:
         samps = json.load(fin)
@@ -183,7 +184,7 @@ if __name__ == "__main__":
         .Filter("METFiltersFailBits == 0") \
         .Filter("passHEMveto") \
         .Filter("passMETtrig") \
-        .Filter("PFMET_pt > 200") \
+        .Filter(f"PFMET_pt > {MET_cut}") \
         .Filter("(nPFJet > 0) && (nPFJet < 3)") \
         .Filter("!anyB_med")
     final = d.Count().GetValue()

@@ -72,6 +72,9 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_charge",&recoElectronCharge_);
     outT->Branch("Electron_isPF",&recoElectronIsPF_);
     outT->Branch("Electron_genMatched",&recoElectronGenMatched_);
+    outT->Branch("Electron_matchType",&recoElectronMatchType_);
+    outT->Branch("Electron_dRJets",&recoElectronDrToJets_);
+    outT->Branch("Electron_dPhiJets",&recoElectronDphiToJets_);
 
     // Low pT electrons
     outT->Branch("nLptElectron",&nElectronLowPt_);
@@ -114,6 +117,9 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_minDRtoReg",&recoLowPtElectronMinDrToReg_);
     outT->Branch("LptElectron_isPF",&recoLowPtElectronIsPF_);
     outT->Branch("LptElectron_genMatched",&recoLowPtElectronGenMatched_);
+    outT->Branch("LptElectron_matchType",&recoLowPtElectronMatchType_);
+    outT->Branch("LptElectron_dRJets",&recoLowPtElectronDrToJets_);
+    outT->Branch("LptElectron_dPhiJets",&recoLowPtElectronDphiToJets_);
 
     // Photons
     outT->Branch("nPhoton",&nPhotons_);
@@ -234,13 +240,19 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("vtx_PFRelIso3",&vtx_ll_PFRelIso_dR3_);
     outT->Branch("vtx_PFIso8",&vtx_ll_PFIso_dR8_);
     outT->Branch("vtx_PFRelIso8",&vtx_ll_PFRelIso_dR8_);
+    outT->Branch("vtx_isMatched",&vtx_isMatched_);
+    outT->Branch("vtx_matchSign",&vtx_matchSign_);
+    outT->Branch("vtx_dRJets",&vtx_dRtoJets_);
+    outT->Branch("vtx_dPhiJets",&vtx_dPhiToJets_);
 
     outT->Branch("vtx_e1_typ",&vtx_e1_type_);
     outT->Branch("vtx_e1_idx",&vtx_e1_idx_);
     outT->Branch("vtx_e1_isMatched",&vtx_e1_isMatched_);
+    outT->Branch("vtx_e1_matchType",&vtx_e1_matchType_);
     outT->Branch("vtx_e2_typ",&vtx_e2_type_);
     outT->Branch("vtx_e2_idx",&vtx_e2_idx_);
     outT->Branch("vtx_e2_isMatched",&vtx_e2_isMatched_);
+    outT->Branch("vtx_e2_matchType",&vtx_e2_matchType_);
 
     // Gen information
     if (!isData_) {
@@ -286,13 +298,7 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenEle_pz",&genElePz_);
         outT->Branch("GenEle_vxy",&genEleVxy_);
         outT->Branch("GenEle_vz",&genEleVz_);
-        outT->Branch("GenEleClosest_typ",&genEleClosestType_); // need to misspell type so it doesn't cause python issues
-        outT->Branch("GenEleClosest_ind",&genEleClosestInd_);
-        outT->Branch("GenEleClosest_dr",&genEleClosestDr_);
-        outT->Branch("GenEleClosestReg_ind",&genEleClosestInd_reg_);
-        outT->Branch("GenEleClosestReg_dr",&genEleClosestDr_reg_);
-        outT->Branch("GenEleClosestLpt_ind",&genEleClosestInd_lpt_);
-        outT->Branch("GenEleClosestLpt_dr",&genEleClosestDr_lpt_);
+        outT->Branch("GenEle_matched",&genEleMatched_);
 
         outT->Branch("GenPos_charge",&genPosCharge_);
         outT->Branch("GenPos_motherID",&genPosMotherID_);
@@ -305,13 +311,10 @@ void NtupleContainerV2::CreateTreeBranches() {
         outT->Branch("GenPos_pz",&genPosPz_);
         outT->Branch("GenPos_vxy",&genPosVxy_);
         outT->Branch("GenPos_vz",&genPosVz_);
-        outT->Branch("GenPosClosest_typ",&genPosClosestType_); // need to misspell type so it doesn't cause python issues
-        outT->Branch("GenPosClosest_ind",&genPosClosestInd_);
-        outT->Branch("GenPosClosest_dr",&genPosClosestDr_);
-        outT->Branch("GenPosClosestReg_ind",&genPosClosestInd_reg_);
-        outT->Branch("GenPosClosestReg_dr",&genPosClosestDr_reg_);
-        outT->Branch("GenPosClosestLpt_ind",&genPosClosestInd_lpt_);
-        outT->Branch("GenPosClosestLpt_dr",&genPosClosestDr_lpt_);
+        outT->Branch("GenPos_matched",&genPosMatched_);
+
+        // Signal reco info
+        outT->Branch("signalReconstructed",&signalReconstructed_);
 
         // Gen Electron + Positron info
         outT->Branch("genEE_pt",&genEEPt_);
@@ -364,13 +367,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     genElePz_ = -999;
     genEleVxy_ = -999;
     genEleVz_ = -999;
-    genEleClosestType_ = -1;
-    genEleClosestInd_ = -1;
-    genEleClosestDr_ = 999.0;
-    genEleClosestInd_reg_ = -1;
-    genEleClosestDr_reg_ = 999.0;
-    genEleClosestInd_lpt_ = -1;
-    genEleClosestDr_lpt_ = 999.0;
+    genEleMatched_ = false;
 
     genPosCharge_ = 0;
     genPosMotherID_ = 0;
@@ -383,13 +380,10 @@ void NtupleContainerV2::ClearTreeBranches() {
     genPosPz_ = -999;
     genPosVxy_ = -999;
     genPosVz_ = -999;
-    genPosClosestType_ = -1;
-    genPosClosestInd_ = -1;
-    genPosClosestDr_ = 999.0;
-    genPosClosestInd_reg_ = -1;
-    genPosClosestDr_reg_ = 999.0;
-    genPosClosestInd_lpt_ = -1;
-    genPosClosestDr_lpt_ = 999.0;
+    genPosMatched_ = false;
+
+    // Signal reconstruction info
+    signalReconstructed_ = false;
 
     // Gen Electron + Positron info
     genEEPt_ = -999;
@@ -463,6 +457,9 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronCharge_.clear();
     recoElectronIsPF_.clear();
     recoElectronGenMatched_.clear();
+    recoElectronMatchType_.clear();
+    recoElectronDrToJets_.clear();
+    recoElectronDphiToJets_.clear();
 
     // Low pT electrons
     nElectronLowPt_ = 0;
@@ -505,6 +502,9 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronMinDrToReg_.clear();
     recoLowPtElectronIsPF_.clear();
     recoLowPtElectronGenMatched_.clear();
+    recoElectronMatchType_.clear();
+    recoLowPtElectronDrToJets_.clear();
+    recoLowPtElectronDphiToJets_.clear();
 
     // Gen weight and pileup
     genwgt_ = 0;
@@ -631,11 +631,17 @@ void NtupleContainerV2::ClearTreeBranches() {
     vtx_ll_PFRelIso_dR3_.clear();
     vtx_ll_PFIso_dR8_.clear();
     vtx_ll_PFRelIso_dR8_.clear();
+    vtx_isMatched_.clear();
+    vtx_matchSign_.clear();
+    vtx_dRtoJets_.clear();
+    vtx_dPhiToJets_.clear();
 
     vtx_e1_type_.clear();
     vtx_e1_idx_.clear();
     vtx_e1_isMatched_.clear();
+    vtx_e1_matchType_.clear();
     vtx_e2_type_.clear();
     vtx_e2_idx_.clear();
     vtx_e2_isMatched_.clear();
+    vtx_e2_matchType_.clear();
 }

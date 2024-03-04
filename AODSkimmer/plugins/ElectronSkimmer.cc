@@ -594,6 +594,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoElectronPhiError_.push_back(track->phiError());
       nt.recoElectronIsPF_.push_back(ele.isPF());
       nt.recoElectronGenMatched_.push_back(false);
+      nt.recoElectronMatchType_.push_back(0);
       nt.recoElectronID_cutVeto_.push_back(ele.electronID("cutBasedElectronID-Fall17-94X-V2-veto"));
       nt.recoElectronID_cutLoose_.push_back(ele.electronID("cutBasedElectronID-Fall17-94X-V2-loose"));
       nt.recoElectronID_cutMed_.push_back(ele.electronID("cutBasedElectronID-Fall17-94X-V2-medium"));
@@ -635,6 +636,14 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
+      // Calculating distance to jets
+      vector<float> dRtoJets; vector<float> dPhitoJets;
+      for (int ij = 0; ij < nt.PFNJet_; ij++) {
+         dRtoJets.push_back(sqrt(pow((ele.eta() - nt.PFJetEta_[ij]),2) + pow(reco::deltaPhi(ele.phi(),nt.PFJetPhi_[ij]),2)));
+         dPhitoJets.push_back(reco::deltaPhi(ele.phi(),nt.PFJetPhi_[ij]));
+      }
+      nt.recoElectronDrToJets_.push_back(dRtoJets);
+      nt.recoElectronDphiToJets_.push_back(dPhitoJets);
    }
 
    /////////////////////////////////
@@ -646,16 +655,16 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    for (auto & ele : *lowPtElectronHandle_) {
       // Cross-cleaning with PF electrons
       float mindR = 999;
+      reco::GsfTrackRef track = ele.gsfTrack();
       float PFmatch_threshold = 0.05; // dR threshold for throwing away low-pT electron in favor of PF electron
       for (auto & reg_ele : *recoElectronHandle_) {
-         float dR = reco::deltaR(reg_ele,ele);
+         float dR = reco::deltaR(*(reg_ele.gsfTrack()),*track);
          if (dR < mindR) mindR = dR;
       }
       if (mindR < PFmatch_threshold) continue;
 
       if (ele.pt() < 1 || ele.electronID("ID") < -0.25) continue; // cuts should be applied by default in miniAOD stage, but repeating here
       nt.recoLowPtElectronMinDrToReg_.push_back(mindR);
-      reco::GsfTrackRef track = ele.gsfTrack();
       lowpt_eleTracks.push_back(track);
       lowpt_ele_p4s.push_back(ele.p4());
       lowpt_good_eles.push_back(&ele);
@@ -668,6 +677,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoLowPtElectronEtaError_.push_back(track->etaError());
       nt.recoLowPtElectronIsPF_.push_back(ele.isPF());
       nt.recoLowPtElectronGenMatched_.push_back(false);
+      nt.recoLowPtElectronMatchType_.push_back(0);
       nt.recoLowPtElectronID_.push_back(ele.electronID("ID"));
       nt.recoLowPtElectronAngularRes_.push_back(sqrt(track->phiError()*track->phiError() + track->etaError()*track->etaError()));
       nt.recoLowPtElectronE_.push_back(ele.energy());
@@ -700,6 +710,14 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       nt.recoLowPtElectronTrkNumTrackerHits_.push_back(track->hitPattern().numberOfValidTrackerHits());
       nt.recoLowPtElectronTrkNumPixHits_.push_back(track->hitPattern().numberOfValidPixelHits());
       nt.recoLowPtElectronTrkNumStripHits_.push_back(track->hitPattern().numberOfValidStripHits());
+      // Calculating distance to jets
+      vector<float> dRtoJets; vector<float> dPhitoJets;
+      for (int ij = 0; ij < nt.PFNJet_; ij++) {
+         dRtoJets.push_back(sqrt(pow(ele.eta() - nt.PFJetEta_[ij],2) + pow(reco::deltaPhi(ele.phi(),nt.PFJetPhi_[ij]),2)));
+         dPhitoJets.push_back(reco::deltaPhi(ele.phi(),nt.PFJetPhi_[ij]));
+      }
+      nt.recoLowPtElectronDrToJets_.push_back(dRtoJets);
+      nt.recoLowPtElectronDphiToJets_.push_back(dPhitoJets);
    }
 
    // Handling photons
@@ -775,11 +793,26 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             nt.vtx_ll_px_.push_back(ll.px());
             nt.vtx_ll_py_.push_back(ll.py());
             nt.vtx_ll_pz_.push_back(ll.pz());
+            nt.vtx_isMatched_.push_back(false);
+            nt.vtx_matchSign_.push_back(0);
             
             nt.vtx_e1_type_.push_back(type1);
             nt.vtx_e1_idx_.push_back(i);
+            nt.vtx_e1_isMatched_.push_back(false);
+            nt.vtx_e1_matchType_.push_back(0);
             nt.vtx_e2_type_.push_back(type2);
             nt.vtx_e2_idx_.push_back(j);
+            nt.vtx_e2_isMatched_.push_back(false);
+            nt.vtx_e2_matchType_.push_back(0);
+
+            // Calculating distance to jets
+            /*vector<float> dRtoJets; vector<float> dPhitoJets;
+            for (int ij = 0; ij < nt.PFNJet_; ij++) {
+               dRtoJets.push_back(sqrt(pow(ll.eta() - nt.PFJetEta_[ij],2) + pow(reco::deltaPhi(ll.phi(),nt.PFJetPhi_[ij]),2)));
+               dPhitoJets.push_back(reco::deltaPhi(ll.phi(),nt.PFJetPhi_[ij]));
+            }
+            nt.vtx_dRtoJets_.push_back(dRtoJets);
+            nt.vtx_dPhiToJets_.push_back(dPhitoJets);*/
          }
       }
    };
@@ -891,139 +924,114 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          genpart_idx++;
       }
 
-      /*vector<float> genE_eledRs;
-      vector<int> genE_idxs;
-      int genE_iClosest;
-      vector<float> genP_eledRs;
-      vector<int> genP_idxs;
-      int genP_iClosest;
-      int icount = 0;
-      for (auto & ele : reg_ele_p4s) {
-         genE_eledRs.push_back(reco::deltaR(ele,gen_ele_p4)); 
-         genE_idxs.push_back(icount);
-         genP_eledRs.push_back(reco::deltaR(ele,gen_pos_p4));
-         genP_idxs.push_back(icount);
-         icount++;
-      }
-      for (auto & ele : lowpt_ele_p4s) {
-         genE_eledRs.push_back(reco::deltaR(ele,gen_ele_p4));
-         genE_idxs.push_back(icount);
-         genP_eledRs.push_back(reco::deltaR(ele,gen_pos_p4));
-         genP_idxs.push_back(icount);
-         icount++;
-      }
-      std::sort(genE_idxs.begin(), genE_idxs.end(), [&](const int & l, const int & r) { return genE_eledRs[l] < genE_eledRs[r]; });
-      std::sort(genP_idxs.begin(), genP_idxs.end(), [&](const int & l, const int & r) { return genP_eledRs[l] < genP_eledRs[r]; });
-      genE_iClosest = genE_idxs[0];
-      genP_iClosest = genP_idxs[0];
-      if (genE_iClosest == genP_iClosest) {
-         if (genE_eledRs[genE_iClosest] < genP_eledRs[genP_iClosest]) {
-            genP_iClosest = genP_idxs[1];
-         }
-         else {
-            genE_iClosest = genE_idxs[1];
-         }
-      }*/
-
-
-      // Matching gen e+/e- to reco objects
-      vector<float> dR_genE;
-      vector<int> dRtype_genE;
-      vector<int> dRind_genE;
+      // Gen-matching electrons to reco objects
+      // Strategy: merge "good" electrons + low-pT electrons (i.e. the ones saved to ntuples & used in vertexing)
+      vector<math::XYZTLorentzVector> all_eles(reg_ele_p4s);
+      all_eles.insert(all_eles.end(),lowpt_ele_p4s.begin(),lowpt_ele_p4s.end());
       
-      vector<float> dR_genP;
-      vector<int> dRtype_genP;
-      vector<int> dRind_genP;
+      float min_dRe = 999.;
+      float min_dRp = 999.;
+      int iMatch_e = -1;
+      int iMatch_p = -1;
       int icount = 0;
-      float mindR_e = 9999; float mindR_p = 9999;
-      for (auto & ele : reg_ele_p4s) {
+      for (auto ele : all_eles) {
          float dRe = reco::deltaR(ele,gen_ele_p4);
          float dRp = reco::deltaR(ele,gen_pos_p4);
-         if (dRe < mindR_e) {
-            mindR_e = dRe;
-            nt.genEleClosestDr_reg_ = dRe;
-            nt.genEleClosestInd_reg_ = icount;
+         if (dRe > 0.1 && dRp > 0.1) continue;
+         
+         if (dRe < 0.1 && dRp > 0.1 && dRe < min_dRe) {
+            min_dRe = dRe;
+            iMatch_e = icount;
          }
-         if (dRp < mindR_p) {
-            mindR_p = dRp;
-            nt.genPosClosestDr_reg_ = dRp;
-            nt.genPosClosestInd_reg_ = icount;
+         else if (dRe > 0.1 && dRp < 0.1 && dRp < min_dRp) {
+            min_dRp = dRp;
+            iMatch_p = icount;
          }
-         dR_genE.push_back(dRe);
-         dRtype_genE.push_back(1);
-         dRind_genE.push_back(icount);
-         dR_genP.push_back(dRp);
-         dRtype_genP.push_back(1);
-         dRind_genP.push_back(icount);
-         icount++;
-      }
-      icount = 0;
-      mindR_e = 9999; mindR_p = 9999;
-      for (auto & ele : lowpt_ele_p4s) {
-         float dRe = reco::deltaR(ele,gen_ele_p4);
-         float dRp = reco::deltaR(ele,gen_pos_p4);
-         if (dRe < mindR_e) {
-            mindR_e = dRe;
-            nt.genEleClosestDr_lpt_ = dRe;
-            nt.genEleClosestInd_lpt_ = icount;
-         }
-         if (dRp < mindR_p) {
-            mindR_p = dRp;
-            nt.genPosClosestDr_lpt_ = dRp;
-            nt.genPosClosestInd_lpt_ = icount;
-         }
-         dR_genE.push_back(dRe);
-         dRtype_genE.push_back(2);
-         dRind_genE.push_back(icount);
-         dR_genP.push_back(dRp);
-         dRtype_genP.push_back(2);
-         dRind_genP.push_back(icount);
-         icount++;
-      }
-
-      if (dR_genE.size() > 0) {   
-         if (dR_genE.size() == 1) {
-            if (dR_genE[0] < dR_genP[0]) {
-               nt.genEleClosestDr_ = dR_genE[0];
-               nt.genEleClosestType_ = dRtype_genE[0];
-               nt.genEleClosestInd_ = dRind_genE[0];
+         else if (dRe < 0.1 && dRp < 0.1 && (dRe < min_dRe || dRp < min_dRp)) {
+            if (dRe < min_dRe && dRp > min_dRp) {
+               min_dRe = dRe;
+               iMatch_e = icount;
+            }
+            else if (dRe > min_dRe && dRp < min_dRp) {
+               min_dRp = dRp;
+               iMatch_p = icount;
             }
             else {
-               nt.genPosClosestDr_ = dR_genP[0];
-               nt.genPosClosestType_ = dRtype_genP[0];
-               nt.genPosClosestInd_ = dRind_genP[0];
+               if (dRe < dRp) {
+                  min_dRe = dRe;
+                  iMatch_e = icount;
+               }
+               else {
+                  min_dRp = dRp;
+                  iMatch_p = icount;
+               }
             }
+         }
+         icount++;
+      }
+      // check if full signal reconstructed
+      if (iMatch_e != -1 && iMatch_p != -1) {
+         nt.signalReconstructed_ = true;
+      }
+      
+      // assign match flags to electrons & vertices
+      int n_reg_eles = reg_ele_p4s.size();
+      int iTarg_e = -1; int iTarg_p = -1;
+      std::string mType_e = "None"; std::string mType_p = "None";
+      if (iMatch_e != -1) {
+         nt.genEleMatched_ = true;
+         if (iMatch_e < n_reg_eles) {
+            nt.recoElectronGenMatched_[iMatch_e] = true;
+            nt.recoElectronMatchType_[iMatch_e] = -1;
+            iTarg_e = iMatch_e;
+            mType_e = "R";
          }
          else {
-            vector<int> ind_genE(dR_genE.size());
-            std::iota(ind_genE.begin(),ind_genE.end(),0); // create index vector
-            std::sort(ind_genE.begin(), ind_genE.end(), [&](const int & l, const int & r) { // sort indices by dR (low to high)
-                     return dR_genE[l] < dR_genE[r];
-                     });
-            vector<int> ind_genP(dR_genP.size());
-            std::iota(ind_genP.begin(),ind_genP.end(),0); // create index vector
-            std::sort(ind_genP.begin(), ind_genP.end(), [&](const int & l, const int & r) { // sort indices by dR (low to high)
-                     return dR_genP[l] < dR_genP[r];
-                     });
+            nt.recoLowPtElectronGenMatched_[iMatch_e - n_reg_eles] = true;
+            nt.recoLowPtElectronMatchType_[iMatch_e - n_reg_eles] = -1;
+            iTarg_e = iMatch_e - n_reg_eles;
+            mType_e = "L";
+         }
+      }
+      
+      if (iMatch_p != -1) {
+         nt.genPosMatched_ = true;
+         if (iMatch_p < n_reg_eles) {
+            nt.recoElectronGenMatched_[iMatch_p] = true;
+            nt.recoElectronMatchType_[iMatch_p] = 1;
+            iTarg_p = iMatch_p;
+            mType_p = "R";
+         }
+         else {
+            nt.recoLowPtElectronGenMatched_[iMatch_p - n_reg_eles] = true;
+            nt.recoLowPtElectronMatchType_[iMatch_p - n_reg_eles] = 1;
+            iTarg_p = iMatch_p - n_reg_eles;
+            mType_p = "L";
+         }
+      }
 
-            if ((dRtype_genE[ind_genE[0]] == dRtype_genP[ind_genP[0]]) && (dRind_genE[ind_genE[0]] == dRind_genP[ind_genP[0]])) {
-               bool eCloser = dR_genE[ind_genE[0]] < dR_genP[ind_genP[0]];
-               nt.genEleClosestDr_ = eCloser ? dR_genE[ind_genE[0]] : dR_genE[ind_genE[1]];
-               nt.genEleClosestType_ = eCloser ? dRtype_genE[ind_genE[0]] : dRtype_genE[ind_genE[1]];
-               nt.genEleClosestInd_ = eCloser ? dRind_genE[ind_genE[0]] : dRind_genE[ind_genE[1]];
+      for (int iv = 0; iv < nt.nvtx_; iv++) {
+         if (nt.vtx_e1_type_[iv] == mType_e && nt.vtx_e1_idx_[iv] == iTarg_e) {
+            nt.vtx_e1_isMatched_[iv] = true;
+            nt.vtx_e1_matchType_[iv] = -1;
+         }
+         if (nt.vtx_e1_type_[iv] == mType_p && nt.vtx_e1_idx_[iv] == iTarg_p) {
+            nt.vtx_e1_isMatched_[iv] = true;
+            nt.vtx_e1_matchType_[iv] = 1;
+         }
 
-               nt.genPosClosestDr_ = eCloser ? dR_genP[ind_genP[1]] : dR_genP[ind_genP[0]];
-               nt.genPosClosestType_ = eCloser ? dRtype_genP[ind_genP[1]] : dRtype_genP[ind_genP[0]];
-               nt.genPosClosestInd_ = eCloser ? dRind_genP[ind_genP[1]] : dRind_genP[ind_genP[0]];
-            }
-            else {
-               nt.genEleClosestDr_ = dR_genE[ind_genE[0]];
-               nt.genEleClosestType_ = dRtype_genE[ind_genE[0]];
-               nt.genEleClosestInd_ = dRind_genE[ind_genE[0]];
-               nt.genPosClosestDr_ = dR_genP[ind_genP[0]];
-               nt.genPosClosestType_ = dRtype_genP[ind_genP[0]];
-               nt.genPosClosestInd_ = dRind_genP[ind_genP[0]];
-            }
+         if (nt.vtx_e2_type_[iv] == mType_e && nt.vtx_e2_idx_[iv] == iTarg_e) {
+            nt.vtx_e2_isMatched_[iv] = true;
+            nt.vtx_e2_matchType_[iv] = -1;
+         }
+         if (nt.vtx_e2_type_[iv] == mType_p && nt.vtx_e2_idx_[iv] == iTarg_p) {
+            nt.vtx_e2_isMatched_[iv] = true;
+            nt.vtx_e2_matchType_[iv] = 1;
+         }
+
+         if (nt.vtx_e1_isMatched_[iv] && nt.vtx_e2_isMatched_[iv]) {
+            nt.vtx_isMatched_[iv] = true;
+            nt.vtx_matchSign_[iv] = nt.vtx_e1_matchType_[iv]*nt.vtx_e2_matchType_[iv];
          }
       }
       

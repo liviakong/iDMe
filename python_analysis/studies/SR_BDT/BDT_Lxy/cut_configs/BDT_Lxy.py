@@ -4,6 +4,31 @@ import sys
 sys.path.append("../../analysisTools/")
 import analysisSubroutines as routines
 
+def cut4(events,info):
+    # pre-computing BDT score so I can make plots with it
+    name = 'cut4'
+    desc = 'computing BDT score'
+    plots = False
+    
+    variables = ['sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy_signif'] # BDT variables
+    vxy_thres = 0.5
+    vxy_mask = events["sel_vtx","vxy"] > vxy_thres
+    if len(events) != 0:
+        inputs = routines.makeBDTv2Inputs(events)
+
+        model_high_vxy = './models/BDT_highLxy_thres_0p5.json'
+        model_low_vxy = './models/BDT_lowLxy_thres_0p5.json'
+        
+        score_BDT_high_vxy = routines.getBDTscore(inputs, model_high_vxy)
+        score_BDT_low_vxy = routines.getBDTscore(inputs, model_low_vxy)
+
+        score_BDT = ak.fill_none(ak.mask(score_BDT_high_vxy, vxy_mask), 0) + ak.fill_none(ak.mask(score_BDT_low_vxy, ~vxy_mask), 0)
+        events['BDTScore'] = score_BDT
+    else:
+        events['BDTScore'] = ak.zeros_like(events.eventWgt)
+        
+    return events, name, desc, plots
+
 def cut5(events,info):
     # UL b-tag threshold recommendations from here: https://twiki.cern.ch/twiki/bin/viewauth/CMS/BtagRecommendation
     # using the medium WP, as in Andre's version of iDM
@@ -40,7 +65,7 @@ def cut5(events,info):
 def cut6(events,info):
     name = "cut6"
     desc = "Leading jet |eta| < 2.4"
-    plots = False
+    plots = True
     cut = np.abs(events.PFJet.eta[:,0]) < 2.4
     return events[cut], name, desc, plots
 
@@ -54,14 +79,14 @@ def cut7(events,info):
 def cut8(events,info):
     name = "cut8"
     desc = "dPhi(MET,leading jet) > 1.5"
-    plots = False
+    plots = True
     cut = np.abs(events.PFJet.METdPhi[:,0]) > 1.5
     return events[cut], name, desc, plots
 
 def cut9(events,info):
     name = "cut9"
     desc = "dPhi(MET,all jets) > 0.75"
-    plots = False
+    plots = True
     cut = ak.all(np.abs(events.PFJet.METdPhi) > 0.75,axis=1)
     return events[cut], name, desc, plots
 
@@ -70,31 +95,11 @@ def cut10(events,info):
     desc = "BDT"
     plots = True
 
-    variables = ['sel_vtx_sign', 'sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy_signif'] # BDT variables
-
     vxy_thres = 0.5
     vxy_mask = events["sel_vtx","vxy"] > vxy_thres
-
     thres_high_vxy = 0.9524
     thres_low_vxy = 0.8267
-    
     thres_arr = ak.where(vxy_mask, thres_high_vxy, thres_low_vxy)
-
-    if len(events) != 0:
-        input = routines.makeBDTv2Inputs(events)
-
-        model_high_vxy = './models/BDT_highLxy_thres_0p5.json'
-        model_low_vxy = './models/BDT_lowLxy_thres_0p5.json'
-        
-        score_BDT_high_vxy = routines.getBDTscore(input, model_high_vxy)
-        score_BDT_low_vxy = routines.getBDTscore(input, model_low_vxy)
-
-        score_BDT = ak.fill_none(ak.mask(score_BDT_high_vxy, vxy_mask), 0) + ak.fill_none(ak.mask(score_BDT_low_vxy, ~vxy_mask), 0)
-        
-        cut = score_BDT > thres_arr
-
-        print(f'Pass: {np.count_nonzero(cut)}/{len(cut)}')
-    else:
-        cut = []
+    cut = events.BDTScore > thres_arr
     
     return events[cut], name, desc, plots

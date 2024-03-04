@@ -43,6 +43,12 @@ def parseArguments():
                      default='',
                      help='Is running signal (1) or not (0)',
                      metavar='SIGNAL')
+
+    parser.add_option('-n','--name',
+                      dest='name',
+                      default='',
+                      help='name for this particular run (will be saved in dir background_NAME)',
+                      metavar='NAME')
     
     (options, arguments) = parser.parse_args()
     
@@ -58,6 +64,8 @@ def parseArguments():
         parser.error("-t type data (1) or mc (0) option not specified")
     if not options.signal:
         parser.error("-s : is running on signal (1) or not (0) option not specified")
+    if not options.name:
+        parser.error("-n : name for run noot specified")
 
     return options
 
@@ -71,6 +79,7 @@ def main():
 
     year = options.year
     samp_type = options.type
+    run_name = options.name
 
     config = CRABClient.UserUtilities.config()
 
@@ -97,7 +106,7 @@ def main():
         samples = json.load(f)
     for samp in samples.keys():
         for subsample, dataset in samples[samp].items():
-            output_base = '/store/group/lpcmetx/iDMe/Samples/Ntuples/background/{0}/{1}/{2}/'.format(year,samp,subsample)
+            output_base = '/store/group/lpcmetx/iDMe/Samples/Ntuples/background_{0}/{1}/{2}/{3}/'.format(run_name,year,samp,subsample)
             xrdClient.mkdir(output_base,flags.MkDirFlags.MAKEPATH)
             config.Data.outLFNDirBase = output_base
             config.Data.inputDataset = dataset

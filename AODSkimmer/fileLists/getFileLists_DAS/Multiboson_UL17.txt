@@ -1,0 +1,7 @@
+/WZ_TuneCP5_13TeV-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/WW_TuneCP5_13TeV-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/ZZ_TuneCP5_13TeV-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/WWW_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/WWZ_4F_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/WZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM
+/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/RunIISummer20UL17RECO-106X_mc2017_realistic_v6-v2/AODSIM

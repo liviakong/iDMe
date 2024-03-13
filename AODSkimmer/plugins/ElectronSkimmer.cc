@@ -87,6 +87,7 @@
 #include "SimDataFormats/GeneratorProducts/interface/GenEventInfoProduct.h"
 
 #include "RecoEgamma/EgammaTools/interface/EffectiveAreas.h"
+#include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
 
 #include "iDMe/CustomTools/interface/DisplacedDileptonAOD.hh"
 #include "iDMe/CustomTools/interface/JetCorrections.hh"
@@ -644,6 +645,18 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       }
       nt.recoElectronDrToJets_.push_back(dRtoJets);
       nt.recoElectronDphiToJets_.push_back(dPhitoJets);
+      // Electron ID variables
+      nt.recoElectronFull5x5_sigmaIetaIeta_.push_back(ele.full5x5_sigmaIetaIeta());
+      float dEtaInSeed = ele.superCluster().isNonnull() && ele.superCluster()->seed().isNonnull() ? ele.deltaEtaSuperClusterTrackAtVtx() - ele.superCluster()->eta() + ele.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
+      nt.recoElectronAbsdEtaSeed_.push_back(std::abs(dEtaInSeed));
+      nt.recoElectronAbsdPhiIn_.push_back(std::abs(ele.deltaPhiSuperClusterTrackAtVtx()));
+      nt.recoElectronHoverE_.push_back(ele.hadronicOverEm());
+      const float ecal_energy_inverse = 1.0/ele.ecalEnergy();
+      const float eSCoverP = ele.eSuperClusterOverP();
+      nt.recoElectronAbs1overEm1overP_.push_back(std::abs(1.0 - eSCoverP)*ecal_energy_inverse);
+      constexpr auto missingHitType =reco::HitPattern::MISSING_INNER_HITS;
+      nt.recoElectronExpMissingInnerHits_.push_back(ele.gsfTrack()->hitPattern().numberOfLostHits(missingHitType));
+      nt.recoElectronConversionVeto_.push_back(!ConversionTools::hasMatchedConversion(ele,*conversionsHandle_,beamspotHandle_->position()));
    }
 
    /////////////////////////////////
@@ -718,6 +731,18 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       }
       nt.recoLowPtElectronDrToJets_.push_back(dRtoJets);
       nt.recoLowPtElectronDphiToJets_.push_back(dPhitoJets);
+      // Electron ID variables
+      nt.recoLowPtElectronFull5x5_sigmaIetaIeta_.push_back(ele.full5x5_sigmaIetaIeta());
+      float dEtaInSeed = ele.superCluster().isNonnull() && ele.superCluster()->seed().isNonnull() ? ele.deltaEtaSuperClusterTrackAtVtx() - ele.superCluster()->eta() + ele.superCluster()->seed()->eta() : std::numeric_limits<float>::max();
+      nt.recoLowPtElectronAbsdEtaSeed_.push_back(std::abs(dEtaInSeed));
+      nt.recoLowPtElectronAbsdPhiIn_.push_back(std::abs(ele.deltaPhiSuperClusterTrackAtVtx()));
+      nt.recoLowPtElectronHoverE_.push_back(ele.hadronicOverEm());
+      const float ecal_energy_inverse = 1.0/ele.ecalEnergy();
+      const float eSCoverP = ele.eSuperClusterOverP();
+      nt.recoLowPtElectronAbs1overEm1overP_.push_back(std::abs(1.0 - eSCoverP)*ecal_energy_inverse);
+      constexpr auto missingHitType =reco::HitPattern::MISSING_INNER_HITS;
+      nt.recoLowPtElectronExpMissingInnerHits_.push_back(ele.gsfTrack()->hitPattern().numberOfLostHits(missingHitType));
+      nt.recoLowPtElectronConversionVeto_.push_back(!ConversionTools::hasMatchedConversion(ele,*conversionsHandle_,beamspotHandle_->position()));
    }
 
    // Handling photons

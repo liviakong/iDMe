@@ -75,6 +75,13 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_matchType",&recoElectronMatchType_);
     outT->Branch("Electron_dRJets",&recoElectronDrToJets_);
     outT->Branch("Electron_dPhiJets",&recoElectronDphiToJets_);
+    outT->Branch("Electron_full55sigmaIetaIeta",&recoElectronFull5x5_sigmaIetaIeta_);
+    outT->Branch("Electron_absdEtaSeed",&recoElectronAbsdEtaSeed_);
+    outT->Branch("Electron_absdPhiIn",&recoElectronAbsdPhiIn_);
+    outT->Branch("Electron_HoverE",&recoElectronHoverE_);
+    outT->Branch("Electron_abs1overEm1overP",&recoElectronAbs1overEm1overP_);
+    outT->Branch("Electron_expMissingInnerHits",&recoElectronExpMissingInnerHits_);
+    outT->Branch("Electron_conversionVeto",&recoElectronConversionVeto_);
 
     // Low pT electrons
     outT->Branch("nLptElectron",&nElectronLowPt_);
@@ -120,6 +127,13 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_matchType",&recoLowPtElectronMatchType_);
     outT->Branch("LptElectron_dRJets",&recoLowPtElectronDrToJets_);
     outT->Branch("LptElectron_dPhiJets",&recoLowPtElectronDphiToJets_);
+    outT->Branch("LptElectron_full55sigmaIetaIeta",&recoLowPtElectronFull5x5_sigmaIetaIeta_);
+    outT->Branch("LptElectron_absdEtaSeed",&recoLowPtElectronAbsdEtaSeed_);
+    outT->Branch("LptElectron_absdPhiIn",&recoLowPtElectronAbsdPhiIn_);
+    outT->Branch("LptElectron_HoverE",&recoLowPtElectronHoverE_);
+    outT->Branch("LptElectron_abs1overEm1overP",&recoLowPtElectronAbs1overEm1overP_);
+    outT->Branch("LptElectron_expMissingInnerHits",&recoLowPtElectronExpMissingInnerHits_);
+    outT->Branch("LptElectron_conversionVeto",&recoLowPtElectronConversionVeto_);
 
     // Photons
     outT->Branch("nPhoton",&nPhotons_);
@@ -460,6 +474,13 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronMatchType_.clear();
     recoElectronDrToJets_.clear();
     recoElectronDphiToJets_.clear();
+    recoElectronFull5x5_sigmaIetaIeta_.clear();
+    recoElectronAbsdEtaSeed_.clear();
+    recoElectronAbsdPhiIn_.clear();
+    recoElectronHoverE_.clear();
+    recoElectronAbs1overEm1overP_.clear();
+    recoElectronExpMissingInnerHits_.clear();
+    recoElectronConversionVeto_.clear();
 
     // Low pT electrons
     nElectronLowPt_ = 0;
@@ -505,6 +526,13 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronMatchType_.clear();
     recoLowPtElectronDrToJets_.clear();
     recoLowPtElectronDphiToJets_.clear();
+    recoLowPtElectronFull5x5_sigmaIetaIeta_.clear();
+    recoLowPtElectronAbsdEtaSeed_.clear();
+    recoLowPtElectronAbsdPhiIn_.clear();
+    recoLowPtElectronHoverE_.clear();
+    recoLowPtElectronAbs1overEm1overP_.clear();
+    recoLowPtElectronExpMissingInnerHits_.clear();
+    recoLowPtElectronConversionVeto_.clear();
 
     // Gen weight and pileup
     genwgt_ = 0;

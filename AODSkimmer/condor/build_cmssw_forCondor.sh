@@ -42,6 +42,8 @@ cp $BASE/AODSkimmer/scripts/genFilterEfficiency_cfg.py iDMe/AODSkimmer/
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoVertex .
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoEgamma .
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/PhysicsTools .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/EgammaPostRecoTools .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/EgammaAnalysis .
 
 scram b -j 8
 

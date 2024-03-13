@@ -5,9 +5,7 @@ year=$2
 nThreads=$3
 isData=$4
 isSignal=$5
-outDirName=$6
-suffix=$7
-
+outPath=$6
 
 xrdcp root://cmseos.fnal.gov//store/group/lpcmetx/iDMe//compiled_CMSSW_envs/ntuplizer_CMSSW_10_6_26.tar.gz .
 tar -xzf ntuplizer_CMSSW_10_6_26.tar.gz
@@ -21,6 +19,6 @@ eval `scram runtime -sh`
 cd iDMe/AODSkimmer
 cmsRun miniPlusElectronNtuplizer_cfg.py flist=${fname}.txt data=${isData} signal=${isSignal} year=${year} numThreads=${nThreads}
 mv test_output.root ntuples_${fname}.root
-xrdcp -f ntuples_${fname}.root root://cmseos.fnal.gov//store/group/lpcmetx/iDMe//Samples/Ntuples/signal_${suffix}/${year}/${outDirName}/ntuples_${fname}.root
+xrdcp -f ntuples_${fname}.root root://cmseos.fnal.gov/${outPath}/ntuples_${fname}.root
 echo "Copied ntuples_${fname}.root"
 echo "Done"

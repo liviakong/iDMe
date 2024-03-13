@@ -162,6 +162,13 @@ public:
     vector<int> recoElectronMatchType_;
     vector<vector<float> > recoElectronDrToJets_;
     vector<vector<float> > recoElectronDphiToJets_;
+    vector<float> recoElectronFull5x5_sigmaIetaIeta_;
+    vector<float> recoElectronAbsdEtaSeed_;
+    vector<float> recoElectronAbsdPhiIn_;
+    vector<float> recoElectronHoverE_;
+    vector<float> recoElectronAbs1overEm1overP_;
+    vector<int> recoElectronExpMissingInnerHits_;
+    vector<bool> recoElectronConversionVeto_;
 
     // Low pT electrons
     int nElectronLowPt_;
@@ -207,6 +214,13 @@ public:
     vector<int> recoLowPtElectronMatchType_;
     vector<vector<float> > recoLowPtElectronDrToJets_;
     vector<vector<float> > recoLowPtElectronDphiToJets_;
+    vector<float> recoLowPtElectronFull5x5_sigmaIetaIeta_;
+    vector<float> recoLowPtElectronAbsdEtaSeed_;
+    vector<float> recoLowPtElectronAbsdPhiIn_;
+    vector<float> recoLowPtElectronHoverE_;
+    vector<float> recoLowPtElectronAbs1overEm1overP_;
+    vector<int> recoLowPtElectronExpMissingInnerHits_;
+    vector<bool> recoLowPtElectronConversionVeto_;
 
     // Photons
     int nPhotons_;

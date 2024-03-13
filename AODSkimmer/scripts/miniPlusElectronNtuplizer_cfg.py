@@ -7,6 +7,7 @@ from TrackingTools.TrackAssociator.default_cfi import TrackAssociatorParameterBl
 from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
 from Configuration.Eras.Era_Run2_2017_cff import Run2_2017
 from Configuration.Eras.Era_Run2_2016_cff import Run2_2016
+from Configuration.Eras.Era_Run2_2016_HIPM_cff import Run2_2016_HIPM
 from Configuration.ProcessModifiers.run2_miniAOD_UL_cff import run2_miniAOD_UL
 import json
 import sys
@@ -25,9 +26,9 @@ options.register('signal',
         VarParsing.VarParsing.varType.bool,
         "Run on signal (1) or not (0")
 options.register('year',
-        2018,
+        "2018",
         VarParsing.VarParsing.multiplicity.singleton,
-        VarParsing.VarParsing.varType.int,
+        VarParsing.VarParsing.varType.string,
         "Data/MC year")
 options.register('numThreads',
         8,
@@ -64,15 +65,22 @@ if options.flist != "":
 
 # globaltag
 globaltag = ''
-if options.year == 2016:
-    globaltag = '106X_mcRun2_asymptotic_v13'
+if options.year == '2016APV':
+    globaltag = '106X_dataRun2_v27' if options.data else '106X_mcRun2_asymptotic_preVFP_v8'
+    era = Run2_2016_HIPM
+    recoEgammaTools_era = '2016preVFP-UL'
+elif options.year == '2016':
+    globaltag = '106X_dataRun2_v27' if options.data else '106X_mcRun2_asymptotic_v13'
     era = Run2_2016
-elif options.year == 2017:
-    globaltag = '106X_mc2017_realistic_v6'
+    recoEgammaTools_era = '2016postVFP-UL'
+elif options.year == '2017':
+    globaltag = '106X_dataRun2_v20' if options.data else '106X_mc2017_realistic_v6'
     era = Run2_2017
-elif options.year == 2018:
-    globaltag = '106X_upgrade2018_realistic_v16_L1v1'
+    recoEgammaTools_era = '2017-UL'
+elif options.year == '2018':
+    globaltag = '106X_dataRun2_v24' if options.data else '106X_upgrade2018_realistic_v16_L1v1'
     era = Run2_2018
+    recoEgammaTools_era = '2018-UL'
 else:
     print("Invalid year given for run 2 : {0}".format(options.year))
     exit
@@ -128,71 +136,6 @@ process.maxEvents = cms.untracked.PSet(
 
 # Output definition
 
-"""process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
-    compressionAlgorithm = cms.untracked.string('LZMA'),
-    compressionLevel = cms.untracked.int32(4),
-    dataset = cms.untracked.PSet(
-        dataTier = cms.untracked.string('MINIAODSIM'),
-        filterName = cms.untracked.string('')
-    ),
-    dropMetaData = cms.untracked.string('ALL'),
-    eventAutoFlushCompressedSize = cms.untracked.int32(-900),
-    fastCloning = cms.untracked.bool(False),
-    fileName = cms.untracked.string('file:output.root'),
-    outputCommands = process.MINIAODSIMEventContent.outputCommands,
-    overrideBranchesSplitLevel = cms.untracked.VPSet(
-        cms.untracked.PSet(
-            branch = cms.untracked.string('patPackedCandidates_packedPFCandidates__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('recoGenParticles_prunedGenParticles__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('patTriggerObjectStandAlones_slimmedPatTrigger__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('patPackedGenParticles_packedGenParticles__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('patJets_slimmedJets__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('recoVertexs_offlineSlimmedPrimaryVertices__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('recoCaloClusters_reducedEgamma_reducedESClusters_*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('EcalRecHitsSorted_reducedEgamma_reducedEBRecHits_*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('EcalRecHitsSorted_reducedEgamma_reducedEERecHits_*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('recoGenJets_slimmedGenJets__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('patJets_slimmedJetsPuppi__*'),
-            splitLevel = cms.untracked.int32(99)
-        ), 
-        cms.untracked.PSet(
-            branch = cms.untracked.string('EcalRecHitsSorted_reducedEgamma_reducedESRecHits_*'),
-            splitLevel = cms.untracked.int32(99)
-        )
-    ),
-    overrideInputFileSplitLevels = cms.untracked.bool(True),
-    splitLevel = cms.untracked.int32(0)
-)"""
 ###########################################
 ###### Path and EndPath definitions #######
 ###########################################
@@ -324,7 +267,7 @@ ntupleProcess.TFileService = cms.Service("TFileService",
 ##### MET Filters #####
 #######################
 metFilters = []
-if options.year == 2016:
+if options.year == '2016':
     metFilters = [
         "Flag_goodVertices",
         "Flag_globalSuperTightHalo2016Filter",
@@ -336,7 +279,7 @@ if options.year == 2016:
         "Flag_eeBadScFilter",
         "Flag_hfNoisyHitsFilter"
     ]
-elif options.year == 2017 or options.year == 2018:
+elif options.year == '2017' or options.year == '2018':
     metFilters = [
         "Flag_goodVertices",
         "Flag_globalSuperTightHalo2016Filter",
@@ -411,21 +354,26 @@ triggerPaths18 = [
 # Electron effective area input file for PU-corrected PF isolation calculations
 effAreaInputPath = "RecoEgamma/ElectronIdentification/data/Fall17/effAreaElectrons_cone03_pfNeuHadronsAndPhotons_94X.txt"
 
+# import EGamma postreco tools
+from RecoEgamma.EgammaTools.EgammaPostRecoTools import setupEgammaPostRecoSeq
+setupEgammaPostRecoSeq(ntupleProcess,
+                       runEnergyCorrections=True,
+                       runVID=False, #saves CPU time by not needlessly re-running VID, if you want the Fall17V2 IDs, set this to True or remove (default is True)
+                       era=recoEgammaTools_era)
+
 ##############################
 ###### Main iDM analyzer #####
 ##############################
 ## (note: cfi with default options is generated by fillDescriptions when compiling -- not found in python/)
 ## (the only options specified below after cloning are the non-default ones)
 
-#sys.path.append("../../../cfipython/slc7_amd64_gcc700/iDMe/AODSkimmer/")
-#from ElectronSkimmer_cfi import ElectronSkimmer
 from iDMe.AODSkimmer.ElectronSkimmer_cfi import ElectronSkimmer
 
 # setting up skimmer & ntupleProcess path
 ntupleProcess.ntuples = ElectronSkimmer.clone(
     isData = cms.bool(options.data),
     isSignal = cms.bool(options.signal),
-    year = options.year,
+    year = int(options.year),
     metFilters = cms.vstring(metFilters),
     triggerPaths16 = cms.vstring(triggerPaths16),
     triggerPaths17 = cms.vstring(triggerPaths17),
@@ -433,5 +381,5 @@ ntupleProcess.ntuples = ElectronSkimmer.clone(
     allTriggerPaths = cms.vstring(list(set(triggerPaths16+triggerPaths17+triggerPaths18))),
     effAreasConfigFile = cms.FileInPath(effAreaInputPath)
 )
-ntupleProcess.totalPath = cms.Path(cms.Sequence(ntupleProcess.ntuples))
+ntupleProcess.totalPath = cms.Path(cms.Sequence(ntupleProcess.egammaPostRecoSeq + ntupleProcess.ntuples))
 ntupleProcess.schedule = cms.Schedule(ntupleProcess.totalPath)

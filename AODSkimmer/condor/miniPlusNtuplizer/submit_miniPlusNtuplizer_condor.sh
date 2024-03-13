@@ -17,6 +17,7 @@ outDirName="${mass}/${ctau}"
 mkdir -p split_fileLists
 mkdir -p Logs
 xrdfs root://cmseos.fnal.gov/ mkdir -p /store/group/lpcmetx/iDMe//Samples/Ntuples/signal_${suffix}/${year}/${outDirName}/
+outPath=/store/group/lpcmetx/iDMe//Samples/Ntuples/signal_${suffix}/${year}/${outDirName}/
 
 cp ${flist_full} .
 split -d -l 20 --additional-suffix ".txt" ${fname}.txt ${fname}_
@@ -26,5 +27,5 @@ do
 	mv $sublist split_fileLists/$sublist
 	sublist_name=`echo $sublist | cut -d "." -f 1`
 	sublist_full=`realpath split_fileLists/$sublist`
-	condor_submit miniPlusNtuplizer_config.jdl -append "Arguments = ${sublist_name} ${year} ${nThreads} ${isData} ${isSignal} ${outDirName} ${suffix}" -append "transfer_input_files = ${sublist_full}" -append "request_cpus = ${nThreads}"
+	condor_submit miniPlusNtuplizer_config.jdl -append "Arguments = ${sublist_name} ${year} ${nThreads} ${isData} ${isSignal} ${outPath}" -append "transfer_input_files = ${sublist_full}" -append "request_cpus = ${nThreads}"
 done

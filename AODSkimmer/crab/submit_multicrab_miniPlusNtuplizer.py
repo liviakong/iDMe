@@ -50,6 +50,12 @@ def parseArguments():
                       help='name for this particular run (will be saved in dir background_NAME)',
                       metavar='NAME')
     
+    parser.add_option('-p','--particular',
+                      dest='particular',
+                      default='',
+                      help='particular subsample to process',
+                      metavar='PARTICULAR')
+    
     (options, arguments) = parser.parse_args()
     
     if arguments:
@@ -80,6 +86,10 @@ def main():
     year = options.year
     samp_type = options.type
     run_name = options.name
+    if options.particular == '':
+        particular = None
+    else:
+        particular = options.particular
 
     config = CRABClient.UserUtilities.config()
 
@@ -106,6 +116,8 @@ def main():
         samples = json.load(f)
     for samp in samples.keys():
         for subsample, dataset in samples[samp].items():
+            if particular is not None and subsample != particular:
+                continue
             output_base = '/store/group/lpcmetx/iDMe/Samples/Ntuples/background_{0}/{1}/{2}/{3}/'.format(run_name,year,samp,subsample)
             xrdClient.mkdir(output_base,flags.MkDirFlags.MAKEPATH)
             config.Data.outLFNDirBase = output_base

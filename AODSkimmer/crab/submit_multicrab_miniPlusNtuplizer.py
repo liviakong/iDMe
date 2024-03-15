@@ -96,15 +96,15 @@ def main():
     # Basic settings common to all runs 
     config.General.workArea = base_dir+'/src/iDMe/AODSkimmer/crab/submissions_miniNtuplizer/'
     config.General.transferOutputs = True
-    config.General.transferLogs = True
+    config.General.transferLogs = False
     config.JobType.pluginName = 'Analysis'
     config.JobType.psetName = base_dir+'/src/iDMe/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
-    config.Data.splitting = 'Automatic'
+    #config.Data.splitting = 'Automatic'
     #config.Data.totalUnits = 1
-    #config.Data.splitting = 'FileBased'
-    #config.Data.unitsPerJob = 1
+    config.Data.splitting = 'EventAwareLumiBased'
+    config.Data.unitsPerJob = 10000
     config.Data.publication = False
     config.Data.ignoreLocality = True
     config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']

@@ -12,7 +12,7 @@ suffix = sys.argv[6]
 if len(sys.argv) > 7:
     nev_target = int(sys.argv[7])
 else:
-    nev_target = 100000
+    nev_target = 10000
 
 fname = flist.split("/")[-1].split(".")[0]
 sample = fname.split("_")[0]

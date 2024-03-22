@@ -1,0 +1,11 @@
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/A9A19436-E183-1749-B044-B9549AA1556A.root 1000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/90BA729D-D510-C246-B772-6D0DAFE8CA5F.root 6000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/9521DCD5-FEB7-A240-B9D6-FE4DAED5B1DA.root 1000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/80A327AD-FD06-BB4A-AB90-6D1E2DEEAD04.root 4000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/F1FDD1DF-C9E1-624A-9D70-9E08BBF0B7DE.root 8000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/D6D4512D-21F5-2A47-961B-FE91E63375BC.root 9000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/45E9BABD-9545-B54B-AA90-3D8570B8C5A9.root 9000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/67989DF7-6D88-A546-8A63-C9A89B9EA51B.root 8000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/02CBAF98-5E3E-EB41-A63A-09511EB955AF.root 8000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/8D13B13C-D97D-1741-A8AB-363E27A6E76B.root 12000
+root://cms-xrd-global.cern.ch///store/mc/RunIISummer20UL16RECO/ZZZ_TuneCP5_13TeV-amcatnlo-pythia8/AODSIM/106X_mcRun2_asymptotic_v13-v2/230000/7F0C7C4F-9FD0-274E-8B5B-37C52E6E2404.root 6000

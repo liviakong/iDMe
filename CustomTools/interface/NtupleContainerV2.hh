@@ -67,13 +67,7 @@ public:
     float genElePz_;
     float genEleVxy_;
     float genEleVz_;
-    int genEleClosestType_;
-    int genEleClosestInd_;
-    float genEleClosestDr_;
-    int genEleClosestInd_reg_;
-    float genEleClosestDr_reg_;
-    int genEleClosestInd_lpt_;
-    float genEleClosestDr_lpt_;
+    bool genEleMatched_;
 
     int genPosCharge_;
     int genPosMotherID_;
@@ -86,49 +80,7 @@ public:
     float genPosPz_;
     float genPosVxy_;
     float genPosVz_;
-    int genPosClosestType_;
-    int genPosClosestInd_;
-    float genPosClosestDr_;
-    int genPosClosestInd_reg_;
-    float genPosClosestDr_reg_;
-    int genPosClosestInd_lpt_;
-    float genPosClosestDr_lpt_;
-
-    // Gen Electron matches to isoTracks
-    int nGenEleTrkMatches;
-    float genEleNearestTrack_pt;
-    float genEleNearestTrack_eta;
-    float genEleNearestTrack_phi;
-    float genEleNearestTrack_dRGen;
-    float genEleNearestTrack_pfIso3;
-    float genEleNearestTrack_miniIso;
-    float genEleNearestTrack_dxy;
-    float genEleNearestTrack_dz;
-    bool genEleNearestTrack_highPurity;
-    bool genEleNearestTrack_Loose;
-    int genEleNearestTrack_charge;
-    int genEleNearestTrack_numPixHits;
-    int genEleNearestTrack_numStripHits;
-    int genEleNearestTrack_fromPV;
-    int genEleNearestTrack_tkIdx;
-
-    // Gen Positron matches to isoTracks
-    int nGenPosTrkMatches;
-    float genPosNearestTrack_pt;
-    float genPosNearestTrack_eta;
-    float genPosNearestTrack_phi;
-    float genPosNearestTrack_dRGen;
-    float genPosNearestTrack_pfIso3;
-    float genPosNearestTrack_miniIso;
-    float genPosNearestTrack_dxy;
-    float genPosNearestTrack_dz;
-    bool genPosNearestTrack_highPurity;
-    bool genPosNearestTrack_Loose;
-    int genPosNearestTrack_charge;
-    int genPosNearestTrack_numPixHits;
-    int genPosNearestTrack_numStripHits;
-    int genPosNearestTrack_fromPV;
-    int genPosNearestTrack_tkIdx;
+    bool genPosMatched_;
 
     // Gen Electron + Positron info
     float genEEPt_;
@@ -138,8 +90,11 @@ public:
     float genEEMass_;
     float genEEdR_;
     float genEEMETdPhi_;
+
+    // Track whether full signal (e and p) are reconstructed
+    bool signalReconstructed_;
     
-   // Gen jet
+    // Gen jet
     int nGenJet_;
     vector<float> genJetPt_;
     vector<float> genJetEta_;
@@ -202,6 +157,18 @@ public:
     vector<int> recoElectronTrkNumPixHits_;
     vector<int> recoElectronTrkNumStripHits_;
     vector<int> recoElectronCharge_;
+    vector<bool> recoElectronIsPF_;
+    vector<bool> recoElectronGenMatched_;
+    vector<int> recoElectronMatchType_;
+    vector<vector<float> > recoElectronDrToJets_;
+    vector<vector<float> > recoElectronDphiToJets_;
+    vector<float> recoElectronFull5x5_sigmaIetaIeta_;
+    vector<float> recoElectronAbsdEtaSeed_;
+    vector<float> recoElectronAbsdPhiIn_;
+    vector<float> recoElectronHoverE_;
+    vector<float> recoElectronAbs1overEm1overP_;
+    vector<int> recoElectronExpMissingInnerHits_;
+    vector<bool> recoElectronConversionVeto_;
 
     // Low pT electrons
     int nElectronLowPt_;
@@ -242,6 +209,18 @@ public:
     vector<int> recoLowPtElectronTrkNumStripHits_;
     vector<int> recoLowPtElectronCharge_;
     vector<float> recoLowPtElectronMinDrToReg_;
+    vector<bool> recoLowPtElectronIsPF_;
+    vector<bool> recoLowPtElectronGenMatched_;
+    vector<int> recoLowPtElectronMatchType_;
+    vector<vector<float> > recoLowPtElectronDrToJets_;
+    vector<vector<float> > recoLowPtElectronDphiToJets_;
+    vector<float> recoLowPtElectronFull5x5_sigmaIetaIeta_;
+    vector<float> recoLowPtElectronAbsdEtaSeed_;
+    vector<float> recoLowPtElectronAbsdPhiIn_;
+    vector<float> recoLowPtElectronHoverE_;
+    vector<float> recoLowPtElectronAbs1overEm1overP_;
+    vector<int> recoLowPtElectronExpMissingInnerHits_;
+    vector<bool> recoLowPtElectronConversionVeto_;
 
     // Photons
     int nPhotons_;
@@ -362,11 +341,19 @@ public:
     vector<float> vtx_ll_PFRelIso_dR3_;
     vector<float> vtx_ll_PFIso_dR8_;
     vector<float> vtx_ll_PFRelIso_dR8_;
+    vector<bool> vtx_isMatched_;
+    vector<int> vtx_matchSign_;
+    vector<vector<float> > vtx_dRtoJets_;
+    vector<vector<float> > vtx_dPhiToJets_;
 
     vector<std::string> vtx_e1_type_;
     vector<int> vtx_e1_idx_;
+    vector<bool> vtx_e1_isMatched_;
+    vector<int> vtx_e1_matchType_;
     vector<std::string> vtx_e2_type_;
     vector<int> vtx_e2_idx_;
+    vector<bool> vtx_e2_isMatched_;
+    vector<int> vtx_e2_matchType_;
 
 protected:
     // Reco and gen TTrees

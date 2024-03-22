@@ -24,6 +24,23 @@ def makeNMinus1(h1,h2,lessThan=False):
     signif[(signif==-1) & (s1==0)] = 0
     return x, signif
 
+def makeNMinus1_multiBkg(hnum,hdens,lessThan=False):
+    assert len(hnum.axes)==1 and hnum.axes == hdens[0].axes
+    ax = hnum.axes[0]
+    if lessThan:
+        snum = np.cumsum(hnum.counts(flow=True))
+        sden = sum([np.cumsum(hd.counts(flow=True)) for hd in hdens])
+    else:
+        snum = np.cumsum(hnum.counts(flow=True)[::-1])[::-1]
+        sden = sum([np.cumsum(hd.counts(flow=True)[::-1])[::-1] for hd in hdens])
+    x = ax.edges
+    dx = x[1]-x[0]
+    x = np.append(x,[x[-1]+dx])
+    signif = np.where(sden>0,snum/np.sqrt(sden),-1)
+    signif[(signif==-1) & (snum>0)] = np.inf
+    signif[(signif==-1) & (snum==0)] = 0
+    return x, signif
+
 def makeCutEff(h,lessThan=False):
     ax = h.axes[0]
     if lessThan:

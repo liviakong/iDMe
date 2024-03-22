@@ -43,6 +43,18 @@ def parseArguments():
                      default='',
                      help='Is running signal (1) or not (0)',
                      metavar='SIGNAL')
+
+    parser.add_option('-n','--name',
+                      dest='name',
+                      default='',
+                      help='name for this particular run (will be saved in dir background_NAME)',
+                      metavar='NAME')
+    
+    parser.add_option('-p','--particular',
+                      dest='particular',
+                      default='',
+                      help='particular subsample to process',
+                      metavar='PARTICULAR')
     
     (options, arguments) = parser.parse_args()
     
@@ -58,6 +70,8 @@ def parseArguments():
         parser.error("-t type data (1) or mc (0) option not specified")
     if not options.signal:
         parser.error("-s : is running on signal (1) or not (0) option not specified")
+    if not options.name:
+        parser.error("-n : name for run noot specified")
 
     return options
 
@@ -71,21 +85,26 @@ def main():
 
     year = options.year
     samp_type = options.type
+    run_name = options.name
+    if options.particular == '':
+        particular = None
+    else:
+        particular = options.particular
 
     config = CRABClient.UserUtilities.config()
 
     # Basic settings common to all runs 
     config.General.workArea = base_dir+'/src/iDMe/AODSkimmer/crab/submissions_miniNtuplizer/'
     config.General.transferOutputs = True
-    config.General.transferLogs = True
+    config.General.transferLogs = False
     config.JobType.pluginName = 'Analysis'
     config.JobType.psetName = base_dir+'/src/iDMe/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
-    config.Data.splitting = 'Automatic'
+    #config.Data.splitting = 'Automatic'
     #config.Data.totalUnits = 1
-    #config.Data.splitting = 'FileBased'
-    #config.Data.unitsPerJob = 1
+    config.Data.splitting = 'EventAwareLumiBased'
+    config.Data.unitsPerJob = 10000
     config.Data.publication = False
     config.Data.ignoreLocality = True
     config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']
@@ -97,7 +116,9 @@ def main():
         samples = json.load(f)
     for samp in samples.keys():
         for subsample, dataset in samples[samp].items():
-            output_base = '/store/group/lpcmetx/iDMe/Samples/Ntuples/background/{0}/{1}/{2}/'.format(year,samp,subsample)
+            if particular is not None and subsample != particular:
+                continue
+            output_base = '/store/group/lpcmetx/iDMe/Samples/Ntuples/background_{0}/{1}/{2}/{3}/'.format(run_name,year,samp,subsample)
             xrdClient.mkdir(output_base,flags.MkDirFlags.MAKEPATH)
             config.Data.outLFNDirBase = output_base
             config.Data.inputDataset = dataset

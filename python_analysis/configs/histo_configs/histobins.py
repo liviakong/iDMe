@@ -14,6 +14,7 @@ vtx_type = StrCategory(["LL","LR","RR"],name="type",label="Vertex Type")
 vtx_matchType = IntCategory([0,1,2],name="mtype",label="Vertex Gen Match Type")
 # Misc
 angleDot = Regular(100,-1,1,name='dot',label=r"$\hat{n}_1 \cdot \hat{n}_2$")
+bdtScore = Regular(100,0,1,name='score',label='BDT Score')
 
 ############################
 ###### Numerical Axes ######

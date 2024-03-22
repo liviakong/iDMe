@@ -28,6 +28,18 @@ and these lines to apply the patch:
 ```bash
 git apply iDMe/patches/lowPtElectrons_miniAOD_IDRegression.patch
 ```
+
+## Installing EGamma PostRecoTools
+We need to run EGamma "PostRecoTools" according to [EGamma POG recommendations](https://twiki.cern.ch/twiki/bin/view/CMS/EgammaUL2016To2018#Recipe_for_running_scales_and_sm). Run these commands (copied from the linked twiki) to set it up:
+```bash
+git cms-addpkg RecoEgamma/EgammaTools
+git clone https://github.com/cms-egamma/EgammaPostRecoTools.git
+mv EgammaPostRecoTools/python/EgammaPostRecoTools.py RecoEgamma/EgammaTools/python/.
+git clone -b ULSSfiles_correctScaleSysMC https://github.com/jainshilpi/EgammaAnalysis-ElectronTools.git EgammaAnalysis/ElectronTools/data/
+git cms-addpkg EgammaAnalysis/ElectronTools
+```
+
+## Building
 Lastly, build everything with 
 ```bash
 scram b -j8

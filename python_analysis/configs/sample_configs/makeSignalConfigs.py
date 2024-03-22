@@ -30,6 +30,10 @@ if mode == "sig":
     for p in points:
         mchi = float(p.split("_")[0].split("-")[1].replace("p","."))
         dmchi = float(p.split("_")[1].split("-")[1].replace("p","."))
+        if 'mZD' in p:
+            mzd = p.split("_")[2]
+        else:
+            mzd = ""
         status, lifetimes = xrdClient.dirlist(prefix+year+"/"+p)
         lifetimes = [l.name for l in lifetimes]
         
@@ -40,7 +44,10 @@ if mode == "sig":
             info["Mchi"] = mchi
             info["dMchi"] = dmchi
             info["ctau"] = ct
-            info["name"] = "sig_Mchi-{0}_dMchi-{1}_ct-{2}".format(info["Mchi"],info["dMchi"],info["ctau"])
+            if mzd != "":
+                info["name"] = "sig_Mchi-{0}_dMchi-{1}_ct-{2}_{3}".format(info["Mchi"],info["dMchi"],info["ctau"],mzd)
+            else:
+                info["name"] = "sig_Mchi-{0}_dMchi-{1}_ct-{2}".format(info["Mchi"],info["dMchi"],info["ctau"])
             info["sum_wgt"] = 0.0
             info["type"] = "signal"
             info["year"] = int(year)

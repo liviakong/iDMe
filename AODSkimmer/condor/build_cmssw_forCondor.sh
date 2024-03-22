@@ -32,13 +32,18 @@ cp -r $BASE/AODSkimmer/test iDMe/AODSkimmer/
 cp -r $BASE/CustomTools/* iDMe/CustomTools/
 
 cp $BASE/iDMeSkimmer/scripts/run_ntuplizer_cfg.py iDMe/iDMeSkimmer/
+
 cp $BASE/AODSkimmer/scripts/run_AODntuplizer_cfg.py iDMe/AODSkimmer/
 cp $BASE/AODSkimmer/scripts/run_isoNtuplizer_cfg.py iDMe/AODSkimmer/
 cp $BASE/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py iDMe/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/run_ElectronNtuplizer_cfg.py iDMe/AODSkimmer/
+cp $BASE/AODSkimmer/scripts/genFilterEfficiency_cfg.py iDMe/AODSkimmer/
 
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoVertex .
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/RecoEgamma .
 cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/PhysicsTools .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/EgammaPostRecoTools .
+cp -r /uscms/home/sbrightt/nobackup/iDM/iDMe_analysis/CMSSW_10_6_26/src/EgammaAnalysis .
 
 scram b -j 8
 

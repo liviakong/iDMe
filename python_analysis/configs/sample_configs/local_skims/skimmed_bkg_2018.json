@@ -1,0 +1,530 @@
+[
+    {
+        "name": "WW",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WW/"
+        ],
+        "sum_wgt": 15673122.73046875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 76250.0,
+        "nFiles": 649,
+        "blacklist": []
+    },
+    {
+        "name": "ZZ",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_ZZ/"
+        ],
+        "sum_wgt": 3694000.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 12230.0,
+        "nFiles": 186,
+        "blacklist": []
+    },
+    {
+        "name": "WZ",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Diboson_rdfSkim/output_WZ/"
+        ],
+        "sum_wgt": 7619000.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 27550.0,
+        "nFiles": 436,
+        "blacklist": []
+    },
+    {
+        "name": "DY",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_DY_rdfSkim/"
+        ],
+        "sum_wgt": 17180809.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5379000.0,
+        "nFiles": 1007,
+        "blacklist": []
+    },
+    {
+        "name": "QCD_HT2000toInf",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT2000toInf/"
+        ],
+        "sum_wgt": 5270790.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 22360.0,
+        "nFiles": 380,
+        "blacklist": [
+            "QCD_HT2000toInf_205.root",
+            "QCD_HT2000toInf_1-33.root",
+            "QCD_HT2000toInf_1-5.root",
+            "QCD_HT2000toInf_193.root",
+            "QCD_HT2000toInf_206.root",
+            "QCD_HT2000toInf_1-47.root"
+        ]
+    },
+    {
+        "name": "QCD_HT300to500",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT300to500/"
+        ],
+        "sum_wgt": 61630681.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 321600000.0,
+        "nFiles": 2280,
+        "blacklist": [
+            "QCD_HT300to500_1702.root",
+            "QCD_HT300to500_1401.root",
+            "QCD_HT300to500_1729.root",
+            "QCD_HT300to500_1216.root",
+            "QCD_HT300to500_998.root",
+            "QCD_HT300to500_1307.root",
+            "QCD_HT300to500_1259.root",
+            "QCD_HT300to500_1743.root",
+            "QCD_HT300to500_1768.root",
+            "QCD_HT300to500_1212.root",
+            "QCD_HT300to500_1214.root"
+        ]
+    },
+    {
+        "name": "QCD_HT1000to1500",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1000to1500/"
+        ],
+        "sum_wgt": 14344466.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1117000.0,
+        "nFiles": 913,
+        "blacklist": [
+            "QCD_HT1000to1500_1-5.root",
+            "QCD_HT1000to1500_1-6.root",
+            "QCD_HT1000to1500_3-337.root",
+            "QCD_HT1000to1500_3-178.root",
+            "QCD_HT1000to1500_3-185.root",
+            "QCD_HT1000to1500_411.root",
+            "QCD_HT1000to1500_406.root",
+            "QCD_HT1000to1500_3-327.root",
+            "QCD_HT1000to1500_413.root",
+            "QCD_HT1000to1500_41.root",
+            "QCD_HT1000to1500_103.root",
+            "QCD_HT1000to1500_3-184.root",
+            "QCD_HT1000to1500_3-334.root"
+        ]
+    },
+    {
+        "name": "QCD_HT1500to2000",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT1500to2000/"
+        ],
+        "sum_wgt": 10828074.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 108400.0,
+        "nFiles": 426,
+        "blacklist": [
+            "QCD_HT1500to2000_1-10.root",
+            "QCD_HT1500to2000_102.root"
+        ]
+    },
+    {
+        "name": "QCD_HT500to700",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT500to700/"
+        ],
+        "sum_wgt": 48988284.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 30980000.0,
+        "nFiles": 2285,
+        "blacklist": [
+            "QCD_HT500to700_3-143.root",
+            "QCD_HT500to700_1498.root",
+            "QCD_HT500to700_3-13.root",
+            "QCD_HT500to700_426.root",
+            "QCD_HT500to700_415.root",
+            "QCD_HT500to700_3-139.root",
+            "QCD_HT500to700_1309.root",
+            "QCD_HT500to700_1336.root",
+            "QCD_HT500to700_1306.root",
+            "QCD_HT500to700_43.root"
+        ]
+    },
+    {
+        "name": "QCD_HT700to1000",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_QCD_TuneCP5_PSWeights_rdfSkim/output_QCD_HT700to1000/"
+        ],
+        "sum_wgt": 48547792.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 6364000.0,
+        "nFiles": 2698,
+        "blacklist": [
+            "QCD_HT700to1000_1145.root",
+            "QCD_HT700to1000_1412.root",
+            "QCD_HT700to1000_457.root",
+            "QCD_HT700to1000_774.root",
+            "QCD_HT700to1000_778.root",
+            "QCD_HT700to1000_523.root",
+            "QCD_HT700to1000_1414.root",
+            "QCD_HT700to1000_1411.root",
+            "QCD_HT700to1000_521.root",
+            "QCD_HT700to1000_753.root",
+            "QCD_HT700to1000_300.root"
+        ]
+    },
+    {
+        "name": "TTJets",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_TTJets/"
+        ],
+        "sum_wgt": 10117074.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 471700.0,
+        "nFiles": 837,
+        "blacklist": [
+            "TTJets_39.root",
+            "TTJets_310.root",
+            "TTJets_65.root",
+            "TTJets_309.root",
+            "TTJets_31.root",
+            "TTJets_7.root",
+            "TTJets_316.root",
+            "TTJets_311.root",
+            "TTJets_4.root"
+        ]
+    },
+    {
+        "name": "ST_tw_antitop",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_ST_tw_antitop/"
+        ],
+        "sum_wgt": 250471822.875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 32510.0,
+        "nFiles": 481,
+        "blacklist": [
+            "ST_tw_antitop_288.root",
+            "ST_tw_antitop_283.root",
+            "ST_tw_antitop_3-23.root"
+        ]
+    },
+    {
+        "name": "ST_tW_top",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_ST_tW_top/"
+        ],
+        "sum_wgt": 257975164.75,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 32450.0,
+        "nFiles": 465,
+        "blacklist": [
+            "ST_tW_top_1-10.root",
+            "ST_tW_top_1-1.root",
+            "ST_tW_top_1-11.root",
+            "ST_tW_top_1-12.root"
+        ]
+    },
+    {
+        "name": "ST_t-channel_top",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_ST_t-channel_top/"
+        ],
+        "sum_wgt": 23245076685.367188,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 119700.0,
+        "nFiles": 11519,
+        "blacklist": []
+    },
+    {
+        "name": "ST_t-channel_antitop",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_ST_t-channel_antitop/"
+        ],
+        "sum_wgt": 7139226270.65625,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 71750.0,
+        "nFiles": 4623,
+        "blacklist": [
+            "ST_t-channel_antitop_995.root",
+            "ST_t-channel_antitop_993.root",
+            "ST_t-channel_antitop_2594.root",
+            "ST_t-channel_antitop_994.root",
+            "ST_t-channel_antitop_996.root"
+        ]
+    },
+    {
+        "name": "ST_s-channel",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Top_rdfSkim/output_ST_s-channel/"
+        ],
+        "sum_wgt": 71108799.48828125,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 3549.0,
+        "nFiles": 725,
+        "blacklist": [
+            "ST_s-channel_274.root",
+            "ST_s-channel_210.root",
+            "ST_s-channel_364.root",
+            "ST_s-channel_63.root",
+            "ST_s-channel_376.root"
+        ]
+    },
+    {
+        "name": "WWW",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWW/"
+        ],
+        "sum_wgt": 51638.25830078125,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 215.8,
+        "nFiles": 10,
+        "blacklist": []
+    },
+    {
+        "name": "ZZZ",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_ZZZ/"
+        ],
+        "sum_wgt": 3452.6484146118164,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 14.76,
+        "nFiles": 21,
+        "blacklist": []
+    },
+    {
+        "name": "WWZ",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WWZ/"
+        ],
+        "sum_wgt": 42310.52294921875,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 170.7,
+        "nFiles": 7,
+        "blacklist": []
+    },
+    {
+        "name": "WZZ",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_Triboson_rdfSkim/output_WZZ/"
+        ],
+        "sum_wgt": 17121.263244628906,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 57.09,
+        "nFiles": 14,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT400to600",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT400to600/"
+        ],
+        "sum_wgt": 6868732.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 44930.0,
+        "nFiles": 722,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT800to1200",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT800to1200/"
+        ],
+        "sum_wgt": 7397330.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 4926.0,
+        "nFiles": 479,
+        "blacklist": [
+            "WJetsLNu_HT800to1200_3-32.root",
+            "WJetsLNu_HT800to1200_3-3.root",
+            "WJetsLNu_HT800to1200_3-29.root",
+            "WJetsLNu_HT800to1200_3-30.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT200to400",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT200to400/"
+        ],
+        "sum_wgt": 58656583.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 337800.0,
+        "nFiles": 4197,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT100to200",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT100to200/"
+        ],
+        "sum_wgt": 62610979.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1244000.0,
+        "nFiles": 1780,
+        "blacklist": [
+            "WJetsLNu_HT100to200_767.root",
+            "WJetsLNu_HT100to200_680.root",
+            "WJetsLNu_HT100to200_777.root",
+            "WJetsLNu_HT100to200_952.root",
+            "WJetsLNu_HT100to200_560.root",
+            "WJetsLNu_HT100to200_983.root",
+            "WJetsLNu_HT100to200_678.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT1200to2500",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT1200to2500/"
+        ],
+        "sum_wgt": 6479369.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1152.0,
+        "nFiles": 307,
+        "blacklist": []
+    },
+    {
+        "name": "WJetsLNu_HT600to800",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT600to800/"
+        ],
+        "sum_wgt": 7816225.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 11190.0,
+        "nFiles": 335,
+        "blacklist": [
+            "WJetsLNu_HT600to800_134.root",
+            "WJetsLNu_HT600to800_133.root",
+            "WJetsLNu_HT600to800_82.root",
+            "WJetsLNu_HT600to800_180.root",
+            "WJetsLNu_HT600to800_202.root",
+            "WJetsLNu_HT600to800_109.root"
+        ]
+    },
+    {
+        "name": "WJetsLNu_HT2500toInf",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_WJets_rdfSkim/output_WJetsLNu_HT2500toInf/"
+        ],
+        "sum_wgt": 2097648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 26.46,
+        "nFiles": 99,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT400to600",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT400to600/"
+        ],
+        "sum_wgt": 20755648.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 9961.0,
+        "nFiles": 868,
+        "blacklist": [
+            "ZJetsNuNu_HT400to600_293.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT800to1200",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT800to1200/"
+        ],
+        "sum_wgt": 2144959.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 1076.0,
+        "nFiles": 113,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT2500toInf",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT2500toInf/"
+        ],
+        "sum_wgt": 268224.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 5.609,
+        "nFiles": 14,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT200to400",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT200to400/"
+        ],
+        "sum_wgt": 23543145.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 72690.0,
+        "nFiles": 1195,
+        "blacklist": [
+            "ZJetsNuNu_HT200to400_766.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT100to200",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT100to200/"
+        ],
+        "sum_wgt": 29066202.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 271300.0,
+        "nFiles": 1122,
+        "blacklist": [
+            "ZJetsNuNu_HT100to200_391.root",
+            "ZJetsNuNu_HT100to200_310.root",
+            "ZJetsNuNu_HT100to200_617.root",
+            "ZJetsNuNu_HT100to200_399.root",
+            "ZJetsNuNu_HT100to200_679.root"
+        ]
+    },
+    {
+        "name": "ZJetsNuNu_HT600to800",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT600to800/"
+        ],
+        "sum_wgt": 5964799.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 2425.0,
+        "nFiles": 196,
+        "blacklist": []
+    },
+    {
+        "name": "ZJetsNuNu_HT1200to2500",
+        "location": [
+            "/uscms/home/sbrightt/nobackup/iDMe/skimmed_ntuples/bkg/bkg_2018_ZJets_rdfSkim/output_ZJetsNuNu_HT1200to2500/"
+        ],
+        "sum_wgt": 381695.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 247.4,
+        "nFiles": 15,
+        "blacklist": []
+    }
+]

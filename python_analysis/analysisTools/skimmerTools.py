@@ -206,6 +206,7 @@ class makeBDTInputs(processor.ProcessorABC):
         outputs['sel_vtx_dR'] = column_accumulator(events.sel_vtx.dR.to_numpy())
         outputs['sel_vtx_minDxy'] = column_accumulator(np.minimum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy)).to_numpy())
         outputs['met_leadPt_ratio'] = column_accumulator((events.PFMET.pt/events.PFJet.pt[:,0]).to_numpy())
+        outputs["vxy"] = column_accumulator(events.sel_vtx.vxy.to_numpy())
         outputs["vxy_signif"] = column_accumulator((events.sel_vtx.vxy/events.sel_vtx.sigmavxy).to_numpy())
         outputs["sel_e1_dxy"] = column_accumulator(np.abs(e1.dxy).to_numpy())
         outputs["sel_e1_dxySignif"] = column_accumulator((np.abs(e1.dxy)/e1.dxyErr).to_numpy())

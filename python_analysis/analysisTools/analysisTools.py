@@ -63,7 +63,10 @@ class Analyzer:
                 break
             mode = sample['type']
             if mode == 'signal':
-                name = "sig_{0}_Mchi-{1}_dMchi-{2}_ctau-{3}".format(sample['year'],str(sample['Mchi']).replace(".","p"),str(sample['dMchi']).replace(".","p"),sample['ctau'])
+                if 'mZD' in sample['name']:
+                    name = "sig_{0}_Mchi-{1}_dMchi-{2}_ctau-{3}_{4}".format(sample['year'],str(sample['Mchi']).replace(".","p"),str(sample['dMchi']).replace(".","p"),sample['ctau'],sample['name'].split('_')[-1])
+                else:
+                    name = "sig_{0}_Mchi-{1}_dMchi-{2}_ctau-{3}".format(sample['year'],str(sample['Mchi']).replace(".","p"),str(sample['dMchi']).replace(".","p"),sample['ctau'])
             elif mode == 'bkg':
                 name = "bkg_{0}_{1}".format(sample['year'],sample['name'])
             elif mode == 'data':

@@ -48,7 +48,7 @@ if __name__ == "__main__":
     if len(sys.argv) == 7:
         nev_per_job = int(sys.argv[6])
     else:
-        nev_per_job = 1000
+        nev_per_job = 10000
     print(f"{nev_per_job} events per job")
     nJobs = nevents // nev_per_job
     if nevents < nev_per_job:

@@ -102,14 +102,14 @@ def cut9(events,info):
     name = "cut9"
     desc = "dPhi(MET,leading jet) > 1.5"
     plots = False
-    cut = events.PFJet.METdPhi[:,0] > 1.5
+    cut = np.abs(events.PFJet.METdPhi[:,0]) > 1.5
     return events[cut], name, desc, plots
 
 def cut10(events,info):
     name = "cut10"
     desc = "dPhi(MET,all jets) > 0.75"
     plots = False
-    cut = ak.all(events.PFJet.METdPhi > 0.75,axis=1)
+    cut = ak.all(np.abs(events.PFJet.METdPhi) > 0.75,axis=1)
     return events[cut], name, desc, plots
     
 def cut11(events,info):
@@ -130,5 +130,5 @@ def cut13(events,info):
     name = "cut13"
     desc = "dPhi(MET,vtx) < 2.5"
     plots = True
-    cut = events.sel_vtx.METdPhi < 2.5
+    cut = np.abs(events.sel_vtx.METdPhi) < 2.5
     return events[cut], name, desc, plots

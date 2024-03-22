@@ -9,4 +9,5 @@
 **/*.png
 **/*.pdf
 **/*.tar.gz
+**/*.pyc
 MCSampleProduction/

@@ -202,6 +202,7 @@ class iDMeProcessor(processor.ProcessorABC):
         routines.electronIsoConePtSum(events) # for each electron, compute pT sum of any other electrons in event within dR < 0.3 of it
         routines.electronID(events) # electron kinematic/ID definition
         routines.vtxElectronConnection(events) # associate electrons to vertices
+        routines.LxyID(events) # ID cut for low pT electrons in vertices with Lxy > 0.5
         routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
         
         #################################

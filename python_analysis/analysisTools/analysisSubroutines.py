@@ -129,9 +129,20 @@ def vtxElectronConnection(events):
         events["vtx","e1"] = all_eles[vtx_e1_flatIdx]
         events["vtx","e2"] = all_eles[vtx_e2_flatIdx]
 
+def LxyID(events):
+    #ID cut for low pT electrons with Lxy > 0.5
+    Lxy_thre = 0.5
+    ID_thre = -1.0
+    
+    lpt_ele_id_cut1 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e1_typ == "L") & (events.vtx.e1.ID < ID_thre)
+    lpt_ele_id_cut2 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e2_typ == "L") & (events.vtx.e2.ID < ID_thre)
+    
+    events["e1","passLxyID"] = ~lpt_ele_id_cut1
+    events["e2","passLxyID"] = ~lpt_ele_id_cut2
+
 def defineGoodVertices(events):
     # Selecting electrons that pass basic pT and eta cuts
-    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID
+    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID & events.vtx.e1.passLxyID & events.vtx.e2.passLxyID
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
 
 def selectBestVertex(events):

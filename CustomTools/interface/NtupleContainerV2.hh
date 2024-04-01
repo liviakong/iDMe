@@ -2,7 +2,11 @@
 #define NTUPLECONTAINERV2_HH
 
 #include <vector>
+#include <map>
+#include <string>
 using std::vector;
+using std::map;
+using std::string;
 #include <iostream>
 
 #include <TTree.h>
@@ -18,14 +22,18 @@ public:
 
     // Trigger and event-level branches
     unsigned int fired_;
-    unsigned int fired16_;
-    unsigned int fired17_;
-    unsigned int fired18_;
+    //unsigned int fired16_;
+    //unsigned int fired17_;
+    //unsigned int fired18_;
     unsigned long long eventNum_;
     unsigned long long runNum_;
     unsigned long long lumiSec_;
     bool isData_;
     bool isSignal_;
+    string trigNames_[100];
+    bool trigPassed_[100]; // more than we need to be safe
+    int numTrigs_ = 0;
+    
 
     // MET Filters
     uint32_t METFiltersFailBits_;
@@ -40,6 +48,7 @@ public:
     int genpuobs_;
     int genputrue_;
     vector<int> genID_;
+    vector<int> genMotherID_;
     // Only save hard-process gen particles
     vector<int> genCharge_;
     vector<float> genPt_;
@@ -67,7 +76,12 @@ public:
     float genElePz_;
     float genEleVxy_;
     float genEleVz_;
+    float genEleVx_;
+    float genEleVy_;
     bool genEleMatched_;
+    std::string genEleMatchType_;
+    int genEleMatchIdxLocal_;
+    int genEleMatchIdxGlobal_;
 
     int genPosCharge_;
     int genPosMotherID_;
@@ -80,7 +94,12 @@ public:
     float genPosPz_;
     float genPosVxy_;
     float genPosVz_;
+    float genPosVx_;
+    float genPosVy_;
     bool genPosMatched_;
+    std::string genPosMatchType_;
+    int genPosMatchIdxLocal_;
+    int genPosMatchIdxGlobal_;
 
     // Gen Electron + Positron info
     float genEEPt_;
@@ -90,6 +109,10 @@ public:
     float genEEMass_;
     float genEEdR_;
     float genEEMETdPhi_;
+    float genEEVxy_;
+    float genEEVz_;
+    float genEEVx_;
+    float genEEVy_;
 
     // Track whether full signal (e and p) are reconstructed
     bool signalReconstructed_;
@@ -140,14 +163,16 @@ public:
     vector<float> recoElectronTrkRelIso_;
     vector<float> recoElectronCaloIso_;
     vector<float> recoElectronCaloRelIso_;
-    vector<float> recoElectronPFIso_dR4_;
-    vector<float> recoElectronPFRelIso_dR4_;
-    vector<float> recoElectronPFIso_dR3_;
-    vector<float> recoElectronPFRelIso_dR3_;
-    vector<float> recoElectronPFIso_dR8_;
-    vector<float> recoElectronPFRelIso_dR8_;
+    //vector<float> recoElectronPFIso_dR4_;
+    //vector<float> recoElectronPFRelIso_dR4_;
+    //vector<float> recoElectronPFIso_dR3_;
+    //vector<float> recoElectronPFRelIso_dR3_;
+    //vector<float> recoElectronPFIso_dR8_;
+    //vector<float> recoElectronPFRelIso_dR8_;
     vector<float> recoElectronPFIso_;
     vector<float> recoElectronPFRelIso_;
+    vector<float> recoElectronMiniIso_;
+    vector<float> recoElectronMiniRelIso_;
     vector<float> recoElectronChadIso_;
     vector<float> recoElectronNhadIso_;
     vector<float> recoElectronPhoIso_;
@@ -169,6 +194,9 @@ public:
     vector<float> recoElectronAbs1overEm1overP_;
     vector<int> recoElectronExpMissingInnerHits_;
     vector<bool> recoElectronConversionVeto_;
+    // special variables for the x-cleaning study
+    vector<bool> recoElectronHasLptMatch_;
+    vector<int> recoElectronLptMatchIdx_;
 
     // Low pT electrons
     int nElectronLowPt_;
@@ -191,12 +219,14 @@ public:
     vector<float> recoLowPtElectronTrkRelIso_;
     vector<float> recoLowPtElectronCaloIso_;
     vector<float> recoLowPtElectronCaloRelIso_;
-    vector<float> recoLowPtElectronPFIso_dR4_;
-    vector<float> recoLowPtElectronPFRelIso_dR4_;
-    vector<float> recoLowPtElectronPFIso_dR3_;
-    vector<float> recoLowPtElectronPFRelIso_dR3_;
-    vector<float> recoLowPtElectronPFIso_dR8_;
-    vector<float> recoLowPtElectronPFRelIso_dR8_;
+    //vector<float> recoLowPtElectronPFIso_dR4_;
+    //vector<float> recoLowPtElectronPFRelIso_dR4_;
+    //vector<float> recoLowPtElectronPFIso_dR3_;
+    //vector<float> recoLowPtElectronPFRelIso_dR3_;
+    //vector<float> recoLowPtElectronPFIso_dR8_;
+    //vector<float> recoLowPtElectronPFRelIso_dR8_;
+    vector<float> recoLowPtElectronMiniIso_;
+    vector<float> recoLowPtElectronMiniRelIso_;
     vector<float> recoLowPtElectronTrkProb_;
     vector<float> recoLowPtElectronPFIso_;
     vector<float> recoLowPtElectronPFRelIso_;
@@ -221,6 +251,10 @@ public:
     vector<float> recoLowPtElectronAbs1overEm1overP_;
     vector<int> recoLowPtElectronExpMissingInnerHits_;
     vector<bool> recoLowPtElectronConversionVeto_;
+    // special variables for the x-cleaning study
+    vector<bool> recoLowPtElectronIsXCleaned_;
+    vector<int> recoLowPtElectronGEDidx_;
+    vector<bool> recoLowPtElectronGEDisMatched_;
 
     // Photons
     int nPhotons_;
@@ -248,18 +282,44 @@ public:
     vector<float> conversionZ_;
     vector<float> conversionVxy_;
     vector<float> conversionVz_;
-    vector<float> conversion_Trk1_innerPt_;
-    vector<float> conversion_Trk1_innerEta_;
-    vector<float> conversion_Trk1_innerPhi_;
-    vector<float> conversion_Trk1_outerPt_;
-    vector<float> conversion_Trk1_outerEta_;
-    vector<float> conversion_Trk1_outerPhi_;
-    vector<float> conversion_Trk2_innerPt_;
-    vector<float> conversion_Trk2_innerEta_;
-    vector<float> conversion_Trk2_innerPhi_;
-    vector<float> conversion_Trk2_outerPt_;
-    vector<float> conversion_Trk2_outerEta_;
-    vector<float> conversion_Trk2_outerPhi_;
+    vector<float> conversionLxy_;
+    vector<float> conversionLz_;
+    vector<float> conversionLxyPV_;
+    vector<float> conversionLzPV_;
+    vector<float> conversionDxy_;
+    vector<float> conversionDz_;
+    vector<float> conversionDxyPV_;
+    vector<float> conversionDzPV_;
+    vector<float> conversionEoverP_;
+    vector<float> conversionEoverPrefit_;
+    vector<int> conversionNSharedHits_;
+    vector<float> conversionM_;
+    vector<float> conversionDr_;
+    vector<float> conversionChi2_;
+    vector<int> conversion_Trk1nHitsVtx_;
+    vector<float> conversion_Trk1Pt_;
+    vector<float> conversion_Trk1Eta_;
+    vector<float> conversion_Trk1Phi_;
+    vector<float> conversion_Trk1Chi2_;
+    vector<int> conversion_Trk1NValidHits_;
+    vector<int> conversion_Trk1numLostHits_;
+    vector<float> conversion_Trk1dxy_;
+    vector<float> conversion_Trk1dxyBS_;
+    vector<float> conversion_Trk1dxyPV_;
+    vector<float> conversion_Trk1dz_;
+    vector<float> conversion_Trk1dzPV_;
+    vector<int> conversion_Trk2nHitsVtx_;
+    vector<float> conversion_Trk2Pt_;
+    vector<float> conversion_Trk2Eta_;
+    vector<float> conversion_Trk2Phi_;
+    vector<float> conversion_Trk2Chi2_;
+    vector<int> conversion_Trk2NValidHits_;
+    vector<int> conversion_Trk2numLostHits_;
+    vector<float> conversion_Trk2dxy_;
+    vector<float> conversion_Trk2dxyBS_;
+    vector<float> conversion_Trk2dxyPV_;
+    vector<float> conversion_Trk2dz_;
+    vector<float> conversion_Trk2dzPV_;
 
     // Jets
     int PFNJet_;
@@ -313,6 +373,11 @@ public:
     // Pileup density
     float rho_;
 
+    // PV information
+    float PV_x_;
+    float PV_y_;
+    float PV_z_;
+
     // Electron-positron vertices
     int nvtx_;
     vector<std::string> vtx_type_;
@@ -335,12 +400,12 @@ public:
     vector<float> vtx_ll_px_;
     vector<float> vtx_ll_py_;
     vector<float> vtx_ll_pz_;
-    vector<float> vtx_ll_PFIso_dR4_;
-    vector<float> vtx_ll_PFRelIso_dR4_;
-    vector<float> vtx_ll_PFIso_dR3_;
-    vector<float> vtx_ll_PFRelIso_dR3_;
-    vector<float> vtx_ll_PFIso_dR8_;
-    vector<float> vtx_ll_PFRelIso_dR8_;
+    //vector<float> vtx_ll_PFIso_dR4_;
+    //vector<float> vtx_ll_PFRelIso_dR4_;
+    //vector<float> vtx_ll_PFIso_dR3_;
+    //vector<float> vtx_ll_PFRelIso_dR3_;
+    //vector<float> vtx_ll_PFIso_dR8_;
+    //vector<float> vtx_ll_PFRelIso_dR8_;
     vector<bool> vtx_isMatched_;
     vector<int> vtx_matchSign_;
     vector<vector<float> > vtx_dRtoJets_;

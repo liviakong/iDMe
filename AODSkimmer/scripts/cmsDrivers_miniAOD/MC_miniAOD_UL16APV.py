@@ -2,13 +2,13 @@
 # using: 
 # Revision: 1.19 
 # Source: /local/reps/CMSSW/CMSSW/Configuration/Applications/python/ConfigBuilder.py,v 
-# with command line options: step1 --filein FILE_PLACEHOLDER --fileout file:output.root --mc --eventcontent MINIAODSIM --datatier MINIAODSIM --step PAT --geometry DB:Extended --conditions 106X_upgrade2018_realistic_v16_L1v1 --era Run2_2018 --nThreads 4 --procModifiers run2_miniAOD_UL --python_filename mini_config.py --no_exec --runUnscheduled -n 999999
+# with command line options: step1 --no_exec --mc --python_filename MC_miniAOD_UL16APV.py --fileout MiniAOD.root --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --geometry DB:Extended --step PAT --conditions 106X_mcRun2_asymptotic_preVFP_v11 --procModifiers run2_miniAOD_UL --era Run2_2016_HIPM
 import FWCore.ParameterSet.Config as cms
 
-from Configuration.Eras.Era_Run2_2018_cff import Run2_2018
+from Configuration.Eras.Era_Run2_2016_HIPM_cff import Run2_2016_HIPM
 from Configuration.ProcessModifiers.run2_miniAOD_UL_cff import run2_miniAOD_UL
 
-process = cms.Process('PAT',Run2_2018,run2_miniAOD_UL)
+process = cms.Process('PAT',Run2_2016_HIPM,run2_miniAOD_UL)
 
 # import of standard configurations
 process.load('Configuration.StandardSequences.Services_cff')
@@ -24,12 +24,12 @@ process.load('Configuration.StandardSequences.EndOfProcess_cff')
 process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 process.maxEvents = cms.untracked.PSet(
-    input = cms.untracked.int32(999999)
+    input = cms.untracked.int32(1)
 )
 
 # Input source
 process.source = cms.Source("PoolSource",
-    fileNames = cms.untracked.vstring('FILE_PLACEHOLDER'),
+    fileNames = cms.untracked.vstring('file:step1_RECO.root'),
     secondaryFileNames = cms.untracked.vstring()
 )
 
@@ -39,7 +39,7 @@ process.options = cms.untracked.PSet(
 
 # Production Info
 process.configurationMetadata = cms.untracked.PSet(
-    annotation = cms.untracked.string('step1 nevts:999999'),
+    annotation = cms.untracked.string('step1 nevts:1'),
     name = cms.untracked.string('Applications'),
     version = cms.untracked.string('$Revision: 1.19 $')
 )
@@ -56,7 +56,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
     dropMetaData = cms.untracked.string('ALL'),
     eventAutoFlushCompressedSize = cms.untracked.int32(-900),
     fastCloning = cms.untracked.bool(False),
-    fileName = cms.untracked.string('file:output.root'),
+    fileName = cms.untracked.string('MiniAOD.root'),
     outputCommands = process.MINIAODSIMEventContent.outputCommands,
     overrideBranchesSplitLevel = cms.untracked.VPSet(
         cms.untracked.PSet(
@@ -116,7 +116,7 @@ process.MINIAODSIMoutput = cms.OutputModule("PoolOutputModule",
 
 # Other statements
 from Configuration.AlCa.GlobalTag import GlobalTag
-process.GlobalTag = GlobalTag(process.GlobalTag, '106X_upgrade2018_realistic_v16_L1v1', '')
+process.GlobalTag = GlobalTag(process.GlobalTag, '106X_mcRun2_asymptotic_preVFP_v11', '')
 
 # Path and EndPath definitions
 process.Flag_trackingFailureFilter = cms.Path(process.goodVertices+process.trackingFailureFilter)
@@ -156,11 +156,6 @@ process.schedule = cms.Schedule(process.Flag_HBHENoiseFilter,process.Flag_HBHENo
 process.schedule.associate(process.patTask)
 from PhysicsTools.PatAlgos.tools.helpers import associatePatAlgosToolsTask
 associatePatAlgosToolsTask(process)
-
-#Setup FWK for multithreaded
-process.options.numberOfThreads=cms.untracked.uint32(NTHREAD)
-process.options.numberOfStreams=cms.untracked.uint32(0)
-process.options.numberOfConcurrentLuminosityBlocks=cms.untracked.uint32(1)
 
 #do not add changes to your config after this point (unless you know what you are doing)
 from FWCore.ParameterSet.Utilities import convertToUnscheduled

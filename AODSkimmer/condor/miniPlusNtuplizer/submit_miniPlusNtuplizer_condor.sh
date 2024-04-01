@@ -6,6 +6,7 @@ nThreads=$3
 isData=$4
 isSignal=$5
 suffix=$6
+nsplit=$7
 
 flist_full=`realpath $flist`
 fname=`echo $flist_full | rev | cut -d "/" -f 1 | rev | cut -d "." -f 1`
@@ -20,7 +21,7 @@ xrdfs root://cmseos.fnal.gov/ mkdir -p /store/group/lpcmetx/iDMe//Samples/Ntuple
 outPath=/store/group/lpcmetx/iDMe//Samples/Ntuples/signal_${suffix}/${year}/${outDirName}/
 
 cp ${flist_full} .
-split -d -l 20 --additional-suffix ".txt" ${fname}.txt ${fname}_
+split -d -l ${nsplit} --additional-suffix ".txt" ${fname}.txt ${fname}_
 rm ${fname}.txt
 for sublist in `ls ${fname}_*.txt`
 do

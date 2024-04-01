@@ -63,7 +63,7 @@ for i in range(n_samp):
 
         print("done tarring")
 
-        submit_cmd = f"condor_submit condor_skim_rdf.jdl -append \"Arguments = {jobname_base} {jobname} {mode} {n_cores} {outDir} {MET_cut}\" -append \"transfer_input_files = {tgz}\" -append \"Output = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stdout.out\" -append \"Error = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stderr.err\" -append \"Log = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/log.log\" -append \"request_cpus = {n_cores}\""
+        submit_cmd = f"condor_submit condor_skim_rdf.jdl -append \"Arguments = {jobname} {outDir} {MET_cut}\" -append \"transfer_input_files = {tgz}\" -append \"Output = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stdout.out\" -append \"Error = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/stderr.err\" -append \"Log = submissions_skim_rdf/{jobname_base}/{jobname}/Logs/log.log\" -append \"request_cpus = {n_cores}\""
         
         subprocess.run(submit_cmd,shell=True)
         

@@ -15,7 +15,7 @@ class Helper {
     public:
         Helper();
         ~Helper();
-        bool JetID(const pat::Jet &jet, int year);
+        bool JetID(const pat::Jet &jet, std::string year);
 };
 
 #endif

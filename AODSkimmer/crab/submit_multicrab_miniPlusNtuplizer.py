@@ -101,13 +101,12 @@ def main():
     config.JobType.psetName = base_dir+'/src/iDMe/AODSkimmer/scripts/miniPlusElectronNtuplizer_cfg.py'
     config.JobType.allowUndistributedCMSSW = True
     config.JobType.numCores = 1
-    #config.Data.splitting = 'Automatic'
+    config.Data.splitting = 'Automatic'
     #config.Data.totalUnits = 1
-    config.Data.splitting = 'EventAwareLumiBased'
-    config.Data.unitsPerJob = 10000
+    #config.Data.splitting = 'EventAwareLumiBased'
+    #config.Data.unitsPerJob = 10000
     config.Data.publication = False
-    config.Data.ignoreLocality = True
-    config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']
+    #config.Site.whitelist = ['T2_US_*', 'T2_DE_*', 'T2_EE_*', 'T2_ES_*', 'T2_GR_*', 'T2_HU_*', 'T2_IT_*', 'T2_RU_*', 'T2_UK_*']
     config.Site.storageSite = 'T3_US_FNALLPC'
 
     inFile = options.inFile

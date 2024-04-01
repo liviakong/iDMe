@@ -57,6 +57,7 @@ for samp in samples:
         if has_blacklist:
             fullList = [f for f in fullList if f not in samp["blacklist"]]
         if nFiles < 2*num_cpus:
+        #if nFiles < 0: # always do parallel mode
             print("Serial Mode")
             sum_weights(fullList,sum_wgt,blacklist,sum_evt)
             sum_wgt = np.sum(sum_wgt)

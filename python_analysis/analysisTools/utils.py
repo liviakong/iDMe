@@ -1,7 +1,7 @@
 import sys
 import pandas as pd
-#sys.path.append("../../../analysisTools/")
 import plotTools as ptools
+import json
 
 # Signal
 def get_signal_point_dict(sig_histo):
@@ -54,6 +54,7 @@ def get_signal_list_of_cuts(sig_histo, get_cut_idx = False):
 
     cut_idx = list(cut_dict.keys())
     cut_name = list(cut_dict.values())
+    print(json.dumps(cut_dict,indent=4))
 
     cut_name = list(map(lambda x: x.replace('No cuts', 'Preselections'), cut_name))
     cut_name = list(map(lambda x: x.replace('Baseline Selection', '0 < n(jet) < 3 & n(good vertex) > 0'), cut_name))

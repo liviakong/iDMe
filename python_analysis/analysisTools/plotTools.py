@@ -6,6 +6,7 @@ import numpy as np
 import re
 import os
 import sys
+import mplhep as hep
 
 def makeNMinus1(h1,h2,lessThan=False):
     assert len(h1.axes)==1 and h1.axes == h2.axes
@@ -44,12 +45,12 @@ def makeNMinus1_multiBkg(hnum,hdens,lessThan=False):
 def makeCutEff(h,lessThan=False):
     ax = h.axes[0]
     if lessThan:
-        s = np.cumsum(h.counts(flow=True))
+        s = np.cumsum(h.counts(flow=True)[:-1])
     else:
-        s = np.cumsum(h.counts(flow=True)[::-1])[::-1]
+        s = np.cumsum(h.counts(flow=True)[1:][::-1])[::-1]
     x = ax.edges
-    dx = x[1]-x[0]
-    x = np.append(x,[x[-1]+dx])
+    #dx = x[1]-x[0]
+    #x = np.append(x,[x[-1]+dx])
     eff = s/np.sum(h.counts(flow=True))
     return x, eff, s
     
@@ -116,3 +117,30 @@ def getHTlow(sampName):
 def setDefaultStyle(fontsize=14):
     mpl.rcParams["font.size"] = fontsize
     mpl.rcParams["figure.figsize"] = (10,8)
+
+def hget(h,samp,cut):
+    return h[{"samp":samp,"cut":cut}]
+
+def makeCDF(h,start,stop,bins=100,right=True):
+    x = np.linspace(start,stop,bins)
+    n_tot = h[::sum].value
+    if right:
+        effs = np.array([h[complex(f"{xi}j")::sum].value for xi in x])
+    else:
+        effs = np.array([h[:complex(f"{xi}j"):sum].value for xi in x])
+    effs = effs/n_tot
+    return x, effs
+
+def overlay(h,overlay,**kwargs):
+    axes = h.axes
+    targ = None
+    for a in axes:
+        if a.name == overlay:
+            targ = a
+    if targ is None:
+        print("can't find overlay axis!")
+        return
+    n_overlay = len(targ.centers)
+    labels = [targ.value(i) for i in range(n_overlay)]
+    histos = [h[{overlay:l}] for l in labels]
+    hep.histplot(histos,label=labels,**kwargs)

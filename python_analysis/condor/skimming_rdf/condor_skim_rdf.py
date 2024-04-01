@@ -76,10 +76,10 @@ bool passMETtrig(int year, unsigned int fired16, unsigned int fired17, unsigned 
 }
 '''
 passbTagLoose = '''
-vector<bool> passbTagLoose(int year, ROOT::VecOps::RVec<float> btag, bool preVFP) {
+vector<bool> passbTagLoose(int year, ROOT::VecOps::RVec<float> btag, bool APV) {
     float wp;
-    if ((year==2016) && preVFP) wp = 0.0508;
-    if ((year==2016) && !preVFP) wp = 0.0480;
+    if ((year==2016) && APV) wp = 0.0508;
+    if ((year==2016) && !APV) wp = 0.0480;
     if (year==2017) wp = 0.0532;
     if (year==2018) wp = 0.0490;
     vector<bool> pass;
@@ -90,10 +90,10 @@ vector<bool> passbTagLoose(int year, ROOT::VecOps::RVec<float> btag, bool preVFP
 }
 '''
 passbTagMed = '''
-vector<bool> passbTagMed(int year, ROOT::VecOps::RVec<float> btag, bool preVFP) {
+vector<bool> passbTagMed(int year, ROOT::VecOps::RVec<float> btag, bool APV) {
     float wp;
-    if ((year==2016) && preVFP) wp = 0.2598;
-    if ((year==2016) && !preVFP) wp = 0.2489;
+    if ((year==2016) && APV) wp = 0.2598;
+    if ((year==2016) && !APV) wp = 0.2489;
     if (year==2017) wp = 0.3040;
     if (year==2018) wp = 0.2783;
     vector<bool> pass;
@@ -104,10 +104,10 @@ vector<bool> passbTagMed(int year, ROOT::VecOps::RVec<float> btag, bool preVFP) 
 }
 '''
 passbTagTight = '''
-vector<bool> passbTagTight(int year, ROOT::VecOps::RVec<float> btag, bool preVFP) {
+vector<bool> passbTagTight(int year, ROOT::VecOps::RVec<float> btag, bool APV) {
     float wp;
-    if ((year==2016) && preVFP) wp = 0.6502;
-    if ((year==2016) && !preVFP) wp = 0.6377;
+    if ((year==2016) && APV) wp = 0.6502;
+    if ((year==2016) && !APV) wp = 0.6377;
     if (year==2017) wp = 0.7476;
     if (year==2018) wp = 0.7100;
     vector<bool> pass;
@@ -130,28 +130,28 @@ bool anyTrue(ROOT::VecOps::RVec<bool> vals) {
 }
 '''
 if __name__ == "__main__":
-    if len(sys.argv) != 7:
+    if len(sys.argv) != 4:
         print("Bad input!")
-        print("Usage: ./condor_skim_rdf jobname_base jobname mode n_cores outDir MET_cut")
+        print("Usage: ./condor_skim_rdf jobname outDir MET_cut")
     t = time.time()
+    ROOT.gInterpreter.GenerateDictionary("ROOT::VecOps::RVec<vector<float> >", "vector;ROOT/RVec.hxx")
+    ROOT.gInterpreter.GenerateDictionary("ROOT::VecOps::RVec<string>", "string;ROOT/RVec.hxx")
     ROOT.gInterpreter.Declare(elePassCut)
     ROOT.gInterpreter.Declare(isGoodVtx)
     ROOT.gInterpreter.Declare(passHEM)
-    ROOT.gInterpreter.Declare(passMETtrig)
+    #ROOT.gInterpreter.Declare(passMETtrig)
     ROOT.gInterpreter.Declare(passbTagLoose)
     ROOT.gInterpreter.Declare(passbTagMed)
     ROOT.gInterpreter.Declare(passbTagTight)
     ROOT.gInterpreter.Declare(anyTrue)
+    ROOT.gInterpreter.GenerateDictionary("vector<vector<float> >","vector")
     ROOT.EnableImplicitMT()
     print(f"set up root in {(time.time() - t)/60} mins")
     t = time.time()
 
-    jobname_base = sys.argv[1]
-    jobname = sys.argv[2]
-    mode = sys.argv[3]
-    n_cores = int(sys.argv[4])
-    outDir = sys.argv[5]
-    MET_cut = sys.argv[6]
+    jobname = sys.argv[1]
+    outDir = sys.argv[2]
+    MET_cut = sys.argv[3]
 
     with open('samples.json','r') as fin:
         samps = json.load(fin)
@@ -161,19 +161,19 @@ if __name__ == "__main__":
     d = ROOT.RDataFrame("ntuples/outT",files)
     print(f"loaded RDF in {(time.time() - t)/60} mins")
     t = time.time()
-    if year == "2016_preVFP":
-        d = d.Define("preVFP","true")
+    if year == "2016APV":
+        d = d.Define("APV","true")
     else:
-        d = d.Define("preVFP","false")
+        d = d.Define("APV","false")
     d = d.Define("year",f"{int(year)}")
     d = d.Define("Electron_passCut","elePassCut(Electron_pt,Electron_eta)")
     d = d.Define("LptElectron_passCut","elePassCut(LptElectron_pt,LptElectron_eta)")
     d = d.Define("vtx_isGood","isGoodVtx(vtx_e1_typ, vtx_e2_typ, vtx_e1_idx, vtx_e2_idx, Electron_passCut, LptElectron_passCut)")
     d = d.Define("passHEMveto","passHEM(year,HEM_flag)")
-    d = d.Define("passMETtrig","passMETtrig(year, trigFired16, trigFired17, trigFired18)")
-    d = d.Define("PFJet_bLoose","passbTagLoose(year,PFJet_bTag,preVFP)")
-    d = d.Define("PFJet_bMed","passbTagMed(year,PFJet_bTag,preVFP)")
-    d = d.Define("PFJet_bTight","passbTagTight(year,PFJet_bTag,preVFP)")
+    #d = d.Define("passMETtrig","passMETtrig(year, trigFired16, trigFired17, trigFired18)")
+    d = d.Define("PFJet_bLoose","passbTagLoose(year,PFJet_bTag,APV)")
+    d = d.Define("PFJet_bMed","passbTagMed(year,PFJet_bTag,APV)")
+    d = d.Define("PFJet_bTight","passbTagTight(year,PFJet_bTag,APV)")
     d = d.Define("anyB_loose","anyTrue(PFJet_bLoose)")
     d = d.Define("anyB_med","anyTrue(PFJet_bMed)")
     d = d.Define("anyB_tight","anyTrue(PFJet_bTight)")
@@ -183,7 +183,7 @@ if __name__ == "__main__":
     d = d.Filter("anyTrue(vtx_isGood)") \
         .Filter("METFiltersFailBits == 0") \
         .Filter("passHEMveto") \
-        .Filter("passMETtrig") \
+        .Filter("trig_HLT_PFMET120_PFMHT120_IDTight == 1") \
         .Filter(f"PFMET_pt > {MET_cut}") \
         .Filter("(nPFJet > 0) && (nPFJet < 3)") \
         .Filter("!anyB_med")

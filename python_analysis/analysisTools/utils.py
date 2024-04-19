@@ -4,6 +4,12 @@ import plotTools as ptools
 import json
 
 # Signal
+def get_dict_fromCutflow(cf):
+    sig_samples = cf.keys()
+    dict = {s:ptools.signalPoint(s) for s in sig_samples}
+    dict = pd.DataFrame.from_dict(dict, orient='index')
+    return dict
+
 def get_signal_point_dict(sig_histo):
     '''
     Get dictionary of signal sub-process, i.e. mass point, lifetime etc.
@@ -11,12 +17,7 @@ def get_signal_point_dict(sig_histo):
     sig_histo takes util.load(coffea_file)[0]
     '''
 
-    sig_samples = list(sig_histo['cutflow'].keys())
-
-    dict = {s:ptools.signalPoint(s) for s in sig_samples}
-    dict = pd.DataFrame.from_dict(dict, orient='index')
-    
-    return dict
+    return get_signal_point_dict(sig_histo['cutflow'])
 
 def get_signal_cutflow_dict(sig_histo, branch, do_only_gen_ee_reconstructed=False):
     '''
@@ -191,5 +192,19 @@ def get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False):
         cut = cut_name
     
     return cut
+
+def bkg_categories(cutflow):
+    allNames = list(cutflow.keys())
+    bkgCats = list(set([n.split("_")[2] for n in allNames]))
+    output_samples = {b:[] for b in bkgCats}
+    output_names = {b:[] for b in bkgCats}
+    for name in allNames:
+        parts = name.split("_")
+        bgkCat = parts[2]
+        subSample = "_".join(parts[3:])
+        output_samples[bgkCat].append(name)
+        output_names[bgkCat].append(subSample)
+    return output_samples, output_names
+    
 
 

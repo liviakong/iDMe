@@ -13,18 +13,18 @@ alpha = str(sys.argv[3])
 prefix = str(sys.argv[4])
 name = str(sys.argv[5])
 
-if mode != "sig" and mode != "bkg":
-    print("Invalid mode: use sig or bkg")
+if mode != "sig" and mode != "bkg" and mode != "data":
+    print("Invalid mode: use sig/bkg/data")
     exit
 if len(sys.argv) < 3:
     print("Invalid input arguments!")
-    print("Usage: python makeSignalConfigs.py mode[sig/bkg] year alpha")
+    print("Usage: python makeSignalConfigs.py mode[sig/bkg/data] year alpha")
     exit
 
 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
 
 if mode == "sig":
-    status, points = xrdClient.dirlist(prefix+year)
+    status, points = xrdClient.dirlist(f"{prefix}/{year}/")
     points = [item.name for item in points]
     output = []
     for p in points:
@@ -34,13 +34,13 @@ if mode == "sig":
             mzd = p.split("_")[2]
         else:
             mzd = ""
-        status, lifetimes = xrdClient.dirlist(prefix+year+"/"+p)
+        status, lifetimes = xrdClient.dirlist(f"{prefix}/{year}/{p}")
         lifetimes = [l.name for l in lifetimes]
         
         for l in lifetimes:
             ct = int(l.split("-")[1])
             info = {}
-            info["location"] = prefix+year+"/"+p+"/"+l+"/"  
+            info["location"] = f"{prefix}/{year}/{p}/{l}/"
             info["Mchi"] = mchi
             info["dMchi"] = dmchi
             info["ctau"] = ct
@@ -57,65 +57,66 @@ if mode == "sig":
             info["nFiles"] = len(rootFiles)
             output.append(info)
 
-    out_json = "{0}_{1}_{2}.json".format(name,year,alpha)
+    out_json = "signal_{0}_{1}_{2}.json".format(name,year,alpha)
     with open(out_json,"w") as outfile:
         json.dump(output,outfile,indent=4)
-else:
-    status, bkgs = xrdClient.dirlist(prefix+year)
+elif mode == "bkg":
+    status, bkgs = xrdClient.dirlist(f"{prefix}/{year}/")
     bkgs = [bkg.name for bkg in bkgs]
+    output = []
     for bkg in bkgs:
-        base_dir = prefix+year+"/"+bkg
-        rootFiles = subprocess.run(['eos','root://cmseos.fnal.gov/','find',base_dir,'-name','*.root'],stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
-        rootFiles = [r for r in rootFiles if '.root' in r]
-        fileDirs = ["/".join(f.split("/")[:-1])+"/" for f in rootFiles]
-        fileDirs = list(set(fileDirs)) # list of unique file directories
-        
-        names = fileDirs.copy()
-        names = [n.split("/") for n in names]
-        reference = names[0].copy()
-        # removing common file path prefix from all paths
-        for r in reference:
-            stop = False
-            for n in names:
-                if r not in n:
-                    stop = True
-                    break
-            if stop:
-                break
-            names = [n[1:] for n in names]
-        # only need first part of path
-        names = [n[0] for n in names] # head of path, i.e. qcd ht bin, for all unique file-holding dirs
-
-        most_recent = ""
-        now = dt.datetime.now()
-        min_dt = dt.timedelta.max.total_seconds()
-        for fd in fileDirs:
-            d = re.findall("202\d_\d\d_\d\d-",fd)[0]
-            delta = (now - dt.datetime.strptime(d,"%Y_%m_%d-")).total_seconds()
-            if delta < min_dt:
-                min_dt = delta
-                most_recent = d
-        print(most_recent)
-        names = [names[i] for i in range(len(names)) if most_recent in fileDirs[i]]
-        fileDirs = [f for f in fileDirs if most_recent in f]
-        name_loc_map = {n:[] for n in set(names)}
-        for i in range(len(names)):
-            name_loc_map[names[i]].append(fileDirs[i])
-        output = []
-        for n in name_loc_map.keys():
+        base_dir = f"{prefix}/{year}/{bkg}"
+        subsamples = [d.name for d in xrdClient.dirlist(base_dir)[1]]
+        for subsample in subsamples:
+            target_dir = f"{base_dir}/{subsample}/"
+            rootFiles = subprocess.run(['eos','root://cmseos.fnal.gov/','find','-name','*.root','-f',target_dir],stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+            rootFiles = [r for r in rootFiles if '.root' in r]
+            fileDirs = ["/".join(f.split("/")[:-1])+"/" for f in rootFiles]
+            fileDirs = list(set(fileDirs)) # list of unique file directories
+            
             info = {}
-            info["name"] = n
-            info["location"] = name_loc_map[n]
+            info["name"] = f"{bkg}_{subsample}"
+            info["location"] = fileDirs[0] if len(fileDirs) == 1 else fileDirs
             info["sum_wgt"] = 0.0
             info["type"] = "bkg"
             info["year"] = int(year)
             info["xsec"] = 0.0
             nFiles=0
-            for loc in name_loc_map[n]:
-                nFiles += len([rf.name for rf in xrdClient.dirlist(loc)[1] if '.root' in rf.name])
+            for fdir in fileDirs:
+                nFiles += len([rf.name for rf in xrdClient.dirlist(fdir)[1] if '.root' in rf.name])
             info["nFiles"] = nFiles
             output.append(info)
 
-        out_json = "bkg_{0}_{1}.json".format(year,bkg)
-        with open(out_json,"w") as outfile:
-            json.dump(output,outfile,indent=4)
+    out_json = "bkg_{0}_{1}.json".format(year,name)
+    with open(out_json,"w") as outfile:
+        json.dump(output,outfile,indent=4)
+elif mode == "data":
+    status, samples = xrdClient.dirlist(f"{prefix}/{year}/")
+    samples = [samp.name for samp in samples]
+    output = []
+    for samp in samples:
+        base_dir = f"{prefix}/{year}/{samp}"
+        subsamples = [d.name for d in xrdClient.dirlist(base_dir)[1]]
+        for subsample in subsamples:
+            target_dir = f"{base_dir}/{subsample}/"
+            rootFiles = subprocess.run(['eos','root://cmseos.fnal.gov/','find','-name','*.root','-f',target_dir],stdout=subprocess.PIPE).stdout.decode('utf-8').splitlines()
+            rootFiles = [r for r in rootFiles if '.root' in r]
+            fileDirs = ["/".join(f.split("/")[:-1])+"/" for f in rootFiles]
+            fileDirs = list(set(fileDirs)) # list of unique file directories
+            
+            info = {}
+            info["name"] = f"{samp}_{subsample}"
+            info["location"] = fileDirs[0] if len(fileDirs) == 1 else fileDirs
+            info["sum_wgt"] = 0.0
+            info["type"] = "data"
+            info["year"] = int(year)
+            info["xsec"] = 0.0
+            nFiles=0
+            for fdir in fileDirs:
+                nFiles += len([rf.name for rf in xrdClient.dirlist(fdir)[1] if '.root' in rf.name])
+            info["nFiles"] = nFiles
+            output.append(info)
+
+    out_json = "data_{0}_{1}.json".format(year,name)
+    with open(out_json,"w") as outfile:
+        json.dump(output,outfile,indent=4)

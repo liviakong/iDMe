@@ -8,7 +8,6 @@ when_to_transfer_output = ON_EXIT
 transfer_output_files = ""
 notification = never
 
-request_cpus = 4
 request_memory = 8000
 
 Queue 1

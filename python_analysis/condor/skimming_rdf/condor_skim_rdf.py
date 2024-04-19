@@ -170,7 +170,6 @@ if __name__ == "__main__":
     d = d.Define("LptElectron_passCut","elePassCut(LptElectron_pt,LptElectron_eta)")
     d = d.Define("vtx_isGood","isGoodVtx(vtx_e1_typ, vtx_e2_typ, vtx_e1_idx, vtx_e2_idx, Electron_passCut, LptElectron_passCut)")
     d = d.Define("passHEMveto","passHEM(year,HEM_flag)")
-    #d = d.Define("passMETtrig","passMETtrig(year, trigFired16, trigFired17, trigFired18)")
     d = d.Define("PFJet_bLoose","passbTagLoose(year,PFJet_bTag,APV)")
     d = d.Define("PFJet_bMed","passbTagMed(year,PFJet_bTag,APV)")
     d = d.Define("PFJet_bTight","passbTagTight(year,PFJet_bTag,APV)")

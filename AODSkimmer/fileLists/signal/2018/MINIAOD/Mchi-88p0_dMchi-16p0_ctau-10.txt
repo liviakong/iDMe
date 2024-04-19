@@ -1,0 +1,3 @@
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-88p0_dMchi-16p0/ctau-10/MiniAOD_Mchi-88p0_dMchi-16p0_ctau-10_00.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-88p0_dMchi-16p0/ctau-10/MiniAOD_Mchi-88p0_dMchi-16p0_ctau-10_01.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-88p0_dMchi-16p0/ctau-10/MiniAOD_Mchi-88p0_dMchi-16p0_ctau-10_02.root

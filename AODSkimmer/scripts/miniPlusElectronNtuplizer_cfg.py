@@ -65,7 +65,7 @@ else:
 # globaltag
 globaltag = ''
 if options.year == '2016APV':
-    globaltag = '106X_dataRun2_v27' if options.data else '106X_mcRun2_asymptotic_preVFP_v8'
+    globaltag = '106X_dataRun2_v37' if options.data else '106X_mcRun2_asymptotic_preVFP_v8'
     era = Run2_2016_HIPM
     recoEgammaTools_era = '2016preVFP-UL'
     if options.data:
@@ -73,7 +73,7 @@ if options.year == '2016APV':
     else:
         from iDMe.AODSkimmer.MC_miniAOD_UL16APV import makeProcess
 elif options.year == '2016':
-    globaltag = '106X_dataRun2_v27' if options.data else '106X_mcRun2_asymptotic_v13'
+    globaltag = '106X_dataRun2_v37' if options.data else '106X_mcRun2_asymptotic_v13'
     era = Run2_2016
     recoEgammaTools_era = '2016postVFP-UL'
     if options.data:
@@ -81,7 +81,7 @@ elif options.year == '2016':
     else:
         from iDMe.AODSkimmer.MC_miniAOD_UL16 import makeProcess
 elif options.year == '2017':
-    globaltag = '106X_dataRun2_v20' if options.data else '106X_mc2017_realistic_v6'
+    globaltag = '106X_dataRun2_v37' if options.data else '106X_mc2017_realistic_v6'
     era = Run2_2017
     recoEgammaTools_era = '2017-UL'
     if options.data:
@@ -89,7 +89,7 @@ elif options.year == '2017':
     else:
         from iDMe.AODSkimmer.MC_miniAOD_UL17 import makeProcess
 elif options.year == '2018':
-    globaltag = '106X_dataRun2_v24' if options.data else '106X_upgrade2018_realistic_v16_L1v1'
+    globaltag = '106X_dataRun2_v37' if options.data else '106X_upgrade2018_realistic_v16_L1v1'
     era = Run2_2018
     recoEgammaTools_era = '2018-UL'
     if options.data:

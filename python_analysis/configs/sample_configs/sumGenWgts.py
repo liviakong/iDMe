@@ -7,7 +7,7 @@ from tqdm import tqdm
 from multiprocessing import Process, Value, Array, Manager
 import multiprocessing as mp
 
-def sum_weights(fileList,sums,blacklist,nevts):
+def sum_weights(fileList,sums,blacklist,nevts,isData):
     sum_wgt = 0
     sum_nevts = 0
     for f in tqdm(fileList):
@@ -16,7 +16,10 @@ def sum_weights(fileList,sums,blacklist,nevts):
                 if tree.num_entries == 0:
                     continue
                 else:
-                    sum_wgt += np.sum(tree['genWgt'].array())
+                    if isData:
+                        sum_wgt += 0
+                    else:
+                        sum_wgt += np.sum(tree['genWgt'].array())
                     sum_nevts += tree.num_entries
         except:
             blacklist.append(f.split("/")[-1])
@@ -27,6 +30,11 @@ inputJson = sys.argv[1]
 with open(inputJson) as f:
     samples = json.load(f)
 num_cpus = mp.cpu_count()
+
+if len(sys.argv) == 3:
+    isData = bool(int(sys.argv[2]))
+else:
+    isData = False
 
 for samp in samples:
     print(f"Running on {samp['name']}")
@@ -42,7 +50,11 @@ for samp in samples:
         if tree.num_entries == 0:
             sum_wgt = 0
         else:
-            sum_wgt = np.sum(tree['genWgt'].array())
+            if not isData:
+                sum_wgt = np.sum(tree['genWgt'].array())
+            else:
+                sum_wgt = 0
+            sum_evt = tree.num_entries
     else:
         xrdClient = client.FileSystem("root://cmseos.fnal.gov")
         if type(loc) != list:
@@ -59,7 +71,7 @@ for samp in samples:
         if nFiles < 2*num_cpus:
         #if nFiles < 0: # always do parallel mode
             print("Serial Mode")
-            sum_weights(fullList,sum_wgt,blacklist,sum_evt)
+            sum_weights(fullList,sum_wgt,blacklist,sum_evt,isData)
             sum_wgt = np.sum(sum_wgt)
             sum_evt = np.sum(sum_evt)
         else:
@@ -71,7 +83,7 @@ for samp in samples:
                 m_nevts = manager.list()
                 processes = []
                 for subList in subLists:
-                    processes.append(Process(target=sum_weights,args=(subList,m_sums,m_blacklist,m_nevts)))
+                    processes.append(Process(target=sum_weights,args=(subList,m_sums,m_blacklist,m_nevts,isData)))
                 for p in processes:
                     p.start()
                 for p in processes:

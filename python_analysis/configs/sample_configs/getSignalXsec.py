@@ -13,7 +13,7 @@ for samp in samples:
     dmchi = samp["dMchi"]
     ct = samp["ctau"]
     aD = str(samp['alphaD'])
-    sel_row = df[(df["Mchi"] == mchi) & (df["dMchi"] == dmchi) & (df["ct"] == ct) & (df["alphaD"] == aD)]
+    sel_row = df[(df["Mchi"] == mchi) & (df["dMchi"] == dmchi) & (df["ct"] == ct) & (df["alphaD"] == aD) & (df['mA/m1'] == 3)]
     if sel_row.empty:
         print(f"No xsec found for {samp['name']}")
         samp["xsec"] = 0.0

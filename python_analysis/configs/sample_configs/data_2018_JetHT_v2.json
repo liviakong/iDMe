@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Data_JetHT_UL18_Run2018A",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_JetHT_v2/2018/Data_JetHT_UL18/Run2018A/JetHT/crab_iDMe_Run2018A_2024_04_18-12_45/240418_174614/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 1,
+        "num_events": 2297373,
+        "blacklist": []
+    },
+    {
+        "name": "Data_JetHT_UL18_Run2018B",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_JetHT_v2/2018/Data_JetHT_UL18/Run2018B/JetHT/crab_iDMe_Run2018B_2024_04_18-12_44/240418_174507/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 8,
+        "num_events": 17609108,
+        "blacklist": []
+    },
+    {
+        "name": "Data_JetHT_UL18_Run2018C",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_JetHT_v2/2018/Data_JetHT_UL18/Run2018C/JetHT/crab_iDMe_Run2018C_2024_04_18-12_45/240418_174538/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 11,
+        "num_events": 5699821,
+        "blacklist": []
+    },
+    {
+        "name": "Data_JetHT_UL18_Run2018D",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_JetHT_v2/2018/Data_JetHT_UL18/Run2018D/JetHT/crab_iDMe_Run2018D_2024_04_18-12_43/240418_174432/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 3,
+        "num_events": 3712546,
+        "blacklist": []
+    }
+]

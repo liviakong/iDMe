@@ -121,17 +121,20 @@ def setDefaultStyle(fontsize=14):
 def hget(h,samp,cut):
     return h[{"samp":samp,"cut":cut}]
 
-def makeCDF(h,start,stop,bins=100,right=True):
+def makeCDF(h,start,stop,bins=100,right=True,nevents=False):
     x = np.linspace(start,stop,bins)
-    n_tot = h[::sum].value
+    n_tot = h.sum(flow=True).value
     if right:
-        effs = np.array([h[complex(f"{xi}j")::sum].value for xi in x])
+        yields = np.array([h[complex(f"{xi}j")::sum].value for xi in x])
     else:
-        effs = np.array([h[:complex(f"{xi}j"):sum].value for xi in x])
-    effs = effs/n_tot
-    return x, effs
+        yields = np.array([h[:complex(f"{xi}j"):sum].value for xi in x])
+    effs = yields/n_tot
+    if nevents:
+        return x,yields
+    else:
+        return x, effs
 
-def overlay(h,overlay,**kwargs):
+def overlay(h,overlay,label_key=None,**kwargs):
     axes = h.axes
     targ = None
     for a in axes:
@@ -143,4 +146,6 @@ def overlay(h,overlay,**kwargs):
     n_overlay = len(targ.centers)
     labels = [targ.value(i) for i in range(n_overlay)]
     histos = [h[{overlay:l}] for l in labels]
+    if label_key is not None:
+        labels = [label_key[targ.value(i)] for i in range(n_overlay)]
     hep.histplot(histos,label=labels,**kwargs)

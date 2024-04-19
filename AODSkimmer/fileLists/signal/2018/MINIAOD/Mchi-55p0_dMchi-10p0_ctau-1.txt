@@ -1,0 +1,1 @@
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-55p0_dMchi-10p0/ctau-1/MiniAOD_Mchi-55p0_dMchi-10p0_ctau-1_00.root

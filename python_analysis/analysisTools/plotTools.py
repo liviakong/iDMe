@@ -149,3 +149,13 @@ def overlay(h,overlay,label_key=None,**kwargs):
     if label_key is not None:
         labels = [label_key[targ.value(i)] for i in range(n_overlay)]
     hep.histplot(histos,label=labels,**kwargs)
+
+from mplhep.styles.cms import cmap_petroff
+bkg_cmap = {
+    "QCD":cmap_petroff[0],
+    "WJets":cmap_petroff[1],
+    "ZJets":cmap_petroff[2],
+    "DY":cmap_petroff[3],
+    "Top":cmap_petroff[4],
+    "Multiboson":cmap_petroff[5]
+}

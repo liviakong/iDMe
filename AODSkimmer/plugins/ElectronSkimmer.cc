@@ -499,7 +499,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
    int iele = 0;
    for (const auto & ele : *recoNanoElectronHandle_) {
       // require pT > 5 & pass loose ID to consider GED electron
-      if (ele.pt() < 5 || !ele.electronID("cutBasedElectronID-Fall17-94X-V2-veto")) {
+      if (ele.pt() < 5 || !ele.electronID("cutBasedElectronID-Fall17-94X-V2-loose")) {
          iele++;
          continue;
       }
@@ -590,6 +590,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       constexpr auto missingHitType =reco::HitPattern::MISSING_INNER_HITS;
       nt.recoElectronExpMissingInnerHits_.push_back(ele.gsfTrack()->hitPattern().numberOfLostHits(missingHitType));
       nt.recoElectronConversionVeto_.push_back(!ConversionTools::hasMatchedConversion(ele,*conversionsHandle_,beamspot.position()));
+      nt.recoElectronIsEE_.push_back(ele.isEE());
       // x-cleaning study
       nt.recoElectronHasLptMatch_.push_back(false);
       nt.recoElectronLptMatchIdx_.push_back(-999);
@@ -713,6 +714,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       constexpr auto missingHitType =reco::HitPattern::MISSING_INNER_HITS;
       nt.recoLowPtElectronExpMissingInnerHits_.push_back(ele.gsfTrack()->hitPattern().numberOfLostHits(missingHitType));
       nt.recoLowPtElectronConversionVeto_.push_back(!ConversionTools::hasMatchedConversion(ele,*conversionsHandle_,beamspot.position()));
+      nt.recoLowPtElectronIsEE_.push_back(ele.isEE());
       // additional x-cleaning study variables 
       nt.recoLowPtElectronGEDisMatched_.push_back(false);
    }
@@ -750,7 +752,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
       float pfIsoCorrection = 0.0;
       float miniIsoCorrection = 0.0;
       for (size_t iged = 0; iged < recoNanoElectronHandle_->size(); iged++) {
-         if ((ele.isEE()) && (iSaved_ele[i] == (int)iged)) continue;
+         if ((ele.isEE()) && (iSaved_ele[i] == (int)iged)) continue; // have deadcone rejection in EE         
          auto cand_ele = (*recoNanoElectronHandle_)[iged];
          if (cand_ele.isPF()) continue;
          float dR = reco::deltaR(ele.p4(),cand_ele.p4());
@@ -772,12 +774,14 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             miniIsoCorrection += (*cand_ele.gsfTrack()).pt();
          }
       }
+      float isoCutoff = 0.0;
+
       float pfIsoCorr = nt.recoElectronPFIso_[i] - pfIsoCorrection;
-      nt.recoElectronPFIsoEleCorr_[i] = std::max(pfIsoCorr,(float)0.0);
+      nt.recoElectronPFIsoEleCorr_[i] = std::max(pfIsoCorr,isoCutoff);
       nt.recoElectronPFRelIsoEleCorr_[i] = nt.recoElectronPFIsoEleCorr_[i]/ele.pt();
 
       float miniIsoCorr = nt.recoElectronMiniIso_[i] - miniIsoCorrection;
-      nt.recoElectronMiniIsoEleCorr_[i] = std::max(miniIsoCorr,(float)0.0);
+      nt.recoElectronMiniIsoEleCorr_[i] = std::max(miniIsoCorr,isoCutoff);
       nt.recoElectronMiniRelIsoEleCorr_[i] = nt.recoElectronMiniIsoEleCorr_[i]/ele.pt();
    }
 
@@ -800,7 +804,7 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
          }
       }
       for (size_t il = 0; il < lowPtNanoElectronHandle_->size(); il++) {
-         if ((ele.isEE()) && (iSaved_lpt[i] == (int)il)) continue;
+         if ((ele.isEE()) && (iSaved_lpt[i] == (int)il)) continue; // have deadcone rejection in EE         
          if (allLptEles_isXcleaned[il]) continue;
          auto cand_ele = (*lowPtNanoElectronHandle_)[il];
          float dR = reco::deltaR(ele.p4(),cand_ele.p4());
@@ -811,12 +815,14 @@ ElectronSkimmer::analyze(const edm::Event& iEvent, const edm::EventSetup& iSetup
             miniIsoCorrection += (*cand_ele.gsfTrack()).pt();
          }
       }
+      float isoCutoff = 0.0;
+
       float pfIsoCorr = nt.recoLowPtElectronPFIso_[i] - pfIsoCorrection;
-      nt.recoLowPtElectronPFIsoEleCorr_[i] = std::max(pfIsoCorr,(float)0.0);
+      nt.recoLowPtElectronPFIsoEleCorr_[i] = std::max(pfIsoCorr,isoCutoff);
       nt.recoLowPtElectronPFRelIsoEleCorr_[i] = nt.recoLowPtElectronPFIsoEleCorr_[i]/ele.pt();
 
       float miniIsoCorr = nt.recoLowPtElectronMiniIso_[i] - miniIsoCorrection;
-      nt.recoLowPtElectronMiniIsoEleCorr_[i] = std::max(miniIsoCorr,(float)0.0);
+      nt.recoLowPtElectronMiniIsoEleCorr_[i] = std::max(miniIsoCorr,isoCutoff);
       nt.recoLowPtElectronMiniRelIsoEleCorr_[i] = nt.recoLowPtElectronMiniIsoEleCorr_[i]/ele.pt();
    }
    

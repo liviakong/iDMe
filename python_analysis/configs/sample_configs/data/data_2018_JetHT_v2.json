@@ -6,8 +6,8 @@
         "type": "data",
         "year": 2018,
         "xsec": 0.0,
-        "nFiles": 1,
-        "num_events": 2297373,
+        "nFiles": 92,
+        "num_events": 158635831,
         "blacklist": []
     },
     {
@@ -17,8 +17,8 @@
         "type": "data",
         "year": 2018,
         "xsec": 0.0,
-        "nFiles": 8,
-        "num_events": 17609108,
+        "nFiles": 38,
+        "num_events": 71804574,
         "blacklist": []
     },
     {
@@ -28,8 +28,8 @@
         "type": "data",
         "year": 2018,
         "xsec": 0.0,
-        "nFiles": 11,
-        "num_events": 5699821,
+        "nFiles": 49,
+        "num_events": 68044531,
         "blacklist": []
     },
     {
@@ -39,8 +39,8 @@
         "type": "data",
         "year": 2018,
         "xsec": 0.0,
-        "nFiles": 3,
-        "num_events": 3712546,
+        "nFiles": 214,
+        "num_events": 342537691,
         "blacklist": []
     }
 ]

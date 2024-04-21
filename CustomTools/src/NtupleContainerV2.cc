@@ -90,6 +90,7 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("Electron_abs1overEm1overP",&recoElectronAbs1overEm1overP_);
     outT->Branch("Electron_expMissingInnerHits",&recoElectronExpMissingInnerHits_);
     outT->Branch("Electron_conversionVeto",&recoElectronConversionVeto_);
+    outT->Branch("Electron_isEE",&recoElectronIsEE_);
     // special vars for x-clean study
     outT->Branch("Electron_hasLptMatch",&recoElectronHasLptMatch_);
     outT->Branch("Electron_lptMatchIdx",&recoElectronLptMatchIdx_);
@@ -145,6 +146,7 @@ void NtupleContainerV2::CreateTreeBranches() {
     outT->Branch("LptElectron_abs1overEm1overP",&recoLowPtElectronAbs1overEm1overP_);
     outT->Branch("LptElectron_expMissingInnerHits",&recoLowPtElectronExpMissingInnerHits_);
     outT->Branch("LptElectron_conversionVeto",&recoLowPtElectronConversionVeto_);
+    outT->Branch("LptElectron_isEE",&recoLowPtElectronIsEE_);
     // special vars for x-cleaning study
     outT->Branch("LptElectron_xCleaned",&recoLowPtElectronIsXCleaned_);
     outT->Branch("LptElectron_gedIdx",&recoLowPtElectronGEDidx_);
@@ -556,6 +558,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoElectronAbs1overEm1overP_.clear();
     recoElectronExpMissingInnerHits_.clear();
     recoElectronConversionVeto_.clear();
+    recoElectronIsEE_.clear();
     // special vars for x-cleaning study
     recoElectronHasLptMatch_.clear();
     recoElectronLptMatchIdx_.clear();
@@ -611,6 +614,7 @@ void NtupleContainerV2::ClearTreeBranches() {
     recoLowPtElectronAbs1overEm1overP_.clear();
     recoLowPtElectronExpMissingInnerHits_.clear();
     recoLowPtElectronConversionVeto_.clear();
+    recoLowPtElectronIsEE_.clear();
     // special vars for x-cleaning study
     recoLowPtElectronIsXCleaned_.clear();
     recoLowPtElectronGEDidx_.clear();

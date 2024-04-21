@@ -196,6 +196,7 @@ public:
     vector<float> recoElectronAbs1overEm1overP_;
     vector<int> recoElectronExpMissingInnerHits_;
     vector<bool> recoElectronConversionVeto_;
+    vector<bool> recoElectronIsEE_;
     // special variables for the x-cleaning study
     vector<bool> recoElectronHasLptMatch_;
     vector<int> recoElectronLptMatchIdx_;
@@ -251,6 +252,7 @@ public:
     vector<float> recoLowPtElectronAbs1overEm1overP_;
     vector<int> recoLowPtElectronExpMissingInnerHits_;
     vector<bool> recoLowPtElectronConversionVeto_;
+    vector<bool> recoLowPtElectronIsEE_;
     // special variables for the x-cleaning study
     vector<bool> recoLowPtElectronIsXCleaned_;
     vector<int> recoLowPtElectronGEDidx_;

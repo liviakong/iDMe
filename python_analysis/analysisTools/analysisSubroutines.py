@@ -249,7 +249,7 @@ def miscExtraVariablesSignal(events):
     #calculateCtau(events)
 
 def projectLxy(events):
-    vtx = events.sel_vtx
+    vtx = events.vtx
 
     vxpx = vtx.vx * vtx.px
     vypy = vtx.vy * vtx.py
@@ -262,8 +262,8 @@ def projectLxy(events):
 
     cos = dotprod / (vxy_mag * pxy_mag)
 
-    events.__setitem__("cos_collinear",cos)
-    events.__setitem__("projectedLxy", events.sel_vtx.vxy * cos)
+    events["vtx","cos_collinear"] = cos
+    events["vtx","projectedLxy"] =  vtx.vxy * cos
 
 def calculateCtau(events):
     # chi2

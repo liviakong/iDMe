@@ -239,11 +239,6 @@ class iDMeProcessor(processor.ProcessorABC):
 
         if info['type'] == "signal":
             cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
-
-            isReconstructed = events.GenEle.matched & events.GenPos.matched
-            has_gen_matched_reco_ee_events = events[isReconstructed]
-            cutflow_genEEreconstructed['all'] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
-            cutflow_vtx_matched_genEEreconstructed['all'] += 1 # dummy value before selecting a vertex
             
         cutDesc['all'] = 'No cuts@'
 
@@ -256,8 +251,7 @@ class iDMeProcessor(processor.ProcessorABC):
         events['LptElectron','mindPhiJ'] = ak.fill_none(ak.min(np.abs(events.LptElectron.dPhiJets),axis=-1),999)
         events['vtx','mindRj'] = ak.fill_none(ak.min(events.vtx.dRJets,axis=-1),999)
         events['vtx','mindPhiJ'] = ak.fill_none(ak.min(np.abs(events.vtx.dPhiJets),axis=-1),999)
-        events['vtx','cosThetaColl'] = (events.vtx.px/events.vtx.pt)*(events.vtx.vx/events.vtx.vxy) + (events.vtx.py/events.vtx.pt)*(events.vtx.vy/events.vtx.vxy)
-        events['vtx','vxyCosThetaColl'] = events.vtx.vxy*events.vtx.cosThetaColl
+        routines.projectLxy(events)
         routines.electronID(events,info) # electron kinematic/ID definition
         routines.jetBtag(events,info['year'])
         if info['type'] == "signal":
@@ -301,12 +295,6 @@ class iDMeProcessor(processor.ProcessorABC):
         if info['type'] == "signal":
             vtx_matched_events = events[events.sel_vtx.isMatched]
             cutflow_vtx_matched['hasVtx'] += ak.sum(vtx_matched_events.genWgt)/ak.sum(events.genWgt)
-            
-            isReconstructed = events.GenEle.matched & events.GenPos.matched
-            has_gen_matched_reco_ee_events = events[isReconstructed]
-            cutflow_genEEreconstructed['hasVtx'] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
-            vtx_matched_events_genEEreconstructed = has_gen_matched_reco_ee_events[has_gen_matched_reco_ee_events.sel_vtx.isMatched]
-            cutflow_vtx_matched_genEEreconstructed['hasVtx'] += ak.sum(vtx_matched_events_genEEreconstructed.genWgt)/ak.sum(has_gen_matched_reco_ee_events.genWgt)
         
         # Compute miscellaneous extra variables -- add anything you want to this function
         # don't need this for now - can activate if need be
@@ -331,12 +319,6 @@ class iDMeProcessor(processor.ProcessorABC):
             if info['type'] == "signal":
                 vtx_matched_events = events[events.sel_vtx.isMatched]
                 cutflow_vtx_matched[cutName] += ak.sum(vtx_matched_events.genWgt)/ak.sum(events.genWgt)
-
-                isReconstructed = events.GenEle.matched & events.GenPos.matched
-                has_gen_matched_reco_ee_events = events[isReconstructed]
-                cutflow_genEEreconstructed[cutName] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
-                vtx_matched_events_genEEreconstructed = has_gen_matched_reco_ee_events[has_gen_matched_reco_ee_events.sel_vtx.isMatched]
-                cutflow_vtx_matched_genEEreconstructed[cutName] += ak.sum(vtx_matched_events_genEEreconstructed.genWgt)/ak.sum(has_gen_matched_reco_ee_events.genWgt)
             cutDesc[cutName] += cutDescription + "@"
 
             # Fill histograms

@@ -2,6 +2,7 @@ import sys
 import pandas as pd
 import plotTools as ptools
 import json
+from pathlib import Path
 
 # Signal
 def get_dict_fromCutflow(cf):
@@ -17,9 +18,9 @@ def get_signal_point_dict(sig_histo):
     sig_histo takes util.load(coffea_file)[0]
     '''
 
-    return get_signal_point_dict(sig_histo['cutflow'])
+    return get_dict_fromCutflow(sig_histo['cutflow'])
 
-def get_signal_cutflow_dict(sig_histo, branch, do_only_gen_ee_reconstructed=False):
+def get_signal_cutflow_dict(sig_histo, branch):
     '''
     Get dictionary of cutflow for signal
     
@@ -28,15 +29,14 @@ def get_signal_cutflow_dict(sig_histo, branch, do_only_gen_ee_reconstructed=Fals
     - cutflow_cts: xsec-weighted event count
     - cutflow_vtx_matched: fraction that selected vtx is truth-matched
     - cutflow_nevts: raw count
-
-    If onlyGenReconstructed is set to true, it will return the same quantities but when only looking at the events where the gen ee are reconstructed (dR(gen,reco) < 0.1)
-    - cutflow_genEEreconstructed, cutflow_cts_genEEreconstructed, cutflow_vtx_matched_genEEreconstructed
     '''
 
-    if do_only_gen_ee_reconstructed:
-        branch += '_genEEreconstructed'
+    df = pd.DataFrame.from_dict(sig_histo[branch], orient='index')
+
+    cutnames = get_signal_list_of_cuts(sig_histo)
+    df.columns = cutnames
     
-    return sig_histo[branch]
+    return df
 
 def get_signal_list_of_histograms(sig_histo):
     '''
@@ -205,6 +205,35 @@ def bkg_categories(cutflow):
         output_samples[bgkCat].append(name)
         output_names[bgkCat].append(subSample)
     return output_samples, output_names
+
+
+def add_signal_info_to_df(df):
+    m1_list = []
+    delta_list = []
+    ctau_list = []
     
+    for point in df.index.values:
+        sig_dict = ptools.signalPoint(point)
+        m1_list.append(sig_dict['m1'])
+        delta_list.append(sig_dict['delta'])
+        ctau_list.append(sig_dict['ctau'])
+    
+    df['m1'] = m1_list
+    df['delta'] = delta_list
+    df['ctau'] = ctau_list
+    
+    df = df.sort_values(by=['m1']) # sort by m1
+
+    return df
+
+def save_df_to_csv(df, outdir, outname, isSignal = False):
+    Path(outdir).mkdir(parents=True, exist_ok=True)
+
+    if isSignal:
+        df = add_signal_info_to_df(df)
+    
+    df.to_csv(f'{outdir}/{outname}.csv')
+
+    print(f'Saved: {outdir}/{outname}.csv')
 
 

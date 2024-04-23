@@ -7,6 +7,7 @@ import re
 import os
 import sys
 import mplhep as hep
+import utils
 
 def makeNMinus1(h1,h2,lessThan=False):
     assert len(h1.axes)==1 and h1.axes == h2.axes
@@ -171,3 +172,404 @@ bkg_cmap = {
     "Top":cmap_petroff[4],
     "Multiboson":cmap_petroff[5]
 }
+
+# Plot efficiency type stuff
+def plot_signal_efficiency(sig_histo, df, m1s, deltas, ctaus, doLog = True, ylabel = '', title = ''):
+    cuts = utils.get_signal_list_of_cuts(sig_histo)
+
+    m1_list = []
+    for point in df.index.values:
+        sig_dict = signalPoint(point)
+        m1 = int(sig_dict['m1'])
+        m1_list.append(m1)
+
+    df['m1'] = m1_list
+    df = df.sort_values(by=['m1']) # sort by m1
+    df.pop('m1')
+        
+    for point in df.index.values:
+        sig_dict = signalPoint(point)
+        m1 = int(sig_dict['m1'])
+        delta = sig_dict['delta']
+        dmchi = sig_dict['dmchi']
+        ctau = int(sig_dict['ctau'])
+        
+        if (m1 in m1s) and (delta in deltas):
+            if ctau in ctaus:
+                plt.plot(cuts, df.loc[point], label=f'({m1}, {dmchi}) GeV, ctau = {int(ctau)}mm')
+
+    plt.grid()
+
+    if doLog:
+        plt.yscale('log')
+    
+    plt.ylabel(ylabel)
+    plt.title(title)
+    
+    plt.xticks(ticks = np.arange(len(cuts)), labels = cuts, rotation = 45, ha = 'right')
+    
+    plt.legend()
+    plt.show()
+
+def plot_bkg_efficiency(bkg_histos, df, doLog = True, ylabel = '', title = ''):
+    processes = df.index.values.tolist()
+    cuts = utils.get_bkg_list_of_cuts(bkg_histos)
+
+    # Color map for each process
+    # cmap = mpl.colormaps['Set3'].colors
+    # cmap = ["#5790fc", "#f89c20", "#e42536", "#964a8b", "#9c9ca1", "#7a21dd"] # cms-recommended for 6-color scheme
+    cmap = ["#3f90da", "#ffa90e", "#bd1f01", "#94a4a2", "#832db6", "#a96b59", "#e76300", "#b9ac70", "#717581", "#92dadd"] # cms-recommended
+    
+    colors = { 'W+jets': cmap[0],
+               'Z+jets': cmap[1],
+               'QCD': cmap[2],
+               'DY': cmap[3],
+               'Top': cmap[4],
+               'TTJetsDiLept': cmap[5],
+               'Diboson': cmap[6],
+               'Triboson': cmap[7],
+               'Total': cmap[8]
+    }
+
+    for process in processes:
+        plt.plot(cuts, df.loc[process], label=process, color = colors[process])
+
+    plt.grid()
+
+    if doLog:
+        plt.yscale('log')
+    
+    plt.ylabel(ylabel)
+    plt.title(title)
+    
+    plt.xticks(ticks = np.arange(len(cuts)), labels = cuts, rotation = 45, ha = 'right')
+    
+    plt.legend()
+    plt.show()
+
+# Plot kinematics
+def plot_signal_1D(ax, sig_histo, m1, delta, ctau, plot_dict, style_dict):
+    # get signal point info
+    si = utils.get_signal_point_dict(sig_histo)
+    samp_df = si[(si.m1 == m1) & (si.delta == delta) & (si.ctau == ctau)]
+    
+    samp = samp_df.name[0]
+
+    m1 = samp_df.m1[0]
+    dmchi = samp_df.dmchi[0]
+    ctau = samp_df.ctau[0]
+    label = f'({m1}, {dmchi}) GeV, ctau = {int(ctau)}mm'
+
+    if style_dict['label'] != None:
+        label = style_dict['label']
+    
+    # get histogram from coffea output
+    histo = sig_histo[plot_dict['variable']][{"samp":samp, "cut": plot_dict['cut']}]
+
+    # rebinning
+    histo = histo[::style_dict['rebin']]
+
+    # set x range manually
+    if style_dict['xlim'] != None:
+        xlim = style_dict['xlim']
+        xbin_range = np.where((histo.axes.edges[0] > xlim[0]) & (histo.axes.edges[0] < xlim[1]))[0]
+        histo = histo[ int(xbin_range[0])-1:int(xbin_range[-1]+1) ]
+
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+    else:    
+        binwidth = histo.axes.widths[0][0]
+        if style_dict['doDensity']:
+            ax.set_ylabel(f'A.U./{binwidth:.3f}')
+        else:
+            ax.set_ylabel(f'Events/{binwidth:.3f}')
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')
+
+    # Plot
+    hep.histplot(histo, yerr=style_dict['doYerr'], density=style_dict['doDensity'], ax=ax, histtype='step', flow=style_dict['flow'], label = label)
+
+
+def plot_signal_2D(ax, sig_histo, m1, delta, ctau, plot_dict, style_dict):
+    # get signal point info
+    si = utils.get_signal_point_dict(sig_histo)
+    samp_df = si[(si.m1 == m1) & (si.delta == delta) & (si.ctau == ctau)]
+    
+    samp = samp_df.name[0]
+
+    m1 = samp_df.m1[0]
+    dmchi = samp_df.dmchi[0]
+    ctau = samp_df.ctau[0]
+    label = f'({m1}, {dmchi}) GeV, ctau = {int(ctau)}mm'
+    
+    # get histogram from coffea output
+    histo = sig_histo[plot_dict['variable']][{"samp":samp, "cut": plot_dict['cut']}]
+
+    # rebinning
+    histo = histo[::style_dict['xrebin'],::style_dict['yrebin']]
+
+    # set x range manually
+    if style_dict['xlim'] != None:
+        xlim = style_dict['xlim']
+        xbin_range = np.where((histo.axes.edges[0] > xlim[0]) & (histo.axes.edges[0] < xlim[1]))[0]
+        histo = histo[ int(xbin_range[0])-1:int(xbin_range[-1]+1), : ]
+    if style_dict['ylim'] != None:
+        ylim = style_dict['ylim']
+        ybin_range = np.where((histo.axes.edges[1] > ylim[0]) & (histo.axes.edges[1] < ylim[1]))[1]
+        histo = histo[ :, int(ybin_range[0]):int(ybin_range[-1]+1) ]
+    
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')
+
+    if style_dict['doLogz']:
+        hep.hist2dplot(histo, flow=style_dict['flow'], norm=mpl.colors.LogNorm(), ax=ax)
+    else:
+        hep.hist2dplot(histo, flow=style_dict['flow'], ax=ax)
+
+
+def plot_bkg_1d(ax, bkg_histos, plot_dict, style_dict, processes = 'all'):  
+
+    if processes == 'all':
+        #processes = bkg_histos.keys()
+
+        list_cut_index = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=True)
+        list_cut_name = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=False)
+        
+        cut_name = plot_dict['cut']
+        
+        df = utils.get_bkg_cutflow_df(bkg_histos, 'cutflow_cts').iloc[:-1]
+        
+        df = df[list_cut_name[list_cut_index.index(cut_name)]]
+        
+        processes = df.index[df != 0].to_list()
+    
+    # if process is given as a list, i.e. ['DY', 'W+jets'], plot only these processes in the list; otherwise, plot all as default
+
+    bkg={}
+    bkg[plot_dict['variable']] = {process:bkg_histos[process][plot_dict['variable']][{"samp":sum}] for process in processes}
+    
+    # sort the histograms by the entries and stack
+    for process in processes:
+        entries = {process: bkg[plot_dict['variable']][process].sum().value for process in processes}
+    
+    sorted_entries = dict(sorted(entries.items(), key=lambda x:x[1], reverse = False))
+
+    # histogram
+    bkg_stack = {}
+    
+    # add histos to stack after rebinning and range setting
+    for process in sorted_entries.keys():
+        bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][plot_dict['cut'],::style_dict['rebin']]
+
+        # set x range manually
+        if style_dict['xlim'] != None:
+            xlim = style_dict['xlim']
+            xbin_range = np.where((bkg[plot_dict['variable']][process].axes.edges[0] > xlim[0]) & (bkg[plot_dict['variable']][process].axes.edges[0] < xlim[1]))[0]
+            bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][ int(xbin_range[0])-1:int(xbin_range[-1]+1) ]
+
+        bkg_stack[process] = bkg[plot_dict['variable']][process]
+
+    hb = hist.Stack.from_dict(bkg_stack)
+    
+    # Color map for each process
+    # cmap = mpl.colormaps['Set3'].colors
+    # cmap = ["#5790fc", "#f89c20", "#e42536", "#964a8b", "#9c9ca1", "#7a21dd"] # cms-recommended for 6-color scheme
+    cmap = ["#3f90da", "#ffa90e", "#bd1f01", "#94a4a2", "#832db6", "#a96b59", "#e76300", "#b9ac70", "#717581", "#92dadd"] # cms-recommended
+    
+    colors = { 'W+jets': cmap[0],
+               'Z+jets': cmap[1],
+               'QCD': cmap[2],
+               'DY': cmap[3],
+               'Top': cmap[4],
+               'TTJetsDiLept': cmap[5],
+               'Diboson': cmap[6],
+               'Triboson': cmap[7],
+    }
+    
+    color_list = [colors[process] for process in sorted_entries.keys()]
+
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+    else:
+        binwidth = hb[0].axes.widths[0][0]
+        
+        if style_dict['doDensity']:
+            ax.set_ylabel(f'A.U./{binwidth:.3f}')
+        else:
+            ax.set_ylabel(f'Events/{binwidth:.3f}')
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')
+    
+    # Plot
+    hb.plot(stack=True, yerr=style_dict['doYerr'], density=style_dict['doDensity'], flow=style_dict['flow'], histtype='fill', color=color_list)
+
+    # legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1])
+
+
+def plot_bkg_1d_stacked(ax, bkg_histos, plot_dict, style_dict, processes = 'all'):  
+
+    if processes == 'all':
+        #processes = bkg_histos.keys()
+
+        list_cut_index = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=True)
+        list_cut_name = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=False)
+        
+        cut_name = plot_dict['cut']
+        
+        df = utils.get_bkg_cutflow_df(bkg_histos, 'cutflow_cts').iloc[:-1]
+        
+        df = df[list_cut_name[list_cut_index.index(cut_name)]]
+        
+        processes = df.index[df != 0].to_list()
+    # if process is given as a list, i.e. ['DY', 'W+jets'], plot only these processes in the list; otherwise, plot all as default
+    
+    bkg={}
+    bkg[plot_dict['variable']] = {process:bkg_histos[process][plot_dict['variable']][{"samp":sum}] for process in processes}
+    
+    # sort the histograms by the entries and stack
+    for process in processes:
+        entries = {process: bkg[plot_dict['variable']][process].sum().value for process in processes}
+    
+    sorted_entries = dict(sorted(entries.items(), key=lambda x:x[1], reverse = False))
+
+    # histogram
+    # add histos to stack after rebinning and range setting
+    for idx, process in enumerate(sorted_entries.keys()):
+        bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][plot_dict['cut'],::style_dict['rebin']]
+
+        # set x range manually
+        if style_dict['xlim'] != None:
+            xlim = style_dict['xlim']
+            xbin_range = np.where((bkg[plot_dict['variable']][process].axes.edges[0] > xlim[0]) & (bkg[plot_dict['variable']][process].axes.edges[0] < xlim[1]))[0]
+            bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][ int(xbin_range[0])-1:int(xbin_range[-1]+1) ]
+            
+        if idx == 0:
+            bkg_stack = bkg[plot_dict['variable']][process]
+        else:
+            bkg_stack += bkg[plot_dict['variable']][process]
+    
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+    else:
+        binwidth = bkg_stack.axes.widths[0][0]
+        
+        if style_dict['doDensity']:
+            ax.set_ylabel(f'A.U./{binwidth:.3f}')
+        else:
+            ax.set_ylabel(f'Events/{binwidth:.3f}')
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')  
+    
+    # Plot
+    hep.histplot(bkg_stack, yerr=style_dict['doYerr'], density=style_dict['doDensity'], ax=ax, histtype='step', flow=style_dict['flow'], label = style_dict['label'])
+    
+    # legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1])
+
+
+
+def plot_bkg_2D(ax, bkg_histos, plot_dict, style_dict, processes = 'all'):  
+
+    processes_list = processes
+    
+    if processes == 'all':
+        #processes = bkg_histos.keys()
+
+        list_cut_index = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=True)
+        list_cut_name = utils.get_bkg_list_of_cuts(bkg_histos, get_cut_idx=False)
+        
+        cut_name = plot_dict['cut']
+        
+        df = utils.get_bkg_cutflow_df(bkg_histos, 'cutflow_cts').iloc[:-1]
+        
+        df = df[list_cut_name[list_cut_index.index(cut_name)]]
+        
+        processes = df.index[df != 0].to_list()
+    # if process is given as a list, i.e. ['DY', 'W+jets'], plot only these processes in the list; otherwise, plot all as default
+    
+    bkg={}
+    bkg[plot_dict['variable']] = {process:bkg_histos[process][plot_dict['variable']][{"samp":sum}] for process in processes}
+    
+    # sort the histograms by the entries and stack
+    for process in processes:
+        entries = {process: bkg[plot_dict['variable']][process].sum().value for process in processes}
+    
+    sorted_entries = dict(sorted(entries.items(), key=lambda x:x[1], reverse = False))
+
+    # histogram
+    # add histos to stack after rebinning and range setting
+    for idx, process in enumerate(sorted_entries.keys()):
+        bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][plot_dict['cut'], ::style_dict['xrebin'], ::style_dict['yrebin']]
+    
+        if style_dict['xlim'] != None:
+            xlim = style_dict['xlim']
+            xbin_range = np.where((bkg[plot_dict['variable']][process].axes.edges[0] > xlim[0]) & (bkg[plot_dict['variable']][process].axes.edges[0] < xlim[1]))[0]
+            bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][ int(xbin_range[0])-1:int(xbin_range[-1]+1), : ]
+        if style_dict['ylim'] != None:
+            ylim = style_dict['ylim']
+            ybin_range = np.where((bkg[plot_dict['variable']][process].axes.edges[1] > ylim[0]) & (bkg[plot_dict['variable']][process].axes.edges[1] < ylim[1]))[1]
+            bkg[plot_dict['variable']][process] = bkg[plot_dict['variable']][process][ :, int(ybin_range[0]):int(ybin_range[-1]+1) ]
+            
+        if idx == 0:
+            bkg_stack = bkg[plot_dict['variable']][process]
+        else:
+            bkg_stack += bkg[plot_dict['variable']][process]
+
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')
+    
+    # Plot
+    if style_dict['doLogz']:
+        hep.hist2dplot(bkg_stack, flow=style_dict['flow'], norm=mpl.colors.LogNorm(), ax=ax)
+    else:
+        hep.hist2dplot(bkg_stack, flow=style_dict['flow'], ax=ax)
+    
+    # legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1])

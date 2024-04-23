@@ -175,7 +175,7 @@ class makeBDTInputs(processor.ProcessorABC):
         #routines.selectBestVertex(events)
 
         if info['type'] == "signal":
-            events = routines.selectTrueVertex(events, events.good_vtx, doGenMatch=True)
+            events = routines.selectTrueVertex(events, events.good_vtx)
         else:
             routines.selectBestVertex(events)
 
@@ -193,6 +193,14 @@ class makeBDTInputs(processor.ProcessorABC):
         # filling outputs dictionary
         e1 = events.sel_vtx.e1
         e2 = events.sel_vtx.e2
+
+        deltadxy = np.abs(np.abs(e1.dxy) - np.abs(e2.dxy))
+        mindxy = np.minimum(np.abs(e1.dxy),np.abs(e2.dxy))
+        maxdxy = np.maximum(np.abs(e1.dxy),np.abs(e2.dxy))
+        meandxy = np.mean(np.abs(e1.dxy),np.abs(e2.dxy))
+        abs_deta = np.abs(e1.eta - e2.eta)
+        abs_dphi = np.abs(e1.phi - e2.phi)
+        
         outputs['wgt'] = column_accumulator(events["eventWgt"].to_numpy())
         outputs['wgt_norm'] = column_accumulator(events["eventWgtNorm"].to_numpy())
         outputs['lead_jet_eta'] = column_accumulator(events.PFJet.eta[:,0].to_numpy())
@@ -218,6 +226,22 @@ class makeBDTInputs(processor.ProcessorABC):
             outputs['delta'] = column_accumulator(events["delta"].to_numpy())
             outputs['ctau'] = column_accumulator(events["ctau"].to_numpy())
 
+        outputs["sel_vtx_cos_collinear"] = column_accumulator(events.cos_collinear.to_numpy())
+        outputs["sel_vtx_prod_eta"] = column_accumulator((e1.eta*e2.eta).to_numpy())
+        outputs["sel_vtx_sign_prod_eta"] = column_accumulator(((e1.eta*e2.eta)/np.abs(e1.eta*e2.eta)).to_numpy())
+
+        outputs["sel_vtx_pt"] = column_accumulator(events.sel_vtx.pt.to_numpy())
+        outputs["sel_vtx_projectedLxy"] = column_accumulator(events.projectedLxy.to_numpy())
+        outputs["sel_vtx_pt_e1_over_pt_e2"] = column_accumulator((np.minimum(e1.pt, e2.pt)/np.maximum(e1.pt, e2.pt)).to_numpy())
+        outputs["sel_vtx_pt_over_m"] = column_accumulator((events.sel_vtx.pt/events.sel_vtx.m).to_numpy())
+
+        outputs["delta_dxy_over_mindxy"] = column_accumulator((deltadxy/mindxy).to_numpy())
+        outputs["delta_dxy_over_maxdxy"] = column_accumulator((deltadxy/maxdxy).to_numpy())
+        outputs["delta_dxy_over_meandxy"] = column_accumulator((deltadxy/meandxy).to_numpy())
+
+        outputs["delta_eta_over_delta_phi"] = column_accumulator((abs_deta/abs_dphi).to_numpy())
+        outputs["log_delta_eta_over_delta_phi"] = column_accumulator(np.log10(abs_deta/abs_dphi).to_numpy())
+        
         return outputs
 
     def postprocess(self, accumulator):

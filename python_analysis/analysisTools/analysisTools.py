@@ -220,9 +220,6 @@ class iDMeProcessor(processor.ProcessorABC):
         cutflow_nevts = defaultdict(int)           # raw event counts
         cutflow_vtx_matched = defaultdict(float)   # (for signal MC) fraction that the selected vertex is truth-matched
         # (for signal MC) also check the above, but only counting the events where both gen ee are reconstructed: dR(reco,gen) < 0.1
-        cutflow_genEEreconstructed = defaultdict(float)             # (for signal MC) efficiency
-        cutflow_counts_genEEreconstructed = defaultdict(float)      # (for signal MC) xsec-weighted event counts
-        cutflow_vtx_matched_genEEreconstructed = defaultdict(float) # (for signal MC) fraction that the selected vertex is truth-matched 
         
         if isMC:
             sum_wgt = info["sum_wgt"]
@@ -242,7 +239,7 @@ class iDMeProcessor(processor.ProcessorABC):
 
         if info['type'] == "signal":
             cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
-            
+
             isReconstructed = events.GenEle.matched & events.GenPos.matched
             has_gen_matched_reco_ee_events = events[isReconstructed]
             cutflow_genEEreconstructed['all'] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
@@ -290,6 +287,7 @@ class iDMeProcessor(processor.ProcessorABC):
         events = events[events.nGoodVtx > 0]
         # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
         routines.selectBestVertex(events)
+        #events = routines.selectTrueVertex(events,events.good_vtx)
 
         # Fill cutflow after baseline selection
         if isMC:
@@ -360,10 +358,6 @@ class iDMeProcessor(processor.ProcessorABC):
         histos['cutflow_nevts'] = {samp:cutflow_nevts}
         histos['cutflow_vtx_matched'] = {samp:cutflow_vtx_matched}
 
-        histos['cutflow_genEEreconstructed'] = {samp:cutflow_genEEreconstructed}
-        histos['cutflow_cts_genEEreconstructed'] = {samp:cutflow_counts_genEEreconstructed}
-        histos['cutflow_vtx_matched_genEEreconstructed'] = {samp:cutflow_vtx_matched_genEEreconstructed}
-        
         return histos
 
     def postprocess(self, accumulator):

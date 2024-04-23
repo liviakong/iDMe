@@ -1,0 +1,3 @@
+*.tar.gz
+plots_*/
+*.coffea

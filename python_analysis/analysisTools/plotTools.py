@@ -121,13 +121,25 @@ def setDefaultStyle(fontsize=14):
 def hget(h,samp,cut):
     return h[{"samp":samp,"cut":cut}]
 
-def makeCDF(h,start,stop,bins=100,right=True,nevents=False):
+def makeCDF(h,start,stop,bins=100,right=True,nevents=False,category=False):
     x = np.linspace(start,stop,bins)
     n_tot = h.sum(flow=True).value
-    if right:
-        yields = np.array([h[complex(f"{xi}j")::sum].value for xi in x])
+    if not category:
+        if right:
+            yields = np.array([h[complex(f"{xi}j")::sum].value for xi in x])
+        else:
+            yields = np.array([h[:complex(f"{xi}j"):sum].value for xi in x])
     else:
-        yields = np.array([h[:complex(f"{xi}j"):sum].value for xi in x])
+        edges_ordered = h.axes[0].edges[::-1] if right else h.axes[0].edges
+        yields_raw = np.cumsum(h.values()[::-1]) if right else np.cumsum(h.values())
+        # add extra point to yields to draw steps
+        yields = []
+        x = []
+        for i,y in enumerate(yields_raw):
+            yields.extend([y,y])
+            x.extend([edges_ordered[i],edges_ordered[i+1]])
+        yields = np.array(yields)
+        x = np.array(x)
     effs = yields/n_tot
     if nevents:
         return x,yields

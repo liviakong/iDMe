@@ -3,10 +3,18 @@ import coffea
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema, BaseSchema
 from mySchema import MySchema
 from coffea import processor
-from coffea.nanoevents.methods import vector
+
+#from coffea.dataset_tools import (
+#    apply_to_fileset,
+#    max_chunks,
+#    preprocess,
+#)
+#import dask
+
 import uproot
 import awkward as ak
-ak.behavior.update(vector.behavior)
+import vector
+vector.register_awkward()
 import numpy as np
 import matplotlib.pyplot as plt
 import json
@@ -20,13 +28,19 @@ NanoAODSchema.warn_missing_crossrefs = False
 import analysisSubroutines as routines
 import sys
 from collections import defaultdict
+from hist import Hist
+from hist.axis import StrCategory, Regular, Integer, IntCategory
+import hist
 
 match_names = {"Default":"match0","lowpt":"match1"}
 vxy_range = {1:[0,20],10:[0,50],100:[0,50],1000:[0,50]}
 vxy_rebin = {1:5,10:20,100:20,1000:20}
 
 class Analyzer:
-    def __init__(self,fileList,histoList,cuts,max_samples=-1,max_files_per_samp=-1):
+    def __init__(self,fileList,histoList,cuts,max_samples=-1,max_files_per_samp=-1,newCoffea=False):
+        # flag to see if we're using new coffea
+        self.newCoffea = newCoffea
+
         # load in file config
         if type(fileList) == str and ".json" in fileList:
             with open(fileList) as f:
@@ -83,11 +97,19 @@ class Analyzer:
             loc = sample['location']
             if '.root' in loc:
                 # if the location is just a single file, load it in
-                self.sample_locs[name] = [sample['location']]
+                if self.newCoffea:
+                    self.sample_locs[name] = {'files':{sample['location']:'ntuples/outT'}}
+                else:
+                    self.sample_locs[name] = [sample['location']]
             elif 'fileset' in sample.keys():
-                self.sample_locs[name] = [f for f in sample['fileset'] if f.split("/")[-1] not in sample['blacklist']]
-                if self.max_files_per_samp > 0 and len(self.sample_locs[name]) > self.max_files_per_samp:
-                    self.sample_locs[name] = self.sample_locs[name][:self.max_files_per_samp]
+                if self.newCoffea:
+                    self.sample_locs[name] = {'files':{f:'ntuples/outT' for f in sample['fileset'] if f.split("/")[-1] not in sample['blacklist']}}
+                    if self.max_files_per_samp > 0 and len(self.sample_locs[name]['files']) > self.max_files_per_samp:
+                        self.sample_locs[name]['files'] = {k:self.sample_locs[name]['files'][k] for k in list(self.sample_locs[name]['files'].keys())[:self.max_files_per_samp]}
+                else:
+                    self.sample_locs[name] = [f for f in sample['fileset'] if f.split("/")[-1] not in sample['blacklist']]
+                    if self.max_files_per_samp > 0 and len(self.sample_locs[name]) > self.max_files_per_samp:
+                        self.sample_locs[name] = self.sample_locs[name][:self.max_files_per_samp]
             else:
                 # if the location is a directory, use the xrootd client to get a list of files
                 xrdClient = client.FileSystem("root://cmseos.fnal.gov")
@@ -101,36 +123,53 @@ class Analyzer:
                         fullList.extend(["root://cmsxrootd.fnal.gov/"+l+"/"+item.name for item in flist if (('.root' in item.name) and (item.name not in sample['blacklist']))])
                 if self.max_files_per_samp > 0 and len(fullList) > self.max_files_per_samp:
                     fullList = fullList[:self.max_files_per_samp]
-                self.sample_locs[name] = fullList
+                if self.newCoffea:
+                    self.sample_locs[name] = {'files':{f:'ntuples/outT' for f in fullList}}
+                else:
+                    self.sample_locs[name] = fullList
             
             self.sample_info[name] = sample
             self.sample_names.append(name)
             loaded += 1
 
-    def process(self,treename='ntuples/outT',execr="iterative",workers=4,dask_client=None):
+    def process(self,treename='ntuples/outT',execr="iterative",workers=4,dask_client=None,procType='default',**kwargs):
         fileset = self.sample_locs
-        proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode)
-        if execr == "iterative":
-            executor = processor.IterativeExecutor()
-        elif execr == "futures":
-            executor = processor.FuturesExecutor(workers=workers)
-        elif execr == "dask":
-            if dask_client is None:
-                print("Need to supply a dask client!")
-                return
+        if procType == 'default':
+            proc = iDMeProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode,**kwargs)
+        elif procType == 'gen':
+            proc = genProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode,**kwargs)
+        elif procType == 'trig':
+            proc = trigProcessor(self.sample_names,self.sample_info,self.sample_locs,self.histoFile,self.cuts,mode=self.mode,**kwargs)
+        
+        if not self.newCoffea:
+            if execr == "iterative":
+                executor = processor.IterativeExecutor()
+            elif execr == "futures":
+                executor = processor.FuturesExecutor(workers=workers)
+            elif execr == "dask":
+                if dask_client is None:
+                    print("Need to supply a dask client!")
+                    return
+                else:
+                    executor = processor.DaskExecutor(client=dask_client)
             else:
-                executor = processor.DaskExecutor(client=dask_client)
+                print("Invalid executor type specification!")
+                return
+            runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
+            accumulator = runner(fileset,
+                                treename=treename,
+                                processor_instance=proc)
         else:
-            print("Invalid executor type specification!")
-            return
-        runner = processor.Runner(executor=executor,schema=MySchema,savemetrics=True)
-        accumulator = runner(fileset,
-                            treename=treename,
-                            processor_instance=proc)
+            print("Preprocessing")
+            dataset_runnable, dataset_updated = preprocess(fileset,step_size=100_000,files_per_batch=1)
+            print("Done Preprocessing")
+            to_compute = apply_to_fileset(proc,dataset_runnable,schemaclass=MySchema)
+            (accumulator,) = dask.compute(to_compute)
+        
         return accumulator
 
 class iDMeProcessor(processor.ProcessorABC):
-    def __init__(self,samples,sampleInfo,fileSet,histoFile,cutFile,mode='signal'):
+    def __init__(self,samples,sampleInfo,fileSet,histoFile,cutFile,mode='signal',**kwargs):
         self.samples = samples
         self.sampleInfo = sampleInfo
         self.sampleLocs = fileSet
@@ -156,11 +195,26 @@ class iDMeProcessor(processor.ProcessorABC):
             cutList = [c for c in dir(self.cutLib) if "cut" in c]
             cutList = sorted(cutList,key=lambda x: int(x[3:])) # make sure cuts are ordered as they are in the file
             self.cuts = [getattr(self.cutLib,c) for c in cutList]
+
+        self.extraStuff = {}
+        for k,v in kwargs.items():
+            self.extraStuff[k] = v
+            print(f"Registering extra input {k} = {v}")
     
     def process(self,events):
         samp = events.metadata["dataset"]
-        histos = self.histoMod.make_histograms()
-        histos['cutDesc'] = defaultdict(str)
+        info = self.sampleInfo[samp]
+        isMC = info["type"] == "signal" or info["type"] == "bkg"
+        info['defineGoodVertices'] = routines.defineGoodVertices
+        info['selectBestVertex'] = routines.selectBestVertex
+        for k,v in self.extraStuff.items():
+            info[f"extras_{k}"] = v
+        
+        #histos = self.histoMod.make_histograms()
+        #histos['cutDesc'] = defaultdict(str)
+        histObj = self.histoMod.make_histograms(info)
+        cutDesc = defaultdict(str)
+
         cutflow = defaultdict(float)               # efficiency
         cutflow_counts = defaultdict(float)        # xsec-weighted event counts
         cutflow_nevts = defaultdict(int)           # raw event counts
@@ -170,70 +224,97 @@ class iDMeProcessor(processor.ProcessorABC):
         cutflow_counts_genEEreconstructed = defaultdict(float)      # (for signal MC) xsec-weighted event counts
         cutflow_vtx_matched_genEEreconstructed = defaultdict(float) # (for signal MC) fraction that the selected vertex is truth-matched 
         
-        info = self.sampleInfo[samp]
-        sum_wgt = info["sum_wgt"]
-        lumi, unc = getLumi(info['year'])
-        xsec = info['xsec']
-
-        # register event weight branch
-        events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
+        if isMC:
+            sum_wgt = info["sum_wgt"]
+            lumi, unc = getLumi(info['year'])
+            xsec = info['xsec']
+            # register event weight branch
+            events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
+        else:
+            sum_wgt = info["num_events"]
 
         # Initial number of events
-        cutflow['all'] += np.sum(events.genWgt)/sum_wgt
+        if isMC:
+            cutflow['all'] += ak.sum(events.genWgt)/sum_wgt
+        else:
+            cutflow['all'] += len(events)/sum_wgt
         cutflow_nevts['all'] += len(events)
 
         if info['type'] == "signal":
             cutflow_vtx_matched['all'] += 1 # dummy value before selecting a vertex
             
-            has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
-            cutflow_genEEreconstructed['all'] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+            isReconstructed = events.GenEle.matched & events.GenPos.matched
+            has_gen_matched_reco_ee_events = events[isReconstructed]
+            cutflow_genEEreconstructed['all'] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
             cutflow_vtx_matched_genEEreconstructed['all'] += 1 # dummy value before selecting a vertex
             
-        histos['cutDesc']['all'] = 'No cuts'
-
-        #################################
-        #### Hard-coded basic cuts ######
-        #################################
-        # 1 or 2 jets in the event
-        nJets = ak.count(events.PFJet.pt,axis=1)
-        events = events[(nJets>0) & (nJets<3)]
+        cutDesc['all'] = 'No cuts@'
 
         #################################
         ## Calculating Additional Vars ##
         #################################
-        routines.electronJetSeparation(events) # dR and dPhi between electrons and jets
-        routines.electronIsoConePtSum(events) # for each electron, compute pT sum of any other electrons in event within dR < 0.3 of it
-        routines.electronID(events) # electron kinematic/ID definition
+        events['Electron','mindRj'] = ak.fill_none(ak.min(events.Electron.dRJets,axis=-1),999)
+        events['Electron','mindPhiJ'] = ak.fill_none(ak.min(np.abs(events.Electron.dPhiJets),axis=-1),999)
+        events['LptElectron','mindRj'] = ak.fill_none(ak.min(events.LptElectron.dRJets,axis=-1),999)
+        events['LptElectron','mindPhiJ'] = ak.fill_none(ak.min(np.abs(events.LptElectron.dPhiJets),axis=-1),999)
+        events['vtx','mindRj'] = ak.fill_none(ak.min(events.vtx.dRJets,axis=-1),999)
+        events['vtx','mindPhiJ'] = ak.fill_none(ak.min(np.abs(events.vtx.dPhiJets),axis=-1),999)
+        events['vtx','cosThetaColl'] = (events.vtx.px/events.vtx.pt)*(events.vtx.vx/events.vtx.vxy) + (events.vtx.py/events.vtx.pt)*(events.vtx.vy/events.vtx.vxy)
+        events['vtx','vxyCosThetaColl'] = events.vtx.vxy*events.vtx.cosThetaColl
+        routines.electronID(events,info) # electron kinematic/ID definition
+        routines.jetBtag(events,info['year'])
+        if info['type'] == "signal":
+            events['GenJetMETdPhi'] = np.abs(deltaPhi(events.GenJet.phi[:,0],events.GenMET.phi))
+            events['GenEle','dr'] = events.genEE.dr
+            events['GenPos','dr'] = events.genEE.dr
+            if "vxy" not in events.genEE.fields:
+                events['genEE','vxy'] = events.GenEle.vxy
+            routines.genElectronKinematicBins(events)
+            #routines.getLptMatchInfoForReg(events)
+            routines.genMatchRecoQuantities(events)
+        # associate electrons to vertices after all electron-related stuff has been computed
         routines.vtxElectronConnection(events) # associate electrons to vertices
-        routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
+        events['vtx','min_dxy'] = np.minimum(np.abs(events.vtx.e1.dxy),np.abs(events.vtx.e2.dxy))
+        events['vtx','eleDphi'] = np.abs(deltaPhi(events.vtx.e1.phi,events.vtx.e2.phi))
+        #if info['type'] == 'signal':
+            #routines.genMatchExtraVtxVariables(events)
         
         #################################
-        #### Demand >= 1 ee vertices ####
+        ##### Hard-coded basic cuts #####
         #################################
-        events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
+        # 1 or 2 jets in the event
+        nJets = ak.count(events.PFJet.pt,axis=1)
+        events = events[(nJets>0) & (nJets<3)]
+        # needs a good vertex
+        routines.defineGoodVertices(events,version='none') # define "good" vertices based on whether associated electrons pass ID cuts
         events = events[events.nGoodVtx > 0]
         # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
         routines.selectBestVertex(events)
 
         # Fill cutflow after baseline selection
-        cutflow['hasVtx'] += np.sum(events.genWgt)/sum_wgt
+        if isMC:
+            cutflow['hasVtx'] += ak.sum(events.genWgt)/sum_wgt
+        else:
+            cutflow['hasVtx'] += len(events)/sum_wgt
         cutflow_nevts['hasVtx'] += len(events)
-        histos['cutDesc']['hasVtx'] = 'Baseline Selection'
+        cutDesc['hasVtx'] = 'Baseline Selection@'
 
         # For signal, (1) check if the vertex ee are gen-matched (2) check if the event has ee that are gen-matched
         if info['type'] == "signal":
-            vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
-            cutflow_vtx_matched['hasVtx'] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
+            vtx_matched_events = events[events.sel_vtx.isMatched]
+            cutflow_vtx_matched['hasVtx'] += ak.sum(vtx_matched_events.genWgt)/ak.sum(events.genWgt)
             
-            has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
-            cutflow_genEEreconstructed['hasVtx'] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
-            vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
-            cutflow_vtx_matched_genEEreconstructed['hasVtx'] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
+            isReconstructed = events.GenEle.matched & events.GenPos.matched
+            has_gen_matched_reco_ee_events = events[isReconstructed]
+            cutflow_genEEreconstructed['hasVtx'] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+            vtx_matched_events_genEEreconstructed = has_gen_matched_reco_ee_events[has_gen_matched_reco_ee_events.sel_vtx.isMatched]
+            cutflow_vtx_matched_genEEreconstructed['hasVtx'] += ak.sum(vtx_matched_events_genEEreconstructed.genWgt)/ak.sum(has_gen_matched_reco_ee_events.genWgt)
         
         # Compute miscellaneous extra variables -- add anything you want to this function
-        routines.miscExtraVariables(events)
-        if info['type'] == "signal":
-            routines.miscExtraVariablesSignal(events)
+        # don't need this for now - can activate if need be
+        #routines.miscExtraVariables(events)
+        #if info['type'] == "signal":
+        #    routines.miscExtraVariablesSignal(events)
 
         # computing any extra quantities specified in the histogram config file
         for subroutine in self.subroutines:
@@ -243,26 +324,37 @@ class iDMeProcessor(processor.ProcessorABC):
         ######## CUTS & HISTOS ########
         ###############################
         for cut in self.cuts:
-            events, cutName, cutDesc, savePlots = cut(events,info)
-            cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
+            events, cutName, cutDescription, savePlots = cut(events,info)
+            if isMC:
+                cutflow[cutName] += ak.sum(events.genWgt)/sum_wgt
+            else:
+                cutflow[cutName] += len(events)/sum_wgt
             cutflow_nevts[cutName] += len(events)            
             if info['type'] == "signal":
-                vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
-                cutflow_vtx_matched[cutName] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
+                vtx_matched_events = events[events.sel_vtx.isMatched]
+                cutflow_vtx_matched[cutName] += ak.sum(vtx_matched_events.genWgt)/ak.sum(events.genWgt)
 
-                has_gen_matched_reco_ee_events = routines.getEventsGenEEareReconstructed(events)
-                cutflow_genEEreconstructed[cutName] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
-                vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
-                cutflow_vtx_matched_genEEreconstructed[cutName] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
-            histos['cutDesc'][cutName] += cutDesc + "@"
+                isReconstructed = events.GenEle.matched & events.GenPos.matched
+                has_gen_matched_reco_ee_events = events[isReconstructed]
+                cutflow_genEEreconstructed[cutName] += ak.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
+                vtx_matched_events_genEEreconstructed = has_gen_matched_reco_ee_events[has_gen_matched_reco_ee_events.sel_vtx.isMatched]
+                cutflow_vtx_matched_genEEreconstructed[cutName] += ak.sum(vtx_matched_events_genEEreconstructed.genWgt)/ak.sum(has_gen_matched_reco_ee_events.genWgt)
+            cutDesc[cutName] += cutDescription + "@"
 
             # Fill histograms
             if savePlots and len(events) > 0: # fixes some bugginess trying to fill histograms with empty arrays
-                self.histoFill(events,histos,samp,cutName,info,sum_wgt=sum_wgt)
+                self.histoFill(events,histObj,samp,cutName,info,sum_wgt=sum_wgt)
         
         for k in cutflow.keys():
-            cutflow_counts[k] = xsec*lumi*cutflow[k]
-            cutflow_counts_genEEreconstructed[k] = xsec*lumi*cutflow_genEEreconstructed[k]
+            if isMC:
+                cutflow_counts[k] = xsec*lumi*cutflow[k]
+                cutflow_counts_genEEreconstructed[k] = xsec*lumi*cutflow_genEEreconstructed[k]
+            else:
+                cutflow_counts[k] = sum_wgt*cutflow[k]
+                cutflow_counts_genEEreconstructed = sum_wgt*cutflow_genEEreconstructed[k]
+        
+        histos = histObj.histograms
+        histos['cutDesc'] = cutDesc
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}
         histos['cutflow_nevts'] = {samp:cutflow_nevts}
@@ -278,6 +370,187 @@ class iDMeProcessor(processor.ProcessorABC):
         # only need one description per cut name -- adds many during parallel execution
         for cutName in list(accumulator['cutDesc'].keys()):
             accumulator['cutDesc'][cutName] = accumulator['cutDesc'][cutName].split("@")[0]
+        return accumulator
+
+class genProcessor(iDMeProcessor):
+    def process(self,events):
+        samp = events.metadata["dataset"]
+        info = self.sampleInfo[samp]
+        
+        #histos = self.histoMod.make_histograms()
+        #histos['cutDesc'] = defaultdict(str)
+        histObj = self.histoMod.make_histograms(info)
+        
+        cutDesc = defaultdict(str)
+        cutflow = defaultdict(float)               # efficiency
+        cutflow_counts = defaultdict(float)        # xsec-weighted event counts
+        cutflow_nevts = defaultdict(int)           # raw event counts
+        
+        sum_wgt = info["sum_wgt"]
+        lumi, unc = getLumi(info['year'])
+        xsec = info['xsec']
+
+        # register event weight branch
+        events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
+
+        # Initial number of events
+        cutflow['all'] += ak.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['all'] += len(events)
+        cutDesc['all'] = 'No cuts'
+
+        #################################
+        ## Calculating Additional Vars ##
+        #################################
+        events['Electron','mindRj'] = ak.fill_none(ak.min(events.Electron.dRJets,axis=-1),999)
+        events['Electron','mindPhiJ'] = ak.fill_none(ak.min(events.Electron.dPhiJets,axis=-1),999)
+        events['LptElectron','mindRj'] = ak.fill_none(ak.min(events.LptElectron.dRJets,axis=-1),999)
+        events['LptElectron','mindPhiJ'] = ak.fill_none(ak.min(events.LptElectron.dPhiJets,axis=-1),999)
+        events['vtx','mindRj'] = ak.fill_none(ak.min(events.vtx.dRJets,axis=-1),999)
+        events['vtx','mindPhiJ'] = ak.fill_none(ak.min(events.vtx.dPhiJets,axis=-1),999)
+        routines.electronID(events,info) # electron kinematic/ID definition
+        if info['type'] == "signal":
+            events['GenJetMETdPhi'] = deltaPhi(events.GenJet.phi[:,0],events.GenMET.phi)
+            events['GenEle','dr'] = events.genEE.dr
+            events['GenPos','dr'] = events.genEE.dr
+            if "vxy" not in events.genEE.fields:
+                events['genEE','vxy'] = events.GenEle.vxy
+            routines.genElectronKinematicBins(events)
+            routines.getLptMatchInfoForReg(events)
+            routines.genMatchRecoQuantities(events)
+        # associate electrons to vertices after all electron-related stuff has been computed
+        routines.vtxElectronConnection(events) # associate electrons to vertices
+        routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
+        if info['type'] == 'signal':
+            routines.genMatchExtraVtxVariables(events)
+
+        # initial histogram fill
+        self.histoFill(events,histObj,samp,"no_presel",info,sum_wgt=sum_wgt)
+
+        #################################
+        #### Hard-coded basic cuts ######
+        #################################
+        # 1 or 2 jets in the event
+        nJets = ak.count(events.PFJet.pt,axis=1)
+        events = events[(nJets>0) & (nJets<3)]
+        
+        #################################
+        #### Demand >= 1 ee vertices ####
+        #################################
+        events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
+        events = events[events.nGoodVtx > 0]
+        # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
+        routines.selectBestVertex(events)
+
+        # Fill cutflow after baseline selection
+        cutflow['hasVtx'] += ak.sum(events.genWgt)/sum_wgt
+        cutflow_nevts['hasVtx'] += len(events)
+        cutDesc['hasVtx'] = 'Baseline Selection'
+        
+        # Compute miscellaneous extra variables -- add anything you want to this function
+        routines.miscExtraVariables(events)
+
+        # computing any extra quantities specified in the histogram config file
+        for subroutine in self.subroutines:
+            getattr(routines,subroutine)(events)
+        
+        ###############################
+        ######## CUTS & HISTOS ########
+        ###############################
+        for cut in self.cuts:
+            events, cutName, cutDescription, savePlots = cut(events,info)
+            cutflow[cutName] += ak.sum(events.genWgt)/sum_wgt
+            cutflow_nevts[cutName] += len(events)            
+            cutDesc[cutName] += cutDescription + "@"
+            # Fill histograms
+            if savePlots and len(events) > 0: # fixes some bugginess trying to fill histograms with empty arrays
+                self.histoFill(events,histObj,samp,cutName,info,sum_wgt=sum_wgt)
+        
+        for k in cutflow.keys():
+            cutflow_counts[k] = xsec*lumi*cutflow[k]
+
+        histos = histObj.histograms
+        histos['cutDesc'] = cutDesc
+        histos['cutflow'] = {samp:cutflow}
+        histos['cutflow_cts'] = {samp:cutflow_counts}
+        histos['cutflow_nevts'] = {samp:cutflow_nevts}
+        
+        return histos
+
+class trigProcessor(iDMeProcessor):
+    def process(self,events):
+        samp = events.metadata["dataset"]
+
+        info = self.sampleInfo[samp]
+        isMC = info["type"] == "signal" or info["type"] == "bkg"
+        if isMC:
+            sum_wgt = info["sum_wgt"]
+            lumi, unc = getLumi(info['year'])
+            xsec = info['xsec']
+            # register event weight branch
+            events.__setitem__("eventWgt",xsec*lumi*events.genWgt)
+        else:
+            sum_wgt = info["num_events"]
+
+        # fill histo
+        if isMC:
+            events['wgt'] = events.eventWgt/sum_wgt
+        else:
+            events['wgt'] = 1
+        
+        # define histo
+        MET_passTrig = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
+                               Regular(220,80,300,name="met",label="met"),
+                               IntCategory([0,1],name="passTrig",label="passTrig"),
+                               storage=hist.storage.Weight())
+
+        MET_all = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
+                               Regular(300,0,300,name="met",label="met"),
+                               storage=hist.storage.Weight())
+
+        jet_pt_passTrig = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
+                               Regular(500,0,500,name="pt",label="pt]"),
+                               IntCategory([0,1],name="passTrig",label="passTrig"),
+                               storage=hist.storage.Weight())
+
+        jet_pt_all = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
+                               Regular(500,0,500,name="pt",label="pt]"),
+                               storage=hist.storage.Weight())
+
+        # full MET histo
+        MET_all.fill(samp=samp,
+                            met=events.PFMET.pt,
+                            weight=events.wgt)
+
+        # require other stuff
+        nJets = ak.count(events.PFJet.pt,axis=1)
+        events = events[nJets>0]
+        # fill jet pt histo
+        jet_pt_all.fill(samp=samp,pt=events.PFJet.pt[:,0],weight=events.wgt)
+
+        # iDM-like selection
+        lead_pt = events.PFJet.pt[:,0]
+        lead_eta = np.abs(events.PFJet.eta[:,0])
+        ele_cut = (events.Electron.pt > 30) & (events.Electron.IDcutLoose==1)
+        lpt_ele_cut = (events.LptElectron.pt > 30)
+        n_ele_cut = ak.any(ele_cut,axis=1) | ak.any(lpt_ele_cut,axis=1)
+        cut = (lead_pt > 80) & (lead_eta < 2.4) & (n_ele_cut)
+        events = events[cut]
+        
+        # require reference trigger
+        #events = events[events.trig.HLT_PFJet80==1]
+
+        # fill histos
+        MET_passTrig.fill(samp=samp,
+                             met=events.PFMET.pt,
+                             passTrig=ak.values_astype(events.trig.HLT_PFMET120_PFMHT120_IDTight,int),
+                             weight=events.wgt)
+        jet_pt_passTrig.fill(samp=samp,pt=events.PFJet.pt[:,0],passTrig=ak.values_astype(events.trig.HLT_PFMET120_PFMHT120_IDTight,int),weight=events.wgt)
+
+        output = {"MET_passTrig":MET_passTrig,"MET_all":MET_all, "jet_pt_all":jet_pt_all, "jet_pt_passTrig":jet_pt_passTrig}
+
+        return output
+
+    def postprocess(self, accumulator):
         return accumulator
 
 class fileSkimmer:
@@ -402,7 +675,6 @@ def getLumi(year):
         lumi = 59.83
         unc = 0.025*lumi # 2.5 percent
     return lumi, unc
-    
 
 def loadSchema(fileLoc):
     loc = uproot.open(fileLoc)

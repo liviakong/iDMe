@@ -1,0 +1,7 @@
+plots_comparison/
+plots_comparison_customMiniAOD/
+plots_noXcleanInfo/
+plots_withXcleanInfo_noCustomMiniAOD/
+__pycache__/
+tmp_merge/
+old_coffeaFiles/

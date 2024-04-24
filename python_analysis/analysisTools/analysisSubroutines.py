@@ -80,6 +80,7 @@ def electronJetSeparation(events):
     events["LptElectron","mindRj"] = np.minimum(events.LptElectron.dRj0,events.LptElectron.dRj1)
     events["LptElectron","mindPhiJ"] = np.minimum(events.LptElectron.dPhij0,events.LptElectron.dPhij1)
 
+
 def electronID(events):
     """
     Function to tag electrons as good/bad according to cuts we define
@@ -99,6 +100,25 @@ def electronID(events):
     #ID cut threshold
     lpt_ele_id_cut = lpt_eles.ID > -1.0
     events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
+
+'''
+def electronID(events):
+    """
+    Function to tag electrons as good/bad according to cuts we define
+    """
+    eles = events.Electron
+    lpt_eles = events.LptElectron
+
+    events['Electron','IDscore'] = eles.IDmvaLoose
+    events['LptElectron','IDscore'] = lpt_eles.ID
+    
+    ele_cut = (eles.pt == 1000000000000000000000000000)
+    events["Electron","passID"] = ele_cut
+
+    #ID cut threshold
+    lpt_ele_id_cut = lpt_eles.ID < 100000000000000000000000000
+    events["LptElectron","passID"] = lpt_ele_id_cut
+'''
 
 def electronIsoConePtSum(events):
     all_eles = ak.concatenate((events.Electron,events.LptElectron),axis=1)
@@ -132,17 +152,21 @@ def vtxElectronConnection(events):
 def LxyID(events):
     #ID cut for low pT electrons with Lxy > 0.5
     Lxy_thre = 0.5
-    ID_thre = -1.0
+    ID_thre = 0.0
+
+    if len(events) == 1 and len(events.vtx.pt) == 1:
+        lpt_ele_id_cut1 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e1_typ[0][0] == "L") & (events.vtx.e1.IDscore < ID_thre)
+        lpt_ele_id_cut2 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e2_typ[0][0] == "L") & (events.vtx.e2.IDscore < ID_thre)
+    else:
+        lpt_ele_id_cut1 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e1_typ == "L") & (events.vtx.e1.IDscore < ID_thre)
+        lpt_ele_id_cut2 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e2_typ == "L") & (events.vtx.e2.IDscore < ID_thre)
     
-    lpt_ele_id_cut1 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e1_typ == "L") & (events.vtx.e1.ID < ID_thre)
-    lpt_ele_id_cut2 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e2_typ == "L") & (events.vtx.e2.ID < ID_thre)
-    
-    events["e1","passLxyID"] = ~lpt_ele_id_cut1
-    events["e2","passLxyID"] = ~lpt_ele_id_cut2
+    events["vtx","passLxyID1"] = ~lpt_ele_id_cut1
+    events["vtx","passLxyID2"] = ~lpt_ele_id_cut2
 
 def defineGoodVertices(events):
     # Selecting electrons that pass basic pT and eta cuts
-    events["vtx","isGood"] = events.vtx.e1.passID & events.vtx.e2.passID & events.vtx.e1.passLxyID & events.vtx.e2.passLxyID & (events.vtx.sign == -1)
+    events["vtx","isGood"] = (events.vtx.e1.passID) & (events.vtx.e2.passID) & (events.vtx.passLxyID1) & (events.vtx.passLxyID2) & (events.vtx.sign == -1)
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
 
 def selectBestVertex(events):

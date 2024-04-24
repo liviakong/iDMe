@@ -222,6 +222,7 @@ class iDMeProcessor(processor.ProcessorABC):
         histos['cutDesc']['hasVtx'] = 'Baseline Selection'
 
         # For signal, (1) check if the vertex ee are gen-matched (2) check if the event has ee that are gen-matched
+        '''
         if info['type'] == "signal":
             vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
             cutflow_vtx_matched['hasVtx'] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
@@ -230,6 +231,7 @@ class iDMeProcessor(processor.ProcessorABC):
             cutflow_genEEreconstructed['hasVtx'] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
             vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
             cutflow_vtx_matched_genEEreconstructed['hasVtx'] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
+        '''
         
         # Compute miscellaneous extra variables -- add anything you want to this function
         routines.miscExtraVariables(events)
@@ -247,6 +249,7 @@ class iDMeProcessor(processor.ProcessorABC):
             events, cutName, cutDesc, savePlots = cut(events,info)
             cutflow[cutName] += np.sum(events.genWgt)/sum_wgt
             cutflow_nevts[cutName] += len(events)            
+            '''
             if info['type'] == "signal":
                 vtx_matched_events = routines.getEventsSelVtxIsTruthMatched(events)
                 cutflow_vtx_matched[cutName] += np.sum(vtx_matched_events.genWgt)/np.sum(events.genWgt)
@@ -255,6 +258,7 @@ class iDMeProcessor(processor.ProcessorABC):
                 cutflow_genEEreconstructed[cutName] += np.sum(has_gen_matched_reco_ee_events.genWgt)/sum_wgt
                 vtx_matched_events_genEEreconstructed = routines.getEventsSelVtxIsTruthMatched(has_gen_matched_reco_ee_events)
                 cutflow_vtx_matched_genEEreconstructed[cutName] += np.sum(vtx_matched_events_genEEreconstructed.genWgt)/np.sum(has_gen_matched_reco_ee_events.genWgt)
+            '''
             histos['cutDesc'][cutName] += cutDesc + "@"
 
             # Fill histograms

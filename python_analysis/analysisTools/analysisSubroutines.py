@@ -181,6 +181,7 @@ def defineGoodVertices(events,version='default',ele_id='dR'):
     mindxy = events.vtx.min_dxy > 0.01
     maxMiniIso = np.maximum(events.vtx.e1.miniRelIsoEleCorr,events.vtx.e2.miniRelIsoEleCorr) < 0.9
     passConvVeto = events.vtx.e1.conversionVeto & events.vtx.e2.conversionVeto
+    mass_lo = events.vtx.m > 0.325
     if version == 'none':
         events['vtx','isGood'] = ak.values_astype(ak.ones_like(events.vtx.m),bool)
     if version == 'default':
@@ -195,6 +196,8 @@ def defineGoodVertices(events,version='default',ele_id='dR'):
         events["vtx","isGood"] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso # v4 definition
     if version == 'v5':
         events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto # v5 definition
+    if version == 'v6':
+        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto & mass_lo # v5 definition
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
     events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
 

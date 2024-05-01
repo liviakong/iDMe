@@ -129,7 +129,8 @@ triggerPaths = [
     "HLT_PFMETTypeOne120_PFMHT120_IDTight",
     "HLT_PFMETTypeOne130_PFMHT130_IDTight",
     "HLT_PFMETTypeOne140_PFMHT140_IDTight",
-    # Jet triggers (for MET study)
+    "HLT_PFMET100_PFMHT100_IDTight_PFHT60_v9"
+    # Jet triggers (for MET trigger eff)
     "HLT_PFJet15",
     "HLT_PFJet25",
     "HLT_PFJet40",
@@ -142,7 +143,38 @@ triggerPaths = [
     "HLT_PFJet400",
     "HLT_PFJet450",
     "HLT_PFJet500",
-    "HLT_PFJet550"
+    "HLT_PFJet550",
+    "HLT_AK4PFJet30",
+    "HLT_AK4PFJet50",
+    "HLT_AK4PFJet80",
+    "HLT_AK4PFJet100",
+    "HLT_AK4PFJet120",
+    # Electron triggers (for MET trigger eff)
+    "HLT_DoubleEle25_CaloIdL_MW",
+    "HLT_DoubleEle27_CaloIdL_MW",
+    "HLT_DoubleEle33_CaloIdL_MW",
+    "HLT_DoubleEle24_eta2p1_WPTight_Gsf",
+    "HLT_Ele20_WPTight_Gsf",
+    "HLT_Ele15_WPLoose_Gsf",
+    "HLT_Ele17_WPLoose_Gsf",
+    "HLT_Ele20_WPLoose_Gsf",
+    "HLT_Ele27_WPTight_Gsf",
+    "HLT_Ele28_WPTight_Gsf",
+    "HLT_Ele30_WPTight_Gsf",
+    "HLT_Ele32_WPTight_Gsf",
+    "HLT_Ele35_WPTight_Gsf",
+    "HLT_Ele38_WPTight_Gsf",
+    "HLT_Ele40_WPTight_Gsf",
+    "HLT_Ele15_Ele8_CaloIdL_TrackIdL_IsoVL",
+    "HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL",
+    "HLT_Ele8_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele12_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele15_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele23_CaloIdL_TrackIdL_IsoVL_PFJet30",
+    "HLT_Ele8_CaloIdM_TrackIdM_PFJet30",
+    "HLT_Ele17_CaloIdM_TrackIdM_PFJet30",
+    "HLT_Ele23_CaloIdM_TrackIdM_PFJet30",
+    "HLT_Ele50_CaloIdVT_GsfTrkIdT_PFJet165"
 ]
 
 # Electron effective area input file for PU-corrected PF isolation calculations

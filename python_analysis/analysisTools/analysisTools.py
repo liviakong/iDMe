@@ -277,7 +277,7 @@ class iDMeProcessor(processor.ProcessorABC):
         nJets = ak.count(events.PFJet.pt,axis=1)
         events = events[(nJets>0) & (nJets<3)]
         # needs a good vertex
-        routines.defineGoodVertices(events,version='none') # define "good" vertices based on whether associated electrons pass ID cuts
+        routines.defineGoodVertices(events,version='v5') # define "good" vertices based on whether associated electrons pass ID cuts
         events = events[events.nGoodVtx > 0]
         # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
         routines.selectBestVertex(events)
@@ -328,10 +328,8 @@ class iDMeProcessor(processor.ProcessorABC):
         for k in cutflow.keys():
             if isMC:
                 cutflow_counts[k] = xsec*lumi*cutflow[k]
-                cutflow_counts_genEEreconstructed[k] = xsec*lumi*cutflow_genEEreconstructed[k]
             else:
                 cutflow_counts[k] = sum_wgt*cutflow[k]
-                cutflow_counts_genEEreconstructed = sum_wgt*cutflow_genEEreconstructed[k]
         
         histos = histObj.histograms
         histos['cutDesc'] = cutDesc
@@ -475,12 +473,17 @@ class trigProcessor(iDMeProcessor):
         
         # define histo
         MET_passTrig = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
-                               Regular(220,80,300,name="met",label="met"),
+                               Regular(600,0,600,name="met",label="met"),
                                IntCategory([0,1],name="passTrig",label="passTrig"),
                                storage=hist.storage.Weight())
 
         MET_all = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
-                               Regular(300,0,300,name="met",label="met"),
+                               Regular(600,0,600,name="met",label="met"),
+                               storage=hist.storage.Weight())
+
+        MET_passTrig_all = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
+                               Regular(600,0,600,name="met",label="met"),
+                               IntCategory([0,1],name="passTrig",label="passTrig"),
                                storage=hist.storage.Weight())
 
         jet_pt_passTrig = Hist(StrCategory([],name="samp",label="Sample Name",growth=True),
@@ -492,28 +495,29 @@ class trigProcessor(iDMeProcessor):
                                Regular(500,0,500,name="pt",label="pt]"),
                                storage=hist.storage.Weight())
 
-        # full MET histo
-        MET_all.fill(samp=samp,
-                            met=events.PFMET.pt,
-                            weight=events.wgt)
+        # histograms w/o selection
+        MET_all.fill(samp=samp,met=events.PFMET.pt,weight=events.wgt)
+        MET_passTrig_all.fill(samp=samp,met=events.PFMET.pt,
+                              passTrig=ak.values_astype(events.trig.HLT_PFMET120_PFMHT120_IDTight,int),
+                              weight=events.wgt)
 
-        # require other stuff
+    
+        # require jets
         nJets = ak.count(events.PFJet.pt,axis=1)
-        events = events[nJets>0]
-        # fill jet pt histo
+        events = events[(nJets>0)&(nJets<3)]
         jet_pt_all.fill(samp=samp,pt=events.PFJet.pt[:,0],weight=events.wgt)
 
-        # iDM-like selection
+        # iDM-like jet selection
         lead_pt = events.PFJet.pt[:,0]
         lead_eta = np.abs(events.PFJet.eta[:,0])
-        ele_cut = (events.Electron.pt > 30) & (events.Electron.IDcutLoose==1)
-        lpt_ele_cut = (events.LptElectron.pt > 30)
-        n_ele_cut = ak.any(ele_cut,axis=1) | ak.any(lpt_ele_cut,axis=1)
-        cut = (lead_pt > 80) & (lead_eta < 2.4) & (n_ele_cut)
+        #ele_cut = (events.Electron.pt > 30) & (events.Electron.IDcutLoose==1)
+        #lpt_ele_cut = (events.LptElectron.pt > 30)
+        #n_ele_cut = ak.any(ele_cut,axis=1) | ak.any(lpt_ele_cut,axis=1)
+        cut = (lead_pt > 80) & (lead_eta < 2.4)
         events = events[cut]
         
         # require reference trigger
-        #events = events[events.trig.HLT_PFJet80==1]
+        events = events[events.trig.HLT_Ele23_Ele12_CaloIdL_TrackIdL_IsoVL==1]
 
         # fill histos
         MET_passTrig.fill(samp=samp,
@@ -522,7 +526,8 @@ class trigProcessor(iDMeProcessor):
                              weight=events.wgt)
         jet_pt_passTrig.fill(samp=samp,pt=events.PFJet.pt[:,0],passTrig=ak.values_astype(events.trig.HLT_PFMET120_PFMHT120_IDTight,int),weight=events.wgt)
 
-        output = {"MET_passTrig":MET_passTrig,"MET_all":MET_all, "jet_pt_all":jet_pt_all, "jet_pt_passTrig":jet_pt_passTrig}
+        output = {"MET_passTrig":MET_passTrig,"MET_all":MET_all, "MET_passTrig_all":MET_passTrig_all,
+                  "jet_pt_all":jet_pt_all, "jet_pt_passTrig":jet_pt_passTrig}
 
         return output
 
@@ -664,60 +669,3 @@ def loadNano(fileLoc):
 
 def flatten_fillNone(arr,val):
     return ak.fill_none(ak.flatten(arr),val)
-
-def loadHistoFiles(location):
-    files = [f for f in os.listdir(location) if ".coffea" in f]
-    histos = {}
-    for f in files:
-        htemp = coffea.util.load(location+"/"+f)[0]
-        for hname in list(htemp.keys()):
-            if hname not in histos.keys():
-                histos[hname] = htemp[hname].copy()
-            else:
-                histos[hname] += htemp[hname]
-    return histos
-
-def getSampleInfo(histos,hname="ele_kinematics"):
-    samps = [s.name for s in histos[hname].axis("sample").identifiers()]
-    info = {}
-    for s in samps:
-        ct = re.findall("ctau-(\d+)",s)[0]
-        m, dm = re.findall("Mchi-(\d+p\d)_dMchi-(\d+p\d)",s)[0]
-        m = m.replace("p",".")
-        dm = dm.replace("p",".")
-        entry = "{0}-{1}".format(m,dm)
-        if entry not in info.keys():
-            info[entry] = {}
-        info[entry][ct] = s
-    return info
-
-def adjustAxes(ax,hstyle,binName,ct):
-    if binName in hstyle.keys():
-        style = hstyle[binName]
-        if "xrange" in style.keys():
-            if ("vxy"  == binName) or ("vz" == binName):
-                ax.set_xlim(left=vxy_range[ct][0],right=vxy_range[ct][1])
-            elif style['xrange']:
-                ax.set_xlim(style['xrange'][0],right=style['xrange'][1])
-
-def setLogY(ax,hstyle,binName):
-    if binName in hstyle.keys():
-        style = hstyle[binName]
-        if 'log' in style.keys():
-            if style['log']:
-                ax.set_yscale('log')
-
-def sampToTitle(samp):
-    vals = samp.split("_")
-    mchi = float(vals[0].split("-")[1])
-    dmchi = float(vals[1].split("-")[1])
-    ct = float(vals[2].split("-")[1])
-    title = r"$m_1 = {0}$ GeV, $m_2 = {1}$ GeV, $c\tau = {2}$ mm".format(int(mchi - dmchi/2),int(mchi+dmchi/2),int(ct))
-    return title
-
-def retrieveParams(samp):
-    vals = samp.split("_")
-    mchi = float(vals[0].split("-")[1])
-    dmchi = float(vals[1].split("-")[1])
-    ct = float(vals[2].split("-")[1])
-    return mchi, dmchi, ct

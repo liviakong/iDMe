@@ -1,0 +1,35 @@
+[
+    {
+        "name": "ZGamma_ZGToLLG",
+        "location": "/store/group/lpcmetx/iDMe/skimmed_ntuples/bkg/bkg_2018_v7_miniAOD_zgamma_rdfSkim_MET200/output_ZGamma_ZGToLLG/",
+        "sum_wgt": 989822.3848571777,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 0.1595,
+        "nFiles": 32,
+        "num_events": 3355944,
+        "blacklist": []
+    },
+    {
+        "name": "ZGamma_ZGamma2JToGamma2L2J",
+        "location": "/store/group/lpcmetx/iDMe/skimmed_ntuples/bkg/bkg_2018_v7_miniAOD_zgamma_rdfSkim_MET200/output_ZGamma_ZGamma2JToGamma2L2J/",
+        "sum_wgt": 495930.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 0.1145,
+        "nFiles": 16,
+        "num_events": 498000,
+        "blacklist": []
+    },
+    {
+        "name": "ZGamma_ZGammaToJJGamma",
+        "location": "/store/group/lpcmetx/iDMe/skimmed_ntuples/bkg/bkg_2018_v7_miniAOD_zgamma_rdfSkim_MET200/output_ZGamma_ZGammaToJJGamma/",
+        "sum_wgt": 98130553.25,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 4.144,
+        "nFiles": 10,
+        "num_events": 4940562,
+        "blacklist": []
+    }
+]

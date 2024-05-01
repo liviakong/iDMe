@@ -1,0 +1,13 @@
+[
+    {
+        "name": "JPsi_BuToKJpsi",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/background_v8_miniAOD_extraProcess/2018/JPsi/BuToKJpsi/BuToKJpsi_Toee_Mufilter_SoftQCDnonD_TuneCP5_13TeV-pythia8-evtgen/crab_iDMe_BuToKJpsi_2024_04_29-08_19/240429_131918/0000/",
+        "sum_wgt": 10084015.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 2046000.0,
+        "nFiles": 12,
+        "num_events": 10084015,
+        "blacklist": []
+    }
+]

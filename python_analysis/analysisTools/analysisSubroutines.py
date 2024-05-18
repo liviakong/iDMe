@@ -2,10 +2,10 @@ from __future__ import with_statement
 import coffea
 from coffea.nanoevents import NanoEventsFactory, NanoAODSchema, BaseSchema
 from coffea import processor
-from coffea.nanoevents.methods import vector
 import uproot
 import awkward as ak
-ak.behavior.update(vector.behavior)
+import vector
+vector.register_awkward()
 import numba as nb
 import awkward.numba
 import numpy as np
@@ -80,26 +80,64 @@ def electronJetSeparation(events):
     events["LptElectron","mindRj"] = np.minimum(events.LptElectron.dRj0,events.LptElectron.dRj1)
     events["LptElectron","mindPhiJ"] = np.minimum(events.LptElectron.dPhij0,events.LptElectron.dPhij1)
 
-
-def electronID(events):
+def electronID(events,info):
     """
     Function to tag electrons as good/bad according to cuts we define
     """
     eles = events.Electron
     lpt_eles = events.LptElectron
-
-    events['Electron','IDscore'] = eles.IDmvaLoose
-    events['LptElectron','IDscore'] = lpt_eles.ID
     
-    ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4) & (eles.mindRj > 0.4)
-    ele_id_cut = eles.IDcutLoose==1
-    events["Electron","passID"] = ele_kinematic_cut & ele_id_cut
+    # define branches with the same name to store relevant MVA ID score for electrons/low-pT electrons
+    events['Electron','IDscore'] = ak.zeros_like(eles.pt) # 'loose' mva score for regular electrons (just a dummy value)
+    events['LptElectron','IDscore'] = lpt_eles.ID # use the actual MVA score for low-pT electrons
 
-    lpt_ele_kinematic_cut = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4) & (lpt_eles.mindRj > 0.4)
+    # lowpT ID
+    lpt_ele_kinematic_cut = (lpt_eles.pt > 1) & (np.abs(lpt_eles.eta) < 2.4)
+    lpt_ele_id_cut = lpt_eles.pt > 0 # dummy always True
+    events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut & (lpt_eles.mindRj > 0.4)
+    events["LptElectron","passIDBasic"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
     
-    #ID cut threshold
-    lpt_ele_id_cut = lpt_eles.ID > -1.0
-    events["LptElectron","passID"] = lpt_ele_kinematic_cut & lpt_ele_id_cut
+    # regular ID
+    """if info['type'] == 'signal':
+        ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
+        ele_id_cut = eles.IDcutLoose==1
+        getLptMatchInfoForReg(events)
+        events["Electron","passIDTemp"] = ele_kinematic_cut & ele_id_cut & (eles.mindRj > 0.4)
+        events["Electron","passIDBasicTemp"] = ele_kinematic_cut & ele_id_cut
+        
+        events["Electron","passEitherID"] = ak.values_astype(events.Electron.passIDTemp | events.Electron.lptMatchPassID,bool)
+        events["Electron","passEitherIDBasic"] = ak.values_astype(events.Electron.passIDBasicTemp | events.Electron.lptMatchPassIDBasic,bool)
+        events["LptElectron","passEitherID"] = ak.values_astype(events.LptElectron.passID,bool)
+        events["LptElectron","passEitherIDBasic"] = ak.values_astype(events.LptElectron.passIDBasic,bool)
+
+        events["Electron","passID"] = events.Electron.passEitherID
+        events["Electron","passIDBasic"] = events.Electron.passEitherIDBasic
+    else:
+        ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
+        ele_id_cut = eles.IDcutLoose==1
+        events["Electron","passID"] = ele_kinematic_cut & ele_id_cut & (eles.mindRj > 0.4)
+        events["Electron","passIDBasic"] = ele_kinematic_cut & ele_id_cut"""
+    ele_kinematic_cut = (eles.pt > 1) & (np.abs(eles.eta) < 2.4)
+    ele_id_cut = eles.IDcutLoose == 1
+    events["Electron","passID"] = ele_kinematic_cut & ele_id_cut & (eles.mindRj > 0.4)
+    events["Electron","passIDBasic"] = ele_kinematic_cut & ele_id_cut
+    
+def jetBtag(events,year):
+    loose,med,tight = getBtagWPs(year)
+    events["PFJet","passLooseID"] = events.PFJet.bTag > loose
+    events["PFJet","passMedID"] = events.PFJet.bTag > med
+    events["PFJet","passTightID"] = events.PFJet.bTag > tight
+
+def getBtagWPs(year):
+    if year == 2018:
+        loose,med,tight = 0.0490, 0.2783, 0.7100
+    if year == 2017:
+        loose,med,tight = 0.0532, 0.3040, 0.7476
+    if year == 2016:
+        loose,med,tight = 0.0480, 0.2489, 0.6377
+    if year == "2016APV":
+        loose,med,tight = 0.0508, 0.2598, 0.6502
+    return loose,med,tight
 
 '''
 def electronID(events):
@@ -164,10 +202,41 @@ def LxyID(events):
     events["vtx","passLxyID1"] = ~lpt_ele_id_cut1
     events["vtx","passLxyID2"] = ~lpt_ele_id_cut2
 
-def defineGoodVertices(events):
+def defineGoodVertices(events,version='default',ele_id='dR'):
     # Selecting electrons that pass basic pT and eta cuts
-    events["vtx","isGood"] = (events.vtx.e1.passID) & (events.vtx.e2.passID) & (events.vtx.passLxyID1) & (events.vtx.passLxyID2) & (events.vtx.sign == -1)
+    if ele_id == 'basic':
+        IDcut = events.vtx.e1.passIDBasic & events.vtx.e2.passIDBasic
+    if ele_id == 'dR':
+        IDcut = events.vtx.e1.passID & events.vtx.e2.passID
+    ossf = events.vtx.sign == -1
+    chi2 = events.vtx.reduced_chi2 < 5
+    mass = events.vtx.m < 20
+    eleDphi = events.vtx.eleDphi < 2
+    mindxy = events.vtx.min_dxy > 0.01
+    maxMiniIso = np.maximum(events.vtx.e1.miniRelIsoEleCorr,events.vtx.e2.miniRelIsoEleCorr) < 0.9
+    passConvVeto = events.vtx.e1.conversionVeto & events.vtx.e2.conversionVeto
+    mass_lo = events.vtx.m > 0.325
+
+    lxy = (events.vtx.passLxyID1) & (events.vtx.passLxyID2)
+    
+    if version == 'none':
+        events['vtx','isGood'] = ak.values_astype(ak.ones_like(events.vtx.m),bool)
+    if version == 'default':
+        events["vtx","isGood"] = IDcut & ossf # base definition
+    if version == 'v1':
+        events["vtx","isGood"] = IDcut & ossf & chi2 # v1 definition
+    if version == 'v2':
+        events["vtx","isGood"] = IDcut & ossf & chi2 & mass # v2 definition
+    if version == 'v3':
+        events["vtx","isGood"] = IDcut & ossf & chi2 & mass & mindxy # v3 definition
+    if version == 'v4':
+        events["vtx","isGood"] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso # v4 definition
+    if version == 'v5':
+        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto # v5 definition
+    if version == 'v6':
+        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto & mass_lo # v5 definition
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
+    events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
 
 def selectBestVertex(events):
     sel_vtx = ak.flatten(events.good_vtx[ak.argmin(events.good_vtx.reduced_chi2,axis=1,keepdims=True)])
@@ -175,13 +244,11 @@ def selectBestVertex(events):
 
 def miscExtraVariables(events):
     # Jet-MET and vertex-MET deltaPhi
-    events.__setitem__("JetMETdPhi",np.abs(deltaPhi(events.PFJet.phi,events.PFMET.phi)))
-    events.__setitem__("VtxMETdPhi",np.abs(deltaPhi(events.sel_vtx.phi,events.PFMET.phi)))
     events["sel_vtx","mindRj"] = ak.min(np.sqrt(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)**2 + (events.PFJet.eta-events.sel_vtx.eta)**2),axis=1)
     events["sel_vtx","mindPhiJ"] = ak.min(np.abs(deltaPhi(events.PFJet.phi,events.sel_vtx.phi)),axis=1)
 
     # compute composite MET + leptons (px,py) and dot w/ leading jet(s) (px,py)
-    dp_px = events.PFMET.pt*np.cos(events.PFMET.phi) + events.sel_vtx.px
+    """dp_px = events.PFMET.pt*np.cos(events.PFMET.phi) + events.sel_vtx.px
     dp_py = events.PFMET.pt*np.sin(events.PFMET.phi) + events.sel_vtx.py
     dp_pt = np.sqrt(dp_px**2+dp_py**2)
     jet_px = events.PFJet.pt*np.cos(events.PFJet.phi)
@@ -190,22 +257,14 @@ def miscExtraVariables(events):
     alljet_py = ak.sum(jet_py,axis=1)
     alljet_pt = np.sqrt(alljet_px**2+alljet_py**2)
     events['DP_dotJet1'] = (dp_px*jet_px[:,0] + dp_py*jet_py[:,0])/(dp_pt*events.PFJet.pt[:,0])
-    events['DP_dotJet12'] = (dp_px*alljet_px + dp_py*alljet_py)/(dp_pt*alljet_pt)
+    events['DP_dotJet12'] = (dp_px*alljet_px + dp_py*alljet_py)/(dp_pt*alljet_pt)"""
+
+    # collinear angle & projectedLxy
+    projectLxy(events)
 
 def miscExtraVariablesSignal(events):
-    # determine if gen e+/e- are matched to reco-level objects
-    events["GenEle","matched"] = ak.where((events.GenEleClosest.typ > 0) & (events.GenEleClosest.dr < 0.1),1,0)
-    events["GenPos","matched"] = ak.where((events.GenPosClosest.typ > 0) & (events.GenPosClosest.dr < 0.1),1,0)
-
-    # determine if the selected vertex is gen-matched
-    e1_match = matchedVertexElectron(events,1)
-    e2_match = matchedVertexElectron(events,2)
-    events["sel_vtx","e1_matched"] = e1_match != 0
-    events["sel_vtx","e2_matched"] = e2_match != 0
-    events["sel_vtx","match"] = ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0))
-
     # record if signal is reconstructed
-    events["signalReco"] = events.GenEle.matched + events.GenPos.matched
+    events["signalReco"] = events.GenEle.matched & events.GenPos.matched
 
     # separation between jets and gen e+/e-
     genj_phi_pt30 = ak.fill_none(ak.pad_none(events.GenJet.phi[events.GenJet.pt>30],1),999)
@@ -225,14 +284,188 @@ def miscExtraVariablesSignal(events):
     events["genEE","mindRjGen"] = ak.min(np.sqrt(deltaPhi(genj_phi_pt30,events.genEE.phi)**2 + (genj_eta_pt30-events.genEE.eta)**2),axis=1)
     events["genEE","mindPhiJGen"] = ak.min(ak.where(genj_phi_pt30 != 999,np.abs(deltaPhi(genj_phi_pt30,events.genEE.phi)),999),axis=1)
 
+    # collinear angle & projectedLxy, calculating ctau with gen info
+    projectLxy(events)
+    #calculateCtau(events)
+
+def projectLxy(events):
+    vtx = events.vtx
+
+    vxpx = vtx.vx * vtx.px
+    vypy = vtx.vy * vtx.py
+    dotprod = vxpx + vypy
+
+    # mask_dotprod_neg = dotprod < 0
+
+    vxy_mag = np.sqrt(vtx.vx * vtx.vx + vtx.vy * vtx.vy)
+    pxy_mag = np.sqrt(vtx.px * vtx.px + vtx.py * vtx.py)
+
+    cos = dotprod / (vxy_mag * pxy_mag)
+
+    events["vtx","cos_collinear"] = cos
+    events["vtx","projectedLxy"] =  vtx.vxy * cos
+
+def calculateCtau(events):
+    # chi2
+    mask_chi2 = events.GenPart.ID == 1000023
+    vx_chi2 = ak.flatten(events.GenPart.vx[mask_chi2])
+    vy_chi2 = ak.flatten(events.GenPart.vy[mask_chi2])
+    vz_chi2 = ak.flatten(events.GenPart.vz[mask_chi2])
+
+    gamma_chi2 = ak.flatten(events.GenPart.e[mask_chi2])/ak.flatten(events.GenPart.mass[mask_chi2])
+
+    # gen e-
+    mask_genele = events.GenPart.ID == 11
+    vx_genele = ak.flatten(events.GenPart.vx[mask_genele])
+    vy_genele = ak.flatten(events.GenPart.vy[mask_genele])
+    vz_genele = ak.flatten(events.GenPart.vz[mask_genele])
+
+    #gamma_genele = ak.flatten(events.GenPart.e[mask_genele])/ak.flatten(events.GenPart.mass[mask_genele])
+
+    # gen e+
+    mask_genpos = events.GenPart.ID == -11
+    vx_genpos = ak.flatten(events.GenPart.vx[mask_genpos])
+    vy_genpos = ak.flatten(events.GenPart.vy[mask_genpos])
+    vz_genpos = ak.flatten(events.GenPart.vz[mask_genpos])
+
+    #gamma_genpos = ak.flatten(events.GenPart.e[mask_genpos])/ak.flatten(events.GenPart.mass[mask_genpos])
+
+    # decay length of chi2 in the lab frame
+    decaylength_chi2 = 10 * np.sqrt( (vx_genele-vx_chi2)**2 + (vy_genele-vy_chi2)**2 + (vz_genele-vz_chi2)**2 ) # in [mm]
+
+    ctau_chi2 = decaylength_chi2 / gamma_chi2
+
+    events.__setitem__("ctau",ctau_chi2)
+    
+@nb.njit
+def ele_dRcategory(b,ele_arr):
+    nEvents = len(ele_arr)
+    for n in range(nEvents):
+        if ele_arr[n] <= 0.1:
+            b.append(0)
+        elif ele_arr[n] > 0.1 and ele_arr[n] <= 0.5:
+            b.append(1)
+        else:
+            b.append(2)
+
+@nb.njit
+def ele_vxyCategory(b,ele_arr):
+    nEvents = len(ele_arr)
+    for n in range(nEvents):
+        if ele_arr[n] <= 1:
+            b.append(0)
+        elif ele_arr[n] > 1 and ele_arr[n] <= 5:
+            b.append(1)
+        elif ele_arr[n] > 5 and ele_arr[n] <= 10:
+            b.append(2)
+        elif ele_arr[n] > 10 and ele_arr[n] <= 15:
+            b.append(3)
+        else:
+            b.append(4)
+
+@nb.njit
+def ele_ptCategory(b,ele_arr):
+    nEvents = len(ele_arr)
+    for n in range(nEvents):
+        if ele_arr[n] <= 5:
+            b.append(0)
+        elif ele_arr[n] > 5 and ele_arr[n] <= 10:
+            b.append(1)
+        elif ele_arr[n] > 10 and ele_arr[n] <= 20:
+            b.append(2)
+        else:
+            b.append(3)
+
+def genElectronKinematicBins(events):
+    dR_map = ak.Array(["0to0p1","0p1to0p5","0p5toInf"])
+    vxy_map = ak.Array(["0to1","1to5","5to10","10to15","15toInf"])
+    pt_map = ak.Array(["0to5","5to10","10to20","20toInf"])
+
+    events["GenEle","dRbin"] = dR_map[runJitOutput(ele_dRcategory,events.GenEle.dr)]
+    events["GenEle","vxyBin"] = vxy_map[runJitOutput(ele_vxyCategory,events.GenEle.vxy)]
+    events["GenEle","ptBin"] = pt_map[runJitOutput(ele_ptCategory,events.GenEle.pt)]
+
+    events["GenPos","dRbin"] = dR_map[runJitOutput(ele_dRcategory,events.GenPos.dr)]
+    events["GenPos","vxyBin"] = vxy_map[runJitOutput(ele_vxyCategory,events.GenPos.vxy)]
+    events["GenPos","ptBin"] = pt_map[runJitOutput(ele_ptCategory,events.GenPos.pt)]
+
+@nb.njit
+def regEle_lptMatchID(b,ele_lptMatchIdx,lpt_ele_id):
+    nEvents = len(ele_lptMatchIdx)
+    for n in range(nEvents):
+        b.begin_list()
+        n_ele = len(ele_lptMatchIdx[n])
+        for ie in range(n_ele):
+            if ele_lptMatchIdx[n][ie] >= 0:
+                b.append(int(lpt_ele_id[n][ele_lptMatchIdx[n][ie]]))
+            else:
+                b.append(0)
+        b.end_list()
+
+def getLptMatchInfoForReg(events):
+    events["Electron","lptMatchPassID"] = runJitOutput(regEle_lptMatchID,events.Electron.lptMatchIdx,events.LptElectron.passID)
+    events["Electron","lptMatchPassIDBasic"] = runJitOutput(regEle_lptMatchID,events.Electron.lptMatchIdx,events.LptElectron.passIDBasic)
+
+@nb.njit
+def getGenMatchRecoQuantity(b,genMatchTyp,genMatchIdx,RegQuantity,LptQuantity,unMatched_value):
+    nEvents = len(genMatchTyp)
+    for n in range(nEvents):
+        typ = genMatchTyp[n]
+        idx = genMatchIdx[n]
+        if typ == "None":
+            b.append(unMatched_value)
+        elif typ == "R":
+            b.append(int(RegQuantity[n][idx]))
+        elif typ == "L":
+            b.append(int(LptQuantity[n][idx]))
+
+def genMatchRecoQuantities(events):
+    #events["GenEle","matchPassID"] = runJitOutput(getGenMatchRecoQuantity,events.GenEle.matchType.to_numpy(),events.GenEle.matchIdxLocal.to_numpy(),events.Electron.passEitherID,events.LptElectron.passID,0)
+    #events["GenEle","matchPassIDBasic"] = runJitOutput(getGenMatchRecoQuantity,events.GenEle.matchType.to_numpy(),events.GenEle.matchIdxLocal.to_numpy(),events.Electron.passEitherIDBasic,events.LptElectron.passIDBasic,0)
+
+    #events["GenPos","matchPassID"] = runJitOutput(getGenMatchRecoQuantity,events.GenPos.matchType.to_numpy(),events.GenPos.matchIdxLocal.to_numpy(),events.Electron.passEitherID,events.LptElectron.passID,0)
+    #events["GenPos","matchPassIDBasic"] = runJitOutput(getGenMatchRecoQuantity,events.GenPos.matchType.to_numpy(),events.GenPos.matchIdxLocal.to_numpy(),events.Electron.passEitherIDBasic,events.LptElectron.passIDBasic,0)
+
+    events["GenEle","matchPassID"] = runJitOutput(getGenMatchRecoQuantity,events.GenEle.matchType.to_numpy(),events.GenEle.matchIdxLocal.to_numpy(),events.Electron.passID,events.LptElectron.passID,0)
+    events["GenEle","matchPassIDBasic"] = runJitOutput(getGenMatchRecoQuantity,events.GenEle.matchType.to_numpy(),events.GenEle.matchIdxLocal.to_numpy(),events.Electron.passIDBasic,events.LptElectron.passIDBasic,0)
+
+    events["GenPos","matchPassID"] = runJitOutput(getGenMatchRecoQuantity,events.GenPos.matchType.to_numpy(),events.GenPos.matchIdxLocal.to_numpy(),events.Electron.passID,events.LptElectron.passID,0)
+    events["GenPos","matchPassIDBasic"] = runJitOutput(getGenMatchRecoQuantity,events.GenPos.matchType.to_numpy(),events.GenPos.matchIdxLocal.to_numpy(),events.Electron.passIDBasic,events.LptElectron.passIDBasic,0)
+
+@nb.njit
+def getGenMatchedVtxQuantity(b,vtxIsMatched,vtxQuantity,unMatched_value):
+    nEvents = len(vtxIsMatched)
+    for n in range(nEvents):
+        nvtx = len(vtxIsMatched[n])
+        hasMatch = False
+        for nv in range(nvtx):
+            if vtxIsMatched[n][nv]:
+                hasMatch = True
+                b.append(vtxQuantity[n][nv])
+                break
+        if not hasMatch:
+            b.append(unMatched_value)
+
+
+def genMatchExtraVtxVariables(events):
+    #events["vtx","bothElePassID"] = events.vtx.e1.passEitherID & events.vtx.e2.passEitherID
+    #events["vtx","bothElePassIDBasic"] = events.vtx.e1.passEitherIDBasic & events.vtx.e2.passEitherIDBasic
+    #events["matchedVtxPassID"] = runJitOutput(getGenMatchedVtxQuantity,ak.Array(ak.values_astype(events.vtx.isMatched,int).tolist()),events.vtx.bothElePassID,0)
+    #events["matchedVtxPassIDBasic"] = runJitOutput(getGenMatchedVtxQuantity,ak.Array(ak.values_astype(events.vtx.isMatched,int).tolist()),events.vtx.bothElePassIDBasic,0)
+    events["vtx","bothElePassID"] = events.vtx.e1.passID & events.vtx.e2.passID
+    events["vtx","bothElePassIDBasic"] = events.vtx.e1.passIDBasic & events.vtx.e2.passIDBasic
+    events["matchedVtxPassID"] = runJitOutput(getGenMatchedVtxQuantity,ak.Array(ak.values_astype(events.vtx.isMatched,int).tolist()),events.vtx.bothElePassID,0)
+    events["matchedVtxPassIDBasic"] = runJitOutput(getGenMatchedVtxQuantity,ak.Array(ak.values_astype(events.vtx.isMatched,int).tolist()),events.vtx.bothElePassIDBasic,0)
+
 def matchedVertexElectron(events,i):
     vtx = events.sel_vtx
-    e = events.GenEleClosest
-    p = events.GenPosClosest
-    ematch = (((e.typ==1)&(vtx[f"e{i}_typ"]=='R'))|((e.typ==2)&(vtx[f"e{i}_typ"]=='L')))&(e.ind==vtx[f"e{i}_idx"])&(e.dr<0.1)
-    pmatch = (((p.typ==1)&(vtx[f"e{i}_typ"]=='R'))|((p.typ==2)&(vtx[f"e{i}_typ"]=='L')))&(p.ind==vtx[f"e{i}_idx"])&(p.dr<0.1)
-    matched = ak.where(ematch,-1,0)
-    matched = ak.where(pmatch,1,matched) # e & p can't be matched to same object, ensured in ntuplizer code
+
+    e1match = events.sel_vtx.e1_isMatched == True
+    e2match = events.sel_vtx.e2_isMatched == True
+
+    matched = ak.where(e1match,-1,0)
+    matched = ak.where(e2match,1,matched)
+
     return matched
 
 @nb.njit()
@@ -298,6 +531,38 @@ def makeBDTv2Inputs(events):
 
     return input
 
+def makeBDTinputs(events):
+    '''
+    # BDT_10vars_comb11 (ROC-AUC, PR-AUC) = (0.9958, 0.9959)
+    variables = ['sel_vtx_chi2','sel_vtx_METdPhi','sel_vtx_m','sel_vtx_dR','sel_vtx_minDxy','vxy','vxy_signif',\
+                 'sel_vtx_cos_collinear', 'sel_vtx_prod_eta', 'met_leadPt_ratio'
+    ]
+    '''
+
+    mindxy = np.minimum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy))
+    maxdxy = np.maximum(np.abs(events.sel_vtx.e1.dxy),np.abs(events.sel_vtx.e2.dxy))
+
+    deltadxy = np.abs(np.abs(events.sel_vtx.e1.dxy) - np.abs(events.sel_vtx.e2.dxy))
+
+    sel_vtx_chi2_arr = events.sel_vtx.reduced_chi2.to_numpy()
+    sel_vtx_METdPhi_arr = np.abs(events.sel_vtx.METdPhi).to_numpy()
+    sel_vtx_m_arr = events.sel_vtx.m.to_numpy()
+    sel_vtx_dR_arr = events.sel_vtx.dR.to_numpy()
+    sel_vtx_minDxy_arr = mindxy.to_numpy()
+    sel_vtx_vxy_arr = events.sel_vtx.vxy.to_numpy()
+    vxy_signif_arr = (events.sel_vtx.vxy/events.sel_vtx.sigmavxy).to_numpy()
+    cos_collinear_arr = events.cos_collinear.to_numpy()
+    sel_vtx_prod_eta_arr = (events.sel_vtx.e1.eta * events.sel_vtx.e2.eta).to_numpy()
+    met_leadPt_ratio_arr = (events.PFMET.pt/events.PFJet.pt[:,0]).to_numpy()
+
+    input_arrs = (sel_vtx_chi2_arr, sel_vtx_METdPhi_arr, sel_vtx_m_arr, sel_vtx_dR_arr, \
+                  sel_vtx_minDxy_arr, sel_vtx_vxy_arr, vxy_signif_arr, \
+                  cos_collinear_arr, sel_vtx_prod_eta_arr, met_leadPt_ratio_arr)
+
+    input = np.stack(input_arrs, axis=1)
+
+    return input
+
 def getBDTscore(arr, model):
     # load the pre-trained model
     trained_model = xgb.XGBRegressor()
@@ -312,70 +577,21 @@ def getEventsSelVtxIsTruthMatched(events):
 # for signal MC, return the events where selected vertex (lowest chi2) passes the truth-matching (gen-matching)
     e1_match = matchedVertexElectron(events,1)
     e2_match = matchedVertexElectron(events,2)
-    events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
-    
+    events["sel_vtx","match"] = ak.sum(np.stack((e1_match, e2_match)), axis=0)   
+    #events["sel_vtx","match"] = ak.values_astype(ak.where(e1_match*e2_match == -1,2,ak.where(np.abs(e1_match)+np.abs(e2_match) > 0,1,0)),np.int32)
+ 
     return events[events.sel_vtx.match == 2]
 
-def getEventsGenEEareReconstructed(events):
-# for signal MC, return the events where both the gen electrons (e-,e+) are reconstructed; have reco electron within dR < 0.1
-    e = events.GenEleClosest # reco electron in the event that is closest to the gen e-
-    p = events.GenPosClosest # reco positron in the event that is closest to the gen e+
+def getTrueVertex(events, evt_vtx):
+    e1match = evt_vtx.e1_isMatched == True
+    e2match = evt_vtx.e2_isMatched == True
 
-    isReconstructed = (e.dr < 0.1) & (p.dr < 0.1)
-    
-    return events[isReconstructed]
+    has_matched_vtx = (ak.sum(e1match & e2match, axis=-1, keepdims=True) != 0)
+    idx_vtxMatch = ak.argmin(ak.where(e1match & e2match == True, 0, 1),axis=1,keepdims=True)
 
-def getTrueVertex(events, evt_vtx, doGenMatch=False):
-# Get the index of events that have "true" vertex, formed by reco e+/e- that are closest to gen e+/e-.
-# For the events, get the index of "true" vertex in each event.
-# dR(gen, reco) < 0.1 gen matching cut is not applied when doGenMatch is set to False.
-    e = events.GenEleClosest # reco electron in the event that is closest to the gen e-
-    p = events.GenPosClosest # reco positron in the event that is closest to the gen e+
-
-    # vtx e1 -- match with either reco e- or reco e+
-    match_reco_e_vtx_e1 = (ak.where(e.typ == 1, 'R', 'L') == evt_vtx.e1_typ)
-    match_reco_e_vtx_e1 = (e.ind == evt_vtx.e1_idx) & match_reco_e_vtx_e1
-
-    match_reco_p_vtx_e1 = (ak.where(p.typ == 1, 'R', 'L') == evt_vtx.e1_typ)
-    match_reco_p_vtx_e1 = (p.ind == evt_vtx.e1_idx) & match_reco_p_vtx_e1
-
-    match_reco_vtx_e1 = (match_reco_e_vtx_e1 | match_reco_p_vtx_e1)
-
-    # vtx e2 -- match with either reco e- or reco e+
-    match_reco_e_vtx_e2 = (ak.where(e.typ == 1, 'R', 'L') == evt_vtx.e2_typ)
-    match_reco_e_vtx_e2 = (e.ind == evt_vtx.e2_idx) & match_reco_e_vtx_e2
-
-    match_reco_p_vtx_e2 = (ak.where(p.typ == 1, 'R', 'L') == evt_vtx.e2_typ)
-    match_reco_p_vtx_e2 = (p.ind == evt_vtx.e2_idx) & match_reco_p_vtx_e2
-
-    match_reco_vtx_e2 = (match_reco_e_vtx_e2 | match_reco_p_vtx_e2)
-
-    # Find vtx with both e1 and e2 matched with reco e+/e-.
-    match_reco_vtx_ee = (match_reco_vtx_e1 & match_reco_vtx_e2)
-
-    if doGenMatch: # also require dR(gen, reco) < 0.1
-        match_reco_e_vtx_e1_dR = (e.dr < 0.1) & match_reco_e_vtx_e1
-        match_reco_p_vtx_e1_dR = (p.dr < 0.1) & match_reco_p_vtx_e1
-    
-        match_reco_vtx_e1_dR = (match_reco_e_vtx_e1_dR | match_reco_p_vtx_e1_dR)
-    
-        match_reco_e_vtx_e2_dR = (e.dr < 0.1) & match_reco_e_vtx_e2
-        match_reco_p_vtx_e2_dR = (p.dr < 0.1) & match_reco_p_vtx_e2
-    
-        match_reco_vtx_e2_dR = (match_reco_e_vtx_e2_dR | match_reco_p_vtx_e2_dR)
-    
-        match_reco_vtx_ee_dR = (match_reco_vtx_e1_dR & match_reco_vtx_e2_dR)
-
-    has_matched_vtx = (ak.sum(match_reco_vtx_ee, axis=-1, keepdims=True) != 0)
-    idx_vtxMatch = ak.argmin(ak.where(match_reco_vtx_ee == True, 0, 1),axis=1,keepdims=True) # returns the index of the matched vertex if there is one, or 0 if there is no matched vertex; later, will only use the idx from events that do have matched vertex
-
-    if doGenMatch:
-        has_matched_vtx = (ak.sum(match_reco_vtx_ee_dR, axis=-1, keepdims=True) != 0)
-        idx_vtxMatch = ak.argmin(ak.where(match_reco_vtx_ee_dR == True, 0, 1),axis=1,keepdims=True)
-    
     return idx_vtxMatch, has_matched_vtx
 
-def selectTrueVertex(events, evt_vtx, doGenMatch=False): 
+def selectTrueVertex(events, evt_vtx): 
     '''
     Select vertex formed with the reco e+,e- that are closest to gen e+,e- (true vertex); instead of the vertex with the lowest chi2.
     dR(gen, reco) < 0.1 gen matching cut is not applied when doGenMatch is set to False.
@@ -383,16 +599,16 @@ def selectTrueVertex(events, evt_vtx, doGenMatch=False):
     - To call this function, in analysisTools; replace the line of `routines.selectBestVertex(events)` like the following
 
     if info['type'] == "signal":
-        events = routines.selectTrueVertex(events, events.good_vtx, doGenMatch=False)           # select the true vertex
+        events = routines.selectTrueVertex(events, events.good_vtx)           # select the true vertex
 
     - To run it without electron cuts applied to vertex electrons, add the following lines before `events = events[events.nGoodVtx > 0]` cut
     
     if info['type'] == "signal":
-        events = routines.selectTrueVertex(events, events.vtx, doGenMatch=False)           # select the true vertex
+        events = routines.selectTrueVertex(events, events.vtx)           # select the true vertex
 
     '''
     
-    idx_vtxMatch, has_matched_vtx = getTrueVertex(events, evt_vtx, doGenMatch=doGenMatch)
+    idx_vtxMatch, has_matched_vtx = getTrueVertex(events, evt_vtx)
 
     sel_vtx = ak.flatten(evt_vtx[idx_vtxMatch])
     events.__setitem__("sel_vtx",sel_vtx)

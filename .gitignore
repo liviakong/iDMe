@@ -1,6 +1,6 @@
-*.root
+**/*.root
 **/.ipynb_checkpoints/
-*.coffea
+**/*.coffea
 **/__pycache__/
 .vscode/
 **/*.log

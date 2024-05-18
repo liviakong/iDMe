@@ -1,0 +1,46 @@
+[
+    {
+        "name": "Data_MET_UL18_Run2018A",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_MET_v1/2018/Data_MET_UL18/Run2018A/MET/crab_iDMe_Run2018A_2024_04_19-20_20/240420_012043/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 41,
+        "num_events": 46096435,
+        "blacklist": []
+    },
+    {
+        "name": "Data_MET_UL18_Run2018B",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_MET_v1/2018/Data_MET_UL18/Run2018B/MET/crab_iDMe_Run2018B_2024_04_19-20_19/240420_011937/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 32,
+        "num_events": 26781714,
+        "blacklist": []
+    },
+    {
+        "name": "Data_MET_UL18_Run2018C",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_MET_v1/2018/Data_MET_UL18/Run2018C/MET/crab_iDMe_Run2018C_2024_04_19-20_19/240420_012018/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 18,
+        "num_events": 30107311,
+        "blacklist": []
+    },
+    {
+        "name": "Data_MET_UL18_Run2018D",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/data_MET_v1/2018/Data_MET_UL18/Run2018D/MET/crab_iDMe_Run2018D_2024_04_19-20_18/240420_011912/0000/",
+        "sum_wgt": 0.0,
+        "type": "data",
+        "year": 2018,
+        "xsec": 0.0,
+        "nFiles": 91,
+        "num_events": 150931631,
+        "blacklist": []
+    }
+]

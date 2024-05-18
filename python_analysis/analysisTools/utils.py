@@ -1,9 +1,16 @@
 import sys
 import pandas as pd
-#sys.path.append("../../../analysisTools/")
 import plotTools as ptools
+import json
+from pathlib import Path
 
 # Signal
+def get_dict_fromCutflow(cf):
+    sig_samples = cf.keys()
+    dict = {s:ptools.signalPoint(s) for s in sig_samples}
+    dict = pd.DataFrame.from_dict(dict, orient='index')
+    return dict
+
 def get_signal_point_dict(sig_histo):
     '''
     Get dictionary of signal sub-process, i.e. mass point, lifetime etc.
@@ -11,14 +18,9 @@ def get_signal_point_dict(sig_histo):
     sig_histo takes util.load(coffea_file)[0]
     '''
 
-    sig_samples = list(sig_histo['cutflow'].keys())
+    return get_dict_fromCutflow(sig_histo['cutflow'])
 
-    dict = {s:ptools.signalPoint(s) for s in sig_samples}
-    dict = pd.DataFrame.from_dict(dict, orient='index')
-    
-    return dict
-
-def get_signal_cutflow_dict(sig_histo, branch, do_only_gen_ee_reconstructed=False):
+def get_signal_cutflow_dict(sig_histo, branch):
     '''
     Get dictionary of cutflow for signal
     
@@ -27,15 +29,14 @@ def get_signal_cutflow_dict(sig_histo, branch, do_only_gen_ee_reconstructed=Fals
     - cutflow_cts: xsec-weighted event count
     - cutflow_vtx_matched: fraction that selected vtx is truth-matched
     - cutflow_nevts: raw count
-
-    If onlyGenReconstructed is set to true, it will return the same quantities but when only looking at the events where the gen ee are reconstructed (dR(gen,reco) < 0.1)
-    - cutflow_genEEreconstructed, cutflow_cts_genEEreconstructed, cutflow_vtx_matched_genEEreconstructed
     '''
 
-    if do_only_gen_ee_reconstructed:
-        branch += '_genEEreconstructed'
+    df = pd.DataFrame.from_dict(sig_histo[branch], orient='index')
+
+    cutnames = get_signal_list_of_cuts(sig_histo)
+    df.columns = cutnames
     
-    return sig_histo[branch]
+    return df
 
 def get_signal_list_of_histograms(sig_histo):
     '''
@@ -54,9 +55,10 @@ def get_signal_list_of_cuts(sig_histo, get_cut_idx = False):
 
     cut_idx = list(cut_dict.keys())
     cut_name = list(cut_dict.values())
+    #print(json.dumps(cut_dict,indent=4))
 
     cut_name = list(map(lambda x: x.replace('No cuts', 'Preselections'), cut_name))
-    cut_name = list(map(lambda x: x.replace('Baseline Selection', '0 < n(jet) < 3 & n(good vertex) > 0'), cut_name))
+    cut_name = list(map(lambda x: x.replace('Baseline Selection', 'n(good vertex) > 0'), cut_name))
 
     if get_cut_idx:
         cut = cut_idx
@@ -65,9 +67,54 @@ def get_signal_list_of_cuts(sig_histo, get_cut_idx = False):
     
     return cut
 
+# Data
+def get_data_cutflow_dict(data_histo, branch):
+
+    df = pd.DataFrame.from_dict(data_histo[branch], orient='index')
+
+    cutnames = get_data_list_of_cuts(data_histo)
+    df.columns = cutnames
+
+    return df
+
+def get_data_list_of_cuts(data_histo, get_cut_idx = False):
+    cut_dict = {cname:ptools.getCut(data_histo['cutDesc'][cname]) for cname in data_histo['cutDesc'].keys()}
+
+    cut_idx = list(cut_dict.keys())
+    cut_name = list(cut_dict.values())
+        
+    cut_name = list(map(lambda x: x.replace('No cuts', 'Preselections'), cut_name))
+    cut_name = list(map(lambda x: x.replace('Baseline Selection', 'n(good vertex) > 0'), cut_name))
+
+    if get_cut_idx:
+        cut = cut_idx
+    else:
+        cut = cut_name
+
+    return cut
 
 # Background
-def get_bkg_point_dict(bkg_histos, selected_process = 'all'):
+def get_bkg_point_dict(bkg_histos, selected_process = 'all', isLegacy = False):
+    if isLegacy:
+        return get_bkg_point_dict_legacy(bkg_histos, selected_process)
+
+    else:
+        sample_cat = bkg_categories(bkg_histos['cutflow'])[0]
+        sample_dict = {}
+        for process in sample_cat.keys():
+            subprocesses = sample_cat[process]
+
+            for sub in subprocesses:
+                sample_dict[sub] = process
+        
+        sample_df = pd.DataFrame.from_dict(sample_dict, orient='index', columns=['Process'])
+
+        if selected_process != 'all':
+            sample_df = sample_df.loc[sample_df['Process'] == selected_process]
+        
+        return sample_df
+
+def get_bkg_point_dict_legacy(bkg_histos, selected_process = 'all'):
     '''
     Get dictionary of background sub-process
 
@@ -80,7 +127,7 @@ def get_bkg_point_dict(bkg_histos, selected_process = 'all'):
     
         for sub in subprocesses:
             sample_dict[sub] = process
-    
+
     sample_df = pd.DataFrame.from_dict(sample_dict, orient='index', columns=['Process'])
 
     if selected_process != 'all':
@@ -88,7 +135,7 @@ def get_bkg_point_dict(bkg_histos, selected_process = 'all'):
 
     return sample_df
 
-def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
+def get_bkg_cutflow_df(bkg_histos, branch, process = 'all', isLegacy = False):
     '''
     Get dictionary of cutflow for background
     
@@ -98,11 +145,16 @@ def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
     - cutflow_nevts: raw count
     '''
 
-    cut_idx = get_bkg_list_of_cuts(bkg_histos, get_cut_idx = True)
-    cut_name = get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False)
-
+    cut_idx = get_bkg_list_of_cuts(bkg_histos, get_cut_idx = True, isLegacy = isLegacy)
+    cut_name = get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False, isLegacy = isLegacy)
+    
     if process != 'all':
-        cutflow = bkg_histos[process][branch]
+        if isLegacy:
+            histos = bkg_histos[process]
+        else:
+            histos = bkg_histos
+        
+        cutflow = histos[branch]
         cutflow = pd.DataFrame.from_dict(cutflow, orient='index')
     
         if branch != 'cutflow':
@@ -112,8 +164,8 @@ def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
             total_cts_nocut = 0
             total_cts_after_cut = {cut: 0 for cut in cut_idx}
             
-            for subprocess in list(bkg_histos[process]['cutflow'].keys()):
-                total_cts_nocut += bkg_histos[process]['cutflow_cts'][subprocess]['all'] / bkg_histos[process]['cutflow'][subprocess]['all']
+            for subprocess in list(histos['cutflow'].keys()):
+                total_cts_nocut += histos['cutflow_cts'][subprocess]['all'] / histos['cutflow'][subprocess]['all']
             
                 for cut in cut_idx:
                     total_cts_after_cut[cut] += bkg_histos[process]['cutflow_cts'][subprocess][cut]
@@ -130,16 +182,28 @@ def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
 
         total_raw_cts_after_cut = {}
 
-        for process in bkg_histos.keys():
+        if isLegacy:
+            bkgCat = bkg_histos.keys()
+        else:
+            histos = bkg_histos
+            bkgCat = bkg_categories(bkg_histos['cutflow'])[0].keys()
+
+        for process in bkgCat:
+            if isLegacy:
+                histos = bkg_histos[process]
+                bkgSubCat = list(histos['cutflow'].keys())
+            else:
+                bkgSubCat = bkg_categories(bkg_histos['cutflow'])[0][process]
+            
             total_cts_nocut[process] = 0
             total_cts_after_cut[process] = {cut: 0 for cut in cut_idx}
             total_raw_cts_after_cut[process] = {cut: 0 for cut in cut_idx}
             
-            for subprocess in list(bkg_histos[process]['cutflow'].keys()):
-                total_cts_nocut[process] += bkg_histos[process]['cutflow_cts'][subprocess]['all'] / bkg_histos[process]['cutflow'][subprocess]['all']
+            for subprocess in bkgSubCat:
+                total_cts_nocut[process] += histos['cutflow_cts'][subprocess]['all'] / histos['cutflow'][subprocess]['all']
                 for cut in cut_idx:
-                    total_cts_after_cut[process][cut] += bkg_histos[process]['cutflow_cts'][subprocess][cut]
-                    total_raw_cts_after_cut[process][cut] += bkg_histos[process]['cutflow_nevts'][subprocess][cut]
+                    total_cts_after_cut[process][cut] += histos['cutflow_cts'][subprocess][cut]
+                    total_raw_cts_after_cut[process][cut] += histos['cutflow_nevts'][subprocess][cut]
             
             total_eff_after_cut[process] = {cut: total_cts_after_cut[process][cut] / total_cts_nocut[process] for cut in cut_idx}
 
@@ -147,11 +211,13 @@ def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
         total_cts_all_process_no_cut = 0
         total_eff_after_cut['Total'] = {}
         
-        for cut in cut_idx:
-            for process in bkg_histos.keys():
+        for idx, cut in enumerate(cut_idx):
+            for process in bkgCat:
                 # for all bkg process summed
                 total_cts_all_process_after_cut[cut] += total_cts_after_cut[process][cut]
-                total_cts_all_process_no_cut += total_cts_nocut[process]
+
+                if idx == 0:
+                    total_cts_all_process_no_cut += total_cts_nocut[process] # do it only once
         
             total_eff_after_cut['Total'][cut] = total_cts_all_process_after_cut[cut] / total_cts_all_process_no_cut
         
@@ -168,7 +234,27 @@ def get_bkg_cutflow_df(bkg_histos, branch, process = 'all'):
     
     return cutflow
 
-def get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False):
+def get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False, isLegacy = False):
+    if isLegacy:
+        return get_bkg_list_of_cuts_legacy(bkg_histos, get_cut_idx)
+
+    else:
+        cut_dict = {cname:ptools.getCut(bkg_histos['cutDesc'][cname]) for cname in bkg_histos['cutDesc'].keys()}
+
+        cut_idx = list(cut_dict.keys())
+        cut_name = list(cut_dict.values())
+        
+        cut_name = list(map(lambda x: x.replace('No cuts', 'Preselections'), cut_name))
+        cut_name = list(map(lambda x: x.replace('Baseline Selection', 'n(good vertex) > 0'), cut_name))
+
+        if get_cut_idx:
+            cut = cut_idx
+        else:
+            cut = cut_name
+    
+        return cut
+
+def get_bkg_list_of_cuts_legacy(bkg_histos, get_cut_idx = False):
     '''
     Get dictionary of cuts
     '''
@@ -190,5 +276,48 @@ def get_bkg_list_of_cuts(bkg_histos, get_cut_idx = False):
         cut = cut_name
     
     return cut
+
+def bkg_categories(cutflow):
+    allNames = list(cutflow.keys())
+    bkgCats = list(set([n.split("_")[2] for n in allNames]))
+    output_samples = {b:[] for b in bkgCats}
+    output_names = {b:[] for b in bkgCats}
+    for name in allNames:
+        parts = name.split("_")
+        bgkCat = parts[2]
+        subSample = "_".join(parts[3:])
+        output_samples[bgkCat].append(name)
+        output_names[bgkCat].append(subSample)
+    return output_samples, output_names
+
+
+def add_signal_info_to_df(df):
+    m1_list = []
+    delta_list = []
+    ctau_list = []
+    
+    for point in df.index.values:
+        sig_dict = ptools.signalPoint(point)
+        m1_list.append(sig_dict['m1'])
+        delta_list.append(sig_dict['delta'])
+        ctau_list.append(sig_dict['ctau'])
+    
+    df['m1'] = m1_list
+    df['delta'] = delta_list
+    df['ctau'] = ctau_list
+    
+    df = df.sort_values(by=['m1']) # sort by m1
+
+    return df
+
+def save_df_to_csv(df, outdir, outname, isSignal = False):
+    Path(outdir).mkdir(parents=True, exist_ok=True)
+
+    if isSignal:
+        df = add_signal_info_to_df(df)
+    
+    df.to_csv(f'{outdir}/{outname}.csv')
+
+    print(f'Saved: {outdir}/{outname}.csv')
 
 

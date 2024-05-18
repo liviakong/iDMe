@@ -1,0 +1,10 @@
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_00.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_01.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_02.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_03.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_04.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_05.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_06.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_07.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_08.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-22p0_dMchi-4p0/ctau-1/MiniAOD_Mchi-22p0_dMchi-4p0_ctau-1_09.root

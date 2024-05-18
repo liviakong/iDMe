@@ -1,0 +1,35 @@
+[
+    {
+        "name": "ZGamma_ZGToLLG",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/background_v8_miniAOD_extraProcess/2018/ZGamma/ZGToLLG/ZGToLLG_01J_5f_PtG-130_TuneCP5_13TeV_amcatnloFXFX-pythia8/crab_iDMe_ZGToLLG_2024_04_30-07_59/240430_130023/0000/",
+        "sum_wgt": 989822.3848571777,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 0.1595,
+        "nFiles": 32,
+        "num_events": 3355944,
+        "blacklist": []
+    },
+    {
+        "name": "ZGamma_ZGamma2JToGamma2L2J",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/background_v8_miniAOD_extraProcess/2018/ZGamma/ZGamma2JToGamma2L2J/ZGamma2JToGamma2L2J_EWK_MLL-50_MJJ-120_TuneCP5_13TeV-madgraph-pythia8/crab_iDMe_ZGamma2JToGamma2L2J_2024_04_30-07_59/240430_125959/0000/",
+        "sum_wgt": 495930.0,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 0.1145,
+        "nFiles": 16,
+        "num_events": 498000,
+        "blacklist": []
+    },
+    {
+        "name": "ZGamma_ZGammaToJJGamma",
+        "location": "/store/group/lpcmetx/iDMe/Samples/Ntuples/background_v8_miniAOD_extraProcess/2018/ZGamma/ZGammaToJJGamma/ZGammaToJJGamma_TuneCP5_13TeV-amcatnloFXFX-pythia8/crab_iDMe_ZGammaToJJGamma_2024_04_30-07_58/240430_125939/0000/",
+        "sum_wgt": 98130553.25,
+        "type": "bkg",
+        "year": 2018,
+        "xsec": 4.144,
+        "nFiles": 10,
+        "num_events": 4940562,
+        "blacklist": []
+    }
+]

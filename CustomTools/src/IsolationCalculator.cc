@@ -8,7 +8,7 @@ electronHandle(recoElectronHandle_), lowPtElectronHandle(lowPtElectronHandle_), 
 {}
 
 void IsolationCalculator::calcIso() {
-    nt.recoElectronPFIso_dR4_.resize((*electronHandle).size(),0.0);
+    /*nt.recoElectronPFIso_dR4_.resize((*electronHandle).size(),0.0);
     nt.recoElectronPFRelIso_dR4_.resize((*electronHandle).size(),0.0);
     nt.recoElectronPFIso_dR3_.resize((*electronHandle).size(),0.0);
     nt.recoElectronPFRelIso_dR3_.resize((*electronHandle).size(),0.0);
@@ -98,5 +98,5 @@ void IsolationCalculator::calcIso() {
                 nt.vtx_ll_PFRelIso_dR3_[i] += rel;
             }
         }
-    }
+    }*/
 }

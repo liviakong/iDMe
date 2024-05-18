@@ -1,0 +1,13 @@
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_00.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_01.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_02.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_03.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_04.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_05.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_06.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_07.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_08.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_09.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_10.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_11.root
+root://cmsxrootd.fnal.gov//store/group/lpcmetx/iDMe//Samples/signal/2018/MINIAOD//Mchi-94p5_dMchi-9p0/ctau-100/MiniAOD_Mchi-94p5_dMchi-9p0_ctau-100_12.root

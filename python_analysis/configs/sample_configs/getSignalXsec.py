@@ -4,7 +4,8 @@ import json
 
 inputJson = sys.argv[1]
 
-df = pd.read_csv('/uscms/home/sbrightt/nobackup/iDMe/signal_xsec/MG5_aMC_v2_9_6/bin/signal_xsec_table.csv')
+#df = pd.read_csv('/uscms/home/sbrightt/nobackup/iDMe/signal_xsec/MG5_aMC_v2_9_6/bin/signal_xsec_table.csv')
+df = pd.read_csv('/uscms_data/d3/sbrightt/iDMe/signal_xsec/condor/signal_xsec_table.csv')
 with open(inputJson) as f:
     samples = json.load(f)
 for samp in samples:
@@ -12,7 +13,7 @@ for samp in samples:
     dmchi = samp["dMchi"]
     ct = samp["ctau"]
     aD = str(samp['alphaD'])
-    sel_row = df[(df["Mchi"] == mchi) & (df["dMchi"] == dmchi) & (df["ct"] == ct) & (df["alphaD"] == aD)]
+    sel_row = df[(df["Mchi"] == mchi) & (df["dMchi"] == dmchi) & (df["ct"] == ct) & (df["alphaD"] == aD) & (df['mA/m1'] == 3)]
     if sel_row.empty:
         print(f"No xsec found for {samp['name']}")
         samp["xsec"] = 0.0

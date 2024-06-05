@@ -210,8 +210,8 @@ class iDMeProcessor(processor.ProcessorABC):
         for k,v in self.extraStuff.items():
             info[f"extras_{k}"] = v
         
-        #histos = self.histoMod.make_histograms()
-        #histos['cutDesc'] = defaultdict(str)
+        # histos = self.histoMod.make_histograms()
+        # histos['cutDesc'] = defaultdict(str)
         histObj = self.histoMod.make_histograms(info)
         cutDesc = defaultdict(str)
 
@@ -276,8 +276,12 @@ class iDMeProcessor(processor.ProcessorABC):
         # 1 or 2 jets in the event
         nJets = ak.count(events.PFJet.pt,axis=1)
         events = events[(nJets>0) & (nJets<3)]
+
+        routines.LxyID(events) # ID cut for low pT electrons in vertices with Lxy > 0.5
+        
         # needs a good vertex
-        routines.defineGoodVertices(events,version='v5') # define "good" vertices based on whether associated electrons pass ID cuts
+        # routines.defineGoodVertices(events,version='v5') # define "good" vertices based on whether associated electrons pass ID cuts
+        routines.defineGoodVertices(events,version='v7') # define "good" vertices based on whether associated electrons pass ID cuts
         events = events[events.nGoodVtx > 0]
         # define "selected" vertex based on selection criteria in the routine (nominally: lowest chi2)
         routines.selectBestVertex(events)
@@ -331,7 +335,8 @@ class iDMeProcessor(processor.ProcessorABC):
             else:
                 cutflow_counts[k] = sum_wgt*cutflow[k]
         
-        histos = histObj.histograms
+        #histos = histObj.histograms
+        histos = self.histoMod.make_histograms(info)
         histos['cutDesc'] = cutDesc
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}
@@ -393,7 +398,6 @@ class genProcessor(iDMeProcessor):
             routines.genMatchRecoQuantities(events)
         # associate electrons to vertices after all electron-related stuff has been computed
         routines.vtxElectronConnection(events) # associate electrons to vertices
-        routines.LxyID(events) # ID cut for low pT electrons in vertices with Lxy > 0.5
         routines.defineGoodVertices(events) # define "good" vertices based on whether associated electrons pass ID cuts
         if info['type'] == 'signal':
             routines.genMatchExtraVtxVariables(events)
@@ -450,7 +454,8 @@ class genProcessor(iDMeProcessor):
         for k in cutflow.keys():
             cutflow_counts[k] = xsec*lumi*cutflow[k]
 
-        histos = histObj.histograms
+        #histos = histObj.histograms
+        histos = self.histoMod.make_histograms(info)
         histos['cutDesc'] = cutDesc
         histos['cutflow'] = {samp:cutflow}
         histos['cutflow_cts'] = {samp:cutflow_counts}

@@ -190,7 +190,7 @@ def vtxElectronConnection(events):
 def LxyID(events):
     #ID cut for low pT electrons with Lxy > 0.5
     Lxy_thre = 0.5
-    ID_thre = 0.0
+    ID_thre = 0.5
 
     if len(events) == 1 and len(events.vtx.pt) == 1:
         lpt_ele_id_cut1 = (events.vtx.vxy < Lxy_thre) & (events.vtx.e1_typ[0][0] == "L") & (events.vtx.e1.IDscore < ID_thre)
@@ -234,7 +234,9 @@ def defineGoodVertices(events,version='default',ele_id='dR'):
     if version == 'v5':
         events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto # v5 definition
     if version == 'v6':
-        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto & mass_lo # v5 definition
+        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto & mass_lo # v6 definition
+    if version == 'v7':
+        events['vtx','isGood'] = IDcut & ossf & chi2 & mass & mindxy & maxMiniIso & passConvVeto & lxy # v7 definition
     events.__setitem__("good_vtx",events.vtx[events.vtx.isGood])
     events.__setitem__("nGoodVtx",ak.count(events.good_vtx.vxy,axis=1))
 

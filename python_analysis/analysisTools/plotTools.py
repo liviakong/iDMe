@@ -1,5 +1,6 @@
 import hist
 import coffea.util as util
+from coffea.processor import accumulate
 import matplotlib.pyplot as plt
 import matplotlib as mpl
 import numpy as np
@@ -7,7 +8,84 @@ import re
 import os
 import sys
 import mplhep as hep
+hep.style.use("CMS")
+plt.rcParams['font.size'] = 16.0
+from matplotlib.lines import Line2D
+from matplotlib.patches import Patch
+from matplotlib.colors import Normalize, LogNorm
 import utils
+
+from mplhep.styles.cms import cmap_petroff
+bkg_cmap = {
+    "QCD":cmap_petroff[0],
+    "WJets":cmap_petroff[1],
+    "ZJets":cmap_petroff[2],
+    "DY":cmap_petroff[3],
+    "Top":cmap_petroff[4],
+    "Multiboson":cmap_petroff[5],
+    "ZGamma":"khaki"
+}
+selected_signals = [
+    "sig_2018_Mchi-10p5_dMchi-1p0_ctau-1",
+    "sig_2018_Mchi-11p0_dMchi-2p0_ctau-100",
+    "sig_2018_Mchi-52p5_dMchi-5p0_ctau-10",
+    "sig_2018_Mchi-77p0_dMchi-14p0_ctau-100"
+]
+selected_signals_cmap = {
+    "sig_2018_Mchi-10p5_dMchi-1p0_ctau-1":"k",
+    "sig_2018_Mchi-11p0_dMchi-2p0_ctau-100":"g",
+    "sig_2018_Mchi-52p5_dMchi-5p0_ctau-10":"c",
+    "sig_2018_Mchi-77p0_dMchi-14p0_ctau-100":"b"
+}
+
+class histContainer:
+    def __init__(self,path,noMeta=False,bkg=False):
+        self.histos, self.metadata = self.loadCoffeaFiles(path,noMeta)
+        self.hnames = list(self.histos.keys())
+        if bkg:
+            self.catSamps,self.catNames = utils.bkg_categories(self.histos['cutflow'])
+            self.cats = list(self.catSamps.keys())
+    
+    def loadCoffeaFiles(self,path,noMeta):
+        if type(path) != list:
+            path = [path]
+        histos,metas = [], []
+        for p in path:
+            if noMeta:
+                h,m = util.load(p), None
+            else:
+                h,m = util.load(p)
+            histos.append(h)
+            metas.append(m)
+        histos = accumulate(histos)
+        metadata = None if noMeta else accumulate(metas)
+        return histos, metadata
+
+    def load(self,hname):
+        return self.histos[hname]
+    def load(self,hname):
+        return self.histos[hname]
+    def names(self,spec=None):
+        if spec is not None:
+            print("\n".join([h for h in self.hnames if spec in h]))
+        else:
+            print("\n".join(self.hnames))
+
+def getPresentSamples(h,possibleSamples):
+    for a in h.axes:
+        if a.name=='samp':
+            ax = a
+            break
+    nbins = len(ax.centers)
+    avail = [ax.bin(i) for i in range(nbins)]
+    return [p for p in possibleSamples if p in avail]
+
+def make_label(row):
+    m1 = int(row['m1'])
+    delta = int(100*row['delta'])
+    ct = int(row['ctau'])
+    label = f"{delta}%, {m1} GeV, {ct} mm"
+    return label
 
 def makeNMinus1(h1,h2,lessThan=False):
     assert len(h1.axes)==1 and h1.axes == h2.axes
@@ -163,16 +241,6 @@ def overlay(h,overlay,label_key=None,**kwargs):
         labels = [label_key[targ.value(i)] for i in range(n_overlay)]
     hep.histplot(histos,label=labels,**kwargs)
 
-from mplhep.styles.cms import cmap_petroff
-bkg_cmap = {
-    "QCD":cmap_petroff[0],
-    "WJets":cmap_petroff[1],
-    "ZJets":cmap_petroff[2],
-    "DY":cmap_petroff[3],
-    "Top":cmap_petroff[4],
-    "Multiboson":cmap_petroff[5]
-}
-
 # Plot efficiency type stuff
 def plot_signal_efficiency(sig_histo, df, m1s, deltas, ctaus, doLog = True, ylabel = '', title = ''):
     cuts = utils.get_signal_list_of_cuts(sig_histo)
@@ -310,7 +378,7 @@ def plot_signal_1D(ax, sig_histo, m1, delta, ctau, plot_dict, style_dict):
 
     if style_dict['ylabel'] != None:
         ax.set_ylabel(style_dict['ylabel'])
-    else:    
+    else:   
         binwidth = histo.axes.widths[0][0]
         if style_dict['doDensity']:
             ax.set_ylabel(f'A.U./{binwidth:.3f}')
@@ -809,6 +877,51 @@ def plot_bkg_2D_legacy(ax, bkg_histos, plot_dict, style_dict, processes = 'all',
     else:
         hep.hist2dplot(bkg_stack, flow=style_dict['flow'], ax=ax)
     
+    # legend
+    handles, labels = ax.get_legend_handles_labels()
+    ax.legend(handles[::-1], labels[::-1])
+
+def plot_data_1d(ax, data_histo, plot_dict, style_dict):
+    # Get list of data
+    runs = list(data_histo['cutflow_cts'].keys())
+
+    for idx, run in enumerate(runs):
+        if idx == 0:
+            histo = data_histo[plot_dict['variable']][{"samp":run, "cut": plot_dict['cut']}]
+        else:
+            histo += data_histo[plot_dict['variable']][{"samp":run, "cut": plot_dict['cut']}]
+
+    # rebinning
+    histo = histo[::style_dict['rebin']]
+
+    # set x range manually
+    if style_dict['xlim'] != None:
+        xlim = style_dict['xlim']
+        xbin_range = np.where((histo.axes.edges[0] > xlim[0]) & (histo.axes.edges[0] < xlim[1]))[0]
+        histo = histo[ int(xbin_range[0])-1:int(xbin_range[-1]+1) ]
+
+    # x and y labels
+    if style_dict['xlabel'] != None:
+        ax.set_xlabel(style_dict['xlabel'])
+
+    if style_dict['ylabel'] != None:
+        ax.set_ylabel(style_dict['ylabel'])
+    else:    
+        binwidth = histo.axes.widths[0][0]
+        if style_dict['doDensity']:
+            ax.set_ylabel(f'A.U./{binwidth:.3f}')
+        else:
+            ax.set_ylabel(f'Events/{binwidth:.3f}')
+
+    # x,y scale
+    if style_dict['doLogx']:
+        ax.set_xscale('log')
+    if style_dict['doLogy']:
+        ax.set_yscale('log')
+
+    # Plot
+    hep.histplot(histo, yerr=style_dict['doYerr'], density=style_dict['doDensity'], ax=ax, histtype='step', flow=style_dict['flow'], label = style_dict['label'])
+
     # legend
     handles, labels = ax.get_legend_handles_labels()
     ax.legend(handles[::-1], labels[::-1])
